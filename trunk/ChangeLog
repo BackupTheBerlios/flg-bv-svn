@@ -1,2 +1,5 @@
 2008-02-13  Christian Hoff  <christian_hoff@gmx.net>
+	* flgutils/src/de/flg_informatik/utils/*.class: Kill remaining class files
+
+2008-02-13  Christian Hoff  <christian_hoff@gmx.net>
 	Initial import.
