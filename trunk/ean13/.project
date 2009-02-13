@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>ean132</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>datenbank</name>
+			<type>2</type>
+			<location>C:/media/usb0/workspace/datenbank/src</location>
+		</link>
+		<link>
+			<name>libs</name>
+			<type>2</type>
+			<location>I:/java/Vorlagen/libs</location>
+		</link>
+	</linkedResources>
+</projectDescription>

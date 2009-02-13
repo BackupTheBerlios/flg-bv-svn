@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Property-File by FLG-Properties V0.5 ofde.flg_informatik.buecherverwaltung.Buchverwaltung[frame0,0,25,562x452,invalid,layout=java.awt.BorderLayout,title=,resizable,normal]</comment>
+
+<entry key=".BuchverwaltungV01">.1</entry>
+<entry key="datenbank.connection.server">//aladin</entry>
+<entry key="datenbank.datenbankname">flgbooks</entry>
+<entry key=".datenbank.connection.port">3306</entry>
+<entry key="datenbank.username">buchadmin</entry>
+<entry key="*datenbank.passwort">aa</entry>
+<entry key=".datenbank.jdbc.Driver">com.mysql.jdbc.Driver</entry>
+<entry key=".datenbank.odbcDriver">sun.jdbc.odbc.JdbcOdbcDriver</entry>
+<entry key=".datenbank.connection.prefix">jdbc:mysql:</entry>
+</properties>

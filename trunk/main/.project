@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>buecherv.v0.1</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>ean13</name>
+			<type>2</type>
+			<location>/media/usb1/workspace/ean132/src</location>
+		</link>
+		<link>
+			<name>flgutils</name>
+			<type>2</type>
+			<location>/media/usb1/workspace/flgutils/src</location>
+		</link>
+	</linkedResources>
+</projectDescription>

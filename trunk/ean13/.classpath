@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="de/flg_informatik/utils/CopyOfEanCanvas.java|de/flg_informatik/ean13/CopyOfEanCanvas.java" kind="src" path="src"/>
+	<classpathentry kind="src" path="datenbank"/>
+	<classpathentry excluding="commapi/samples/blackbox/|commapi/samples/NULLDRIVER/|commapi/samples/PARALLELBLACKBOX/|commapi/samples/porting/|commapi/samples/SERIALDEMO/|commapi/samples/simple/" kind="src" path="libs"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
