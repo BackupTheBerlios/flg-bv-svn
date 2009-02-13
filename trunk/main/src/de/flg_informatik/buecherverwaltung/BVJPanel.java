@@ -1,12 +1,6 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.TextEvent;
-import java.awt.event.TextListener;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -14,12 +8,15 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
-import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
-import de.flg_informatik.ean13.Ean;
 
 public class BVJPanel extends JPanel {
 	
 
+	/**
+	 * Parent Panel class containing a scrollable table("mymodell")
+	 * setting widths of columns by and forwarding ListSelection Events to "myparent"
+	 */
+	private static final long serialVersionUID = 1L;
 	private BTVTable table;
 	BVJPanel me; 
 	AbstractTableModel memodell;
@@ -32,6 +29,11 @@ public class BVJPanel extends JPanel {
 		this.table=new BTVTable(meparent, memodell);
 		this.add(new JScrollPane(this.table 
 				,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS){
+			/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
 			public Dimension getPreferredSize() {
 				return new Dimension(me.getSize().width-me.getInsets()
 					.left-me.getInsets().right-10,me.getSize().height-me.getInsets()
@@ -48,6 +50,10 @@ public class BVJPanel extends JPanel {
 	}
 		
 	class BTVTable extends JTable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		BVView meparent;
 		AbstractTableModel memodell;
 		public BTVTable(BVView myparent, AbstractTableModel mymodell) {
@@ -65,9 +71,9 @@ public class BVJPanel extends JPanel {
 			try{
 				int maxtchar=this.getGraphics().getFontMetrics().charWidth('m');
 				for (int i=0; i<this.getColumnCount();i++){
-					this.getColumn(memodell.getColumnName(i)).setPreferredWidth(((BVBookTypView)meparent).columnwidth[i]*maxtchar);
-					if (!((BVBookTypView)meparent).columnresizable[i]){
-						this.getColumn(memodell.getColumnName(i)).setMinWidth(((BVBookTypView)meparent).columnwidth[i]*maxtchar);
+					this.getColumn(memodell.getColumnName(i)).setPreferredWidth(meparent.columnwidth[i]*maxtchar);
+					if (!(meparent).columnresizable[i]){
+						this.getColumn(memodell.getColumnName(i)).setMinWidth(meparent.columnwidth[i]*maxtchar);
 						this.getColumn(memodell.getColumnName(i)).setResizable(false);
 					}
 				}

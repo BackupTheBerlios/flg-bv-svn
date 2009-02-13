@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>buecherv.v0.1</name>
+	<name>buecherv.v0.2</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -18,12 +18,7 @@
 		<link>
 			<name>ean13</name>
 			<type>2</type>
-			<location>/media/usb1/workspace/ean132/src</location>
-		</link>
-		<link>
-			<name>flgutils</name>
-			<type>2</type>
-			<location>/media/usb1/workspace/flgutils/src</location>
+			<location>H:/workspace/ean132/src</location>
 		</link>
 	</linkedResources>
 </projectDescription>

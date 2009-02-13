@@ -1,9 +1,7 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -11,23 +9,21 @@ import java.awt.Label;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.TextEvent;
-import java.awt.event.TextListener;
 import java.sql.Connection;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.table.AbstractTableModel;
 
 import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 
 public class BVBookTypView extends BVView implements ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	final int[] columnwidth={13,20,50,50};
 	final boolean[] columnresizable={false,true,true,true}; 
 	private BVBookTypeDatamodell mymodell;
@@ -116,6 +112,10 @@ public class BVBookTypView extends BVView implements ActionListener {
 		
 	
 	private class BookTypeWhat extends JPanel implements ActionListener{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		BookTypeWhat mebtw;
 		TextField[] editfields;
 		JButton save;
@@ -159,7 +159,6 @@ public class BVBookTypView extends BVView implements ActionListener {
 			
 				editfields = new TextField[mymodell.numofcolumns];
 				for (int i=0; i< mymodell.numofcolumns;i++){
-//					up.add(new Minipanel(mymodell.getColumnName(i),editfields[i]=new TextField(booktyp.get(Math.min(i,booktyp.size())),columnwidth[i])));
 					up.add(new Minipanel(mymodell.getColumnName(i),editfields[i]=new TextField(booktyp.get(i),columnwidth[i])));
 					editfields[i].setEditable(false);
 										
@@ -169,7 +168,7 @@ public class BVBookTypView extends BVView implements ActionListener {
 							editfields[i].setFocusable(false);
 							break;
 						case edit: //man sollte jetzt die Datenbank locken
-														if (i>0){
+							if (i>0){
 								editfields[i].setEditable(true);
 								editfields[i].setFocusable(true);
 							}else{
@@ -196,7 +195,7 @@ public class BVBookTypView extends BVView implements ActionListener {
 				}
 			
 			this.add(up);
-			switch(state){
+			switch(state){ // Hier kommt der Rest zur Buchtyp-Zeile dazu.
 			case info:
 				up.add(new Minipanel("Bestand",new Label(Integer.toString(bvc.gui.bvbv.getBookCount(booktyp.get(0).toString())[0]))));
 			
@@ -213,6 +212,11 @@ public class BVBookTypView extends BVView implements ActionListener {
 			me.validateTree();	
 		}
 		private class Minipanel extends JPanel{
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			Minipanel(String c1, Component c2){
 				setLayout(new GridLayout(2,1));
 				add(new Label(c1));
@@ -221,6 +225,11 @@ public class BVBookTypView extends BVView implements ActionListener {
 		
 		}
 		private class Editpanel extends JPanel{
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			Editpanel(){
 				super(new BorderLayout());
 				

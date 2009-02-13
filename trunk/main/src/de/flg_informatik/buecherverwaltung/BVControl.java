@@ -1,19 +1,10 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
-import java.util.Enumeration;
-import java.util.EventObject;
 import java.util.Properties;
 
-import de.flg_informatik.scanner.Scan1;
-import de.flg_informatik.utils.DecisionBox;
-import de.flg_informatik.utils.FLGFrame;
-import de.flg_informatik.utils.FLGProperties;
 import de.flg_informatik.utils.Version;
 
 public class BVControl implements Runnable {
@@ -55,7 +46,7 @@ public class BVControl implements Runnable {
 				infilename=System.getProperty("user.home")+System.getProperty("file.separator")+"."+infilename;
 				break;
 			default:
-				infilename=infilename;
+				// infilename=infilename;
 		}
 		File infile = new File(infilename);
 		File getfile = new File(infilename);

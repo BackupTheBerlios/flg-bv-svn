@@ -8,6 +8,10 @@ import java.util.Vector;
 import de.flg_informatik.ean13.Ean;
 	
 public class BVBookTypeDatamodell extends javax.swing.table.AbstractTableModel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	enum Result{
 		ok,
 		isbnexists,

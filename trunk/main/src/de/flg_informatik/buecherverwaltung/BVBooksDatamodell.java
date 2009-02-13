@@ -2,14 +2,15 @@ package de.flg_informatik.buecherverwaltung;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
-import de.flg_informatik.ean13.Ean;
-
 public class BVBooksDatamodell extends javax.swing.table.AbstractTableModel{
+	/**
+	 * 
+	 */
+
+	private static final long serialVersionUID = 1L;
 	Connection connection;
 	BVControl control;
 	ArrayList<String> headers;
