@@ -7,7 +7,7 @@ import java.util.Properties;
 
 import de.flg_informatik.utils.Version;
 
-public class BVControl implements Runnable {
+public class BVControl implements Runnable,BVSelectedEventListener {
 	private final String defaultfilename="buchverwaltung.default.xml";
 	private final String significantstring=".BuchverwaltungV01";
 	
@@ -121,7 +121,16 @@ public class BVControl implements Runnable {
 	static private void debug(Object obj){
 		System.out.println(BVControl.class+": "+ obj);
 	}
+	
 	/**
 	 * @param args
+	 * BVSelectetEvent forwarded by any view which doesn't know what to do
+	 * with that particular BVSelectedEvent,
+	 * should change tab on top and forward event to it.
 	 */
+
+	public void thingSelected(BVSelectedEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 }

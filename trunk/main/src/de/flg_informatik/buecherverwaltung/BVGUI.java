@@ -1,23 +1,22 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.Label;
-import java.io.File;
-import java.sql.Connection;
-import java.util.Properties;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+
 import de.flg_informatik.utils.FLGFrame;
-import de.flg_informatik.utils.FLGProperties;
 import de.flg_informatik.utils.FireButton;
 
 public class BVGUI extends FLGFrame {
 
+	/**
+	 * Hauptklasse, jeder usecase bekommt ein Panel im JTabbedPane
+	 */
+	private static final long serialVersionUID = 1L;
 	BVControl control;
 	BVBooksDatamodell bvbv;
 	FireButton cancel = new FireButton("Abbrechen");
@@ -37,16 +36,22 @@ public class BVGUI extends FLGFrame {
 	}
 	private JTabbedPane makeCardField(){
 		JTabbedPane retpan=new JTabbedPane();
-		retpan.addTab("Buchtypen",makeBuchTypView());
+		retpan.addTab("StapelRückgabe",makeBookBackView());
+		retpan.addTab("Buchtypen",makeBookTypView());
 		return retpan;
 	}
 	
-	private JPanel makeBuchTypView(){
+	private JPanel makeBookTypView(){
 		BVBookTypView retpan;
 		retpan=new BVBookTypView(control,control.connection);
 		return retpan;
 	}
 	
+	private JPanel makeBookBackView(){
+		BVBookTypView retpan;
+		retpan=new BVBookTypView(control,control.connection);
+		return retpan;
+	}
 	
 	
 	

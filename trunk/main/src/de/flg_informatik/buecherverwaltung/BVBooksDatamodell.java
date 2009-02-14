@@ -11,8 +11,8 @@ public class BVBooksDatamodell extends javax.swing.table.AbstractTableModel{
 	 */
 
 	private static final long serialVersionUID = 1L;
-	Connection connection;
-	BVControl control;
+	private Connection connection;
+	private BVControl control;
 	ArrayList<String> headers;
 	public BVBooksDatamodell(BVControl control, Connection con) {
 		this.control=control;

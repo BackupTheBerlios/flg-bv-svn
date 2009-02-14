@@ -12,7 +12,9 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 	 */
 	public enum SelectedEventType{
 		ISBNSelected,
-		BookSelected,
+		BookUnknownSelected,
+		BookFreeSelected,
+		BookLeasedSelected,
 		PersonSelected,
 		BTinfo,
 		BTnew,
