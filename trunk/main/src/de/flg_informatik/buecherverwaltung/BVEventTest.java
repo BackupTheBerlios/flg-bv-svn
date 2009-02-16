@@ -30,7 +30,7 @@ public class BVEventTest implements BVSelectedEventListener{
 			if (i%100==0){
 				BVEventTest el = new BVEventTest();
 			}
-			BVSelectedEvent.makeEvent(et, SelectedEventType.BookSelected, new Ean("0"));
+			BVSelectedEvent.makeEvent(et, SelectedEventType.BookUnknownSelected, new Ean("0"));
 			
 		}
 	}

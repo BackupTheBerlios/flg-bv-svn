@@ -15,6 +15,7 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 		BookUnknownSelected,
 		BookFreeSelected,
 		BookLeasedSelected,
+		AgainSelected,
 		PersonSelected,
 		BTinfo,
 		BTnew,
@@ -26,6 +27,7 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 	private int wildcards=0;
 	private boolean copyfinished=false;
 	private static Vector<BVSelectedEventListener> listenerlist = new Vector<BVSelectedEventListener>();
+	private static Ean lastselected=null;
 	
 	
 	public BVSelectedEvent(Object source, SelectedEventType id, Ean ean, int wildcards){
@@ -42,6 +44,10 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 		BVSelectedEvent.makeEvent(source, id, ean, 0);
 	}
 	public static void makeEvent(Object source, SelectedEventType id, Ean ean, int wildcards){
+		if (ean!=null&&ean==lastselected){
+			id=SelectedEventType.AgainSelected;
+		}
+		lastselected=ean;
 		BVSelectedEvent me=new BVSelectedEvent (source, id, ean, wildcards);
 		Thread thread=new Thread(me);
 		thread.start();

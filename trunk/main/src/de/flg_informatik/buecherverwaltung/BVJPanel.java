@@ -26,7 +26,7 @@ public class BVJPanel extends JPanel {
 		this.me=this;
 		this.memodell=mymodell;
 		this.meparent=myparent;
-		this.table=new BTVTable(meparent, memodell);
+		this.table=new BTVTable();
 		this.add(new JScrollPane(this.table 
 				,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS){
 			/**
@@ -54,33 +54,34 @@ public class BVJPanel extends JPanel {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		BVView meparent;
-		AbstractTableModel memodell;
-		public BTVTable(BVView myparent, AbstractTableModel mymodell) {
-			super(mymodell);
-			this.memodell=mymodell;
-			this.meparent=myparent;
+		public BTVTable() {
+			super();
 			this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			this.setRowSelectionAllowed(true);
 			this.setColumnSelectionAllowed(false);
 			this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
+			this.setModel(memodell);
+					
 		}
 		
 		public synchronized void validate(){
-				//Es könnte mehr Colums als Parameter in myparent.columnwidth bzw .columnresizable geben
+			//Es könnte mehr Colums als Parameter in myparent.columnwidth bzw .columnresizable geben
 			try{
 				int maxtchar=this.getGraphics().getFontMetrics().charWidth('m');
 				for (int i=0; i<this.getColumnCount();i++){
-					this.getColumn(memodell.getColumnName(i)).setPreferredWidth(meparent.columnwidth[i]*maxtchar);
-					if (!(meparent).columnresizable[i]){
-						this.getColumn(memodell.getColumnName(i)).setMinWidth(meparent.columnwidth[i]*maxtchar);
+					this.getColumn(memodell.getColumnName(i)).setPreferredWidth(meparent.getColumnwidth(i)*maxtchar); 
+					if (!(meparent).getColumnresizable(i)){
+						this.getColumn(memodell.getColumnName(i)).setMinWidth(meparent.getColumnwidth(i)*maxtchar);
 						this.getColumn(memodell.getColumnName(i)).setResizable(false);
 					}
 				}
 			}catch(Exception e){
+				
+				
 				e.printStackTrace();
 				
 				javax.swing.JOptionPane.showMessageDialog (null, "Interner Fehler aufgetreten. Für weitere Information sehen Sie bitte den Konsolenoutput ein.");
+				
 			}
 			
 		}
@@ -92,7 +93,7 @@ public class BVJPanel extends JPanel {
 			super.valueChanged(e);
 			// read the manual ListSelectionEvent
 			meparent.itemSelected(e);
-			this.validateTree();
+			this.validate();
 		}
 	}
 

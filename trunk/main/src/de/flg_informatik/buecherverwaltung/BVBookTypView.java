@@ -24,11 +24,11 @@ public class BVBookTypView extends BVView implements ActionListener {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	final int[] columnwidth={13,20,50,50};
-	final boolean[] columnresizable={false,true,true,true}; 
+	final int[] columnwidth={13,20,50,50};;
+	boolean[] columnresizable={false,true,true,true}; 
 	private BVBookTypeDatamodell mymodell;
 	private BVBookTypView me;
-	private int lastselected;
+	private int lastselected=1;
 	private BVChooser bvchooser;
 	private Vector<String> booktyp=null;
 	private BookTypeWhat booktypewhat = null;
@@ -43,14 +43,14 @@ public class BVBookTypView extends BVView implements ActionListener {
 	
 	public BVBookTypView(BVControl bvc,Connection connection){
 		me = this;
+		mymodell=new BVBookTypeDatamodell(bvc,connection,this);
 		this.bvc=bvc;
 		setLayout(new BorderLayout());
-		mymodell=new BVBookTypeDatamodell(bvc,connection,this);
 		add(new BVJPanel(me,mymodell),BorderLayout.CENTER);
 		add(makeChooser(this),BorderLayout.WEST);
 		booktypewhat = new BookTypeWhat(state); //adds itself
 		BVSelectedEvent.addBVSelectedEventListener(this);
-		validateTree();
+		validate();
 	}
 	
 	@Override
@@ -86,9 +86,10 @@ public class BVBookTypView extends BVView implements ActionListener {
 		}
 		
 	}
-	public synchronized void validateTree(){
+	/*public synchronized void validateTree(){
 		super.validateTree();
-	}
+	}*/
+	
 	private JPanel makeChooser(ActionListener listener){
 		JPanel ret =new JPanel(new FlowLayout());
 		ret.add(bvchooser=new BVChooser(listener,new String[]{"info","edit","neu"}));
@@ -109,7 +110,13 @@ public class BVBookTypView extends BVView implements ActionListener {
 		return ret;
 		
 	}
-		
+	
+	int getColumnwidth(int i){
+		return columnwidth[i];
+	}
+	boolean getColumresizable(int i){
+		return columnresizable[i];
+	}	
 	
 	private class BookTypeWhat extends JPanel implements ActionListener{
 		/**

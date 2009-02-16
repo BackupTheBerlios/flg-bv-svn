@@ -6,7 +6,11 @@ import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 
 public abstract class BVView extends JPanel implements BVSelectedEventListener{
-	int[] columnwidth;
-	boolean[] columnresizable; 
+	int getColumnwidth(int i){
+		return 0;
+	}
+	boolean getColumnresizable(int i){
+		return true;
+	}
 	public abstract void itemSelected(ListSelectionEvent e);
 }

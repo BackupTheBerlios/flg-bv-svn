@@ -29,7 +29,7 @@ public class BVGUI extends FLGFrame {
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.pack();
 		this.setVisible(true);
-		this.validateTree();
+		this.validate();
 			
 		
 		
@@ -48,8 +48,8 @@ public class BVGUI extends FLGFrame {
 	}
 	
 	private JPanel makeBookBackView(){
-		BVBookTypView retpan;
-		retpan=new BVBookTypView(control,control.connection);
+		BVBookBack retpan;
+		retpan=new BVBookBack(control,control.connection);
 		return retpan;
 	}
 	
