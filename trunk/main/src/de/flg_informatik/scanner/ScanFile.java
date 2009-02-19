@@ -1,19 +1,21 @@
 package de.flg_informatik.scanner;
+import java.io.File;
 import java.io.FileReader;
 
 import de.flg_informatik.buecherverwaltung.BVScanAdapter;
 
-public class Scan1 implements Runnable{
+
+public class ScanFile implements Runnable{
 	FileReader rf;
 	BVScanAdapter adapter;
-	static Scan1 scan1=null; 
+	static ScanFile scanFile=null; 
 	
-	private Scan1 (BVScanAdapter adapter){
+	private ScanFile (BVScanAdapter adapter, File file){
 		this.adapter=adapter;
-		scan1=this;
+		scanFile=this;
 		debug("new");
 		try{
-			rf= new FileReader("/dev/ttyUSB0");
+			rf= new FileReader(file);
 		
 		Thread thread=new Thread(this);
 		thread.start();
@@ -23,7 +25,7 @@ public class Scan1 implements Runnable{
 		
 	}
 	/*public static void main(String[] args) {
-		new Scan1();
+		new ScanFile();
 		/*Enumeration portList = CommPortIdentifier.getPortIdentifiers();
 		System.out.println(portList.nextElement().toString());
 		gnu.io.RXTXCommDriver io = new gnu.io.RXTXCommDriver();
@@ -56,7 +58,7 @@ public class Scan1 implements Runnable{
 		}
 	}
 	void sendString(String io){
-		debug(io);
+		// debug(io);
 		if (adapter != null) {
 			adapter.eanScanned(io);
 		}else{
@@ -66,18 +68,21 @@ public class Scan1 implements Runnable{
 		
 	}
 	static private void debug(Object obj){
-		System.out.println(Scan1.class+": "+ obj);
+		System.out.println(ScanFile.class+": "+ obj);
 	
 	}
+	/**
+	 *  Testing only
+	 */
 	public static void main(String[] args) {
-		getScan1(null);
+		getScan1(null, new File("C:\\temp\\temp.ll") );
 	}
-	public static Scan1 getScan1(BVScanAdapter adapter) {
+	public static ScanFile getScan1(BVScanAdapter adapter, File file) {
 		debug("try");
-		if (scan1==null){
-			new Scan1(adapter);
+		if (scanFile==null){
+			new ScanFile(adapter, file);
 		}	
-		return scan1;
+		return scanFile;
 		
 	}
 }

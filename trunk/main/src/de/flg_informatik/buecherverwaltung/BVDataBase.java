@@ -25,14 +25,15 @@ public class BVDataBase {
 	public static Connection getConnection(Properties props){
 		Connection connection=null;	
 		try{
+			debug(props);
 			connection = DriverManager.getConnection( props.getProperty(".datenbank.connection.prefix","jdbc:mysql:")+
 				props.getProperty("datenbank.connection.server")+":"+
 				props.getProperty(".datenbank.connection.port","3306")+"/"+	
 				props.getProperty("datenbank.datenbankname"),
 				props.getProperty("datenbank.username"),
 				props.getProperty("*datenbank.passwort"));
-		}catch(SQLException sqle){
-			sqle.printStackTrace();
+		}catch(Exception e){
+			e.printStackTrace();
 			return null;
 		}
 		return connection;

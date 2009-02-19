@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="trunk/ean13/src"/>
+	<classpathentry kind="src" path="trunk/main/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.5.0_14"/>
+	<classpathentry kind="lib" path="trunk/main/jarlibs/mysql-connector-java-5.1.7-bin.jar"/>
+	<classpathentry kind="lib" path="trunk/main/jarlibs/RXTXcomm.jar"/>
+	<classpathentry kind="lib" path="trunk/flgutils/flgutils.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

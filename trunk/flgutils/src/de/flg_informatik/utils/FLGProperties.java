@@ -12,12 +12,15 @@ import java.awt.TextField;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -27,53 +30,69 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 
-public class FLGProperties extends  Panel implements MouseListener, TextListener{
+public class FLGProperties extends  Panel implements TextListener,FocusListener{
 	/**
 	 * 
 	 */
-	public Properties properties;
+	private Properties properties2;
 	private static final long serialVersionUID = 767010307826685780L;
 	private JTabbedPane jtp =new JTabbedPane();
 	private FLGProperties me;
-	private Panel buttonleiste;
-	private Object parent=null;
+	private String infilename;
+	private File defaultfile;
+	private String significantkey;
 	private ArrayList<String> groups;
 	private ArrayList<ArrayList<String>> keys;
 	private ArrayList<TabPanel.LinePanel> changelist = new ArrayList<TabPanel.LinePanel>();
 	private File outfile;
-	// private Button save=new Button("  speichern  ");
-	// private Button saveas=new Button("speichern als");
 	private boolean changed=false;
 	/**
-	 * @param (String infilename) Filename des Propertyfiles, das im Userverzeichnis (unix mit .dot) adgelegt ist/wird
+	 * @param (Properties properties2) Properties als Objekt für die Rückgabe, wenn null, dann wird das Propertyfile (infile bzw defaultfile) geladen.
+	 * @param (String infilename) Filename des Propertyfiles, das im Userverzeichnis (unix mit .dot) abgelegt ist/wird
 	 * @param (File defaultfile) File, das, falls kein Propertyfile gefunden wird, als Template verwendet wird (muss mitgeliefert werden)
 	 * @param (String significantkey) Propertykey an dem das File erkannt werden kann, dient zur Verifizierung
-	 * @param (Object parent) Parentobject, dessen Properties bearbeitet werden. 
-	 * 	 
+	 * 
+	 * ansonsten gibt es die Methoden readProperties(), saveProperties() speichert unter infile (s.u.),boolean savePropertiesAs(String filename);	 
 	 * */
 
-	public FLGProperties(java.util.Properties properties){
+	public FLGProperties(java.util.Properties properties, String infilename, File defaultfile, String significantkey){
 		super();
-		this.properties = properties;
-		// this.parent=parent;
+		this.infilename = infilename;
+		this.defaultfile = defaultfile;
+		this.significantkey = significantkey;
+		if (properties==null){
+			switch(de.flg_informatik.utils.shell.OSShell.getOS()){
+				case linux:
+					infilename=System.getProperty("user.home")+System.getProperty("file.separator")+"."+infilename;
+				break;
+				default:
+				break;	
+			// infilename=infilename;
+			}
+			properties=loadPropertiesFromXML(infilename,defaultfile,significantkey);
+			debug(properties);
+		}	
 		this.me=this;
 		this.setLayout(new BorderLayout(5,5));
-		JPanel buttonleiste = new JPanel();
-		{
-			/* buttonleiste.setLayout(new GridLayout(1,4));
-			buttonleiste.add(new Panel());
-			buttonleiste.add(saveas);
-			buttonleiste.add(new Panel());
-			buttonleiste.add(save);
-			saveas.addActionListener(this);
-			save.addActionListener(this); */
-		}
-		this.add(buttonleiste,BorderLayout.SOUTH);
+		this.properties2 = properties;
 		makeTabs(properties);
 	}
 
 	public Properties getProperties(){
-		return properties;
+		return properties2;
+	}
+	
+	public Properties readProperties(){
+		return loadPropertiesFromXML(infilename, defaultfile, significantkey);
+	}
+	
+	public boolean saveProperties(){
+		setProps();
+		return savePropertiesToXML(new File(infilename), properties2, "");
+	}
+	
+	public boolean savePropertiesAs(String newfilename){
+		return savePropertiesToXML(new File(newfilename), properties2, "");
 	}
 	
 	private void getGroups(Properties props){
@@ -108,16 +127,76 @@ public class FLGProperties extends  Panel implements MouseListener, TextListener
 
 		
 	}
+	private Properties loadPropertiesFromXML(String infilename, File defaultfile, String significantkey){
+		File infile = new File(infilename);
+		File getfile = new File(infilename);
+		Properties props = new Properties();
+		while(!props.containsKey(significantkey)){
+			try{FileInputStream fis =new FileInputStream(getfile);
+				props.loadFromXML(fis);
+			}catch(java.io.FileNotFoundException e){
+				javax.swing.JOptionPane.showMessageDialog(null, "Eine Einstellungsdatei wurde nicht in ihrem Benutzerverzeichnis gefunden. Es werden die Standardeinstellungen geladen.");
+				/* switch(DecisionBox.getLabel(this,"Einstellungsdatei",
+							new String[]{"In Ihrem Benutzerverzeichnis gibt es keine",
+								"Einstellungsdatei: (\""+infilename+"\")",
+								"Was wollen Sie: Die Einstellungsdatei..."},
+							new String[]{"... aus default neu erstellen?","...suchen?"})){
+						case 1:{ */
+							getfile=defaultfile;
+							debug("loading defaults from: "+getfile.getAbsolutePath());
+							
+						/* }
+						case 2:{
+							JFileChooser jfc = new javax.swing.JFileChooser();
+							if(jfc.showOpenDialog(this)==javax.swing.JFileChooser.APPROVE_OPTION){
+								getfile=jfc.getSelectedFile();
+								infile=getfile;
+							}
+							break;
+						}
+					} */
+			}catch(java.util.InvalidPropertiesFormatException e){
+				debug("Format of props not valid!");
+			}
+			catch(java.io.IOException e){
+				e.printStackTrace();
+			}
+			//File outfile=new File(infile.getAbsolutePath());
+			//efaultfile=infile;
+			
+			
+		}
+		
+		return props;
+	}
+	
+	private boolean savePropertiesToXML(File file, Properties props, String comment){
+		if (file!=null){
+			try{
+				java.io.FileOutputStream fos = new java.io.FileOutputStream(file);
+				props.storeToXML(fos , comment);
+				fos.close();
+				return true;
+			}catch(Exception e){
+				e.printStackTrace(); // debug("exception");
+			}
+			debug(file);
+			
+			return false;
+		}	
+		return false;
+	}
+	
 	private void makeTabs(Properties props){
 		
 		clearTabs();
 		getGroups(props);
 		for (String string: groups){
 			jtp.addTab(string, new TabPanel(keys.get(groups.indexOf(string)).toArray(new String[keys.get(groups.indexOf(string)).size()])));
+			jtp.addFocusListener(this);
 			
 		}
 		this.add(jtp,BorderLayout.CENTER);
-		this.addMouseListener(this);	
 		
 	}
 	
@@ -128,10 +207,11 @@ public class FLGProperties extends  Panel implements MouseListener, TextListener
 
 	private void setProps(){
 		for (TabPanel.LinePanel lpl : changelist){
-			properties.setProperty(lpl.lbl.getText(), lpl.tfld.getText().trim());
+			properties2.setProperty(lpl.lbl.getText(), lpl.tfld.getText().trim());
 		}
 		changed=true;
 		changelist.removeAll(changelist);
+		javax.swing.JOptionPane.showMessageDialog(null, "Änderungen übernommen!");
 	}
 
 	static private void debug(Object obj){
@@ -160,7 +240,7 @@ public class FLGProperties extends  Panel implements MouseListener, TextListener
 					//pnl.setSize(200,50);
 					LinePanel pnl = new LinePanel();
 					pnl.lbl = new Label(propkeys[i]);
-					pnl.tfld = new TextField(properties.getProperty(propkeys[i]),30);
+					pnl.tfld = new TextField(properties2.getProperty(propkeys[i]),30);
 					if (propkeys[i].codePointAt(0)=='.'){
 						pnl.tfld.setEditable(false);
 						pnl.tfld.setBackground(java.awt.Color.LIGHT_GRAY);
@@ -190,15 +270,15 @@ public class FLGProperties extends  Panel implements MouseListener, TextListener
 		if (e.getSource()==save){
 			this.removeMouseListener(this);
 			setProps();
-			savePropertiesToXML(outfile, properties, "Property-File by FLG-Properties V0.5 of"+parent.toString(), false);
-			makeTabs(properties);
+			savePropertiesToXML(outfile, properties2, "Property-File by FLG-Properties V0.5 of"+parent.toString(), false);
+			makeTabs(properties2);
 			this.addMouseListener(this);
 		}
 		if (e.getSource()==saveas){
 			this.removeMouseListener(this);
 			setProps();
-			savePropertiesToXML(outfile, properties, "Property-File by FLG-Properties V0.5 of"+parent.toString(), true);
-			makeTabs(properties);
+			savePropertiesToXML(outfile, properties2, "Property-File by FLG-Properties V0.5 of"+parent.toString(), true);
+			makeTabs(properties2);
 			this.addMouseListener(this);
 			
 			
@@ -217,14 +297,9 @@ public class FLGProperties extends  Panel implements MouseListener, TextListener
 		changed=true;
 	}
 	
-	public void mouseExited(MouseEvent e) {
-		/*debug("out");
-		if (changelist.size()!=0&&!me.getBounds().contains(e.getX()-20, e.getY()-20)){
-			this.removeMouseListener(this);
-			this.toSave();
-			
-		}
-		*/
+	public void focusLost(FocusEvent e) {
+		setProps();
+		
 	}
 	
 	/**
@@ -232,20 +307,8 @@ public class FLGProperties extends  Panel implements MouseListener, TextListener
 	 * b) Stubs
 	 */
 	
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void mouseReleased(MouseEvent e) {
+	public void focusGained(FocusEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
