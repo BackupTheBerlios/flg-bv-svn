@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<comment>Property-File by FLG-Properties V0.5 ofde.flg_informatik.buecherverwaltung.Buchverwaltung[frame0,0,25,562x452,invalid,layout=java.awt.BorderLayout,title=,resizable,normal]</comment>
-
+<comment/>
+<entry key=".datenbank.odbcDriver">sun.jdbc.odbc.JdbcOdbcDriver</entry>
 <entry key=".BuchverwaltungV01">.1</entry>
-<entry key="datenbank.connection.server">//aladin</entry>
-<entry key="datenbank.datenbankname">flgbooks</entry>
+<entry key=".datenbank.connection.prefix">jdbc:mysql:</entry>
+<entry key="datenbank.connection.server">//aladin<!--(Intra-)Net URL--></entry>
 <entry key=".datenbank.connection.port">3306</entry>
 <entry key="datenbank.username">buchadmin</entry>
-<entry key="*datenbank.passwort">aa</entry>
+<entry key="datenbank.datenbankname">flgbooks</entry>
 <entry key=".datenbank.jdbc.Driver">com.mysql.jdbc.Driver</entry>
-<entry key=".datenbank.odbcDriver">sun.jdbc.odbc.JdbcOdbcDriver</entry>
-<entry key=".datenbank.connection.prefix">jdbc:mysql:</entry>
+<entry key="*datenbank.passwort">aa</entry>
+	<entry key="scanner.typ">emulator</entry><!--Reflects hardcoded(sorry!) enumeration BVScanAdapter.types, by now only "emulator, file", but you can change file-name in next properties.-->
+	<entry key="scanner.file.filename_linux">/dev/ttyUSB0</entry>
+	<entry key="scanner.emulator.filename_linux">/tmp/scanfile</entry>
+	<entry key="scanner.emulator.filename_winnt">C:\temp\bvscanemulator</entry>
 </properties>

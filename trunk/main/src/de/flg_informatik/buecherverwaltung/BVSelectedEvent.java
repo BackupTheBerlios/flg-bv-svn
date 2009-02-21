@@ -12,6 +12,8 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 	 */
 	public enum SelectedEventType{
 		ISBNSelected,
+		ISBNUnknownSelected,
+		ISBNBuySelected,
 		BookUnknownSelected,
 		BookFreeSelected,
 		BookLeasedSelected,
@@ -19,7 +21,8 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 		PersonSelected,
 		BTinfo,
 		BTnew,
-		BTedit;
+		BTedit,
+		EanUnknown;
 		
 	}
 	private SelectedEventType id=null;
@@ -71,12 +74,12 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 	}
 	
 	public void run(){
-		//debug("copy");
+		debug("copy");
 		Vector<BVSelectedEventListener> dispatchlist = new Vector<BVSelectedEventListener>();
 		for (BVSelectedEventListener listener:listenerlist ){
 			dispatchlist.add(listener);
 		}
-		//debug("copyfinished");
+		debug("copyfinished");
 		copyfinished=true;
 		debug("Event to Dispatch:"+this.source+", "+this.id+", "+this.ean+", "+this.wildcards);
 		for (BVSelectedEventListener listener:dispatchlist ){
@@ -110,7 +113,7 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 	
 	private static final long serialVersionUID = 1L;
 	private static void debug(Object o) {
-		System.out.println(o);
+		//System.out.println(o);
 		
 	}
 

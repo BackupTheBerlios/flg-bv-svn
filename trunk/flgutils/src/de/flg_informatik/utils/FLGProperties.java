@@ -21,6 +21,7 @@ import java.awt.event.TextListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -34,7 +35,7 @@ public class FLGProperties extends  Panel implements TextListener,FocusListener{
 	/**
 	 * 
 	 */
-	private Properties properties2;
+	private Properties properties;
 	private static final long serialVersionUID = 767010307826685780L;
 	private JTabbedPane jtp =new JTabbedPane();
 	private FLGProperties me;
@@ -47,7 +48,7 @@ public class FLGProperties extends  Panel implements TextListener,FocusListener{
 	private File outfile;
 	private boolean changed=false;
 	/**
-	 * @param (Properties properties2) Properties als Objekt für die Rückgabe, wenn null, dann wird das Propertyfile (infile bzw defaultfile) geladen.
+	 * @param (Properties properties) Properties als Objekt für die Rückgabe, wenn null, dann wird das Propertyfile (infile bzw defaultfile) geladen.
 	 * @param (String infilename) Filename des Propertyfiles, das im Userverzeichnis (unix mit .dot) abgelegt ist/wird
 	 * @param (File defaultfile) File, das, falls kein Propertyfile gefunden wird, als Template verwendet wird (muss mitgeliefert werden)
 	 * @param (String significantkey) Propertykey an dem das File erkannt werden kann, dient zur Verifizierung
@@ -57,29 +58,30 @@ public class FLGProperties extends  Panel implements TextListener,FocusListener{
 
 	public FLGProperties(java.util.Properties properties, String infilename, File defaultfile, String significantkey){
 		super();
-		this.infilename = infilename;
+		this.infilename = infilename; 
 		this.defaultfile = defaultfile;
 		this.significantkey = significantkey;
 		if (properties==null){
 			switch(de.flg_informatik.utils.shell.OSShell.getOS()){
 				case linux:
-					infilename=System.getProperty("user.home")+System.getProperty("file.separator")+"."+infilename;
+					this.infilename=System.getProperty("user.home")+System.getProperty("file.separator")+"."+this.infilename;
 				break;
 				default:
 				break;	
 			// infilename=infilename;
 			}
-			properties=loadPropertiesFromXML(infilename,defaultfile,significantkey);
-			debug(properties);
-		}	
+			properties=loadPropertiesFromXML(this.infilename,defaultfile,significantkey);
+		}
+		debug(properties);
+		this.properties=properties;
+		debug(this.properties);
 		this.me=this;
 		this.setLayout(new BorderLayout(5,5));
-		this.properties2 = properties;
 		makeTabs(properties);
 	}
 
 	public Properties getProperties(){
-		return properties2;
+		return properties;
 	}
 	
 	public Properties readProperties(){
@@ -88,11 +90,11 @@ public class FLGProperties extends  Panel implements TextListener,FocusListener{
 	
 	public boolean saveProperties(){
 		setProps();
-		return savePropertiesToXML(new File(infilename), properties2, "");
+		return savePropertiesToXML(new File(infilename), properties, "");
 	}
 	
 	public boolean savePropertiesAs(String newfilename){
-		return savePropertiesToXML(new File(newfilename), properties2, "");
+		return savePropertiesToXML(new File(newfilename), properties, "");
 	}
 	
 	private void getGroups(Properties props){
@@ -166,6 +168,10 @@ public class FLGProperties extends  Panel implements TextListener,FocusListener{
 			
 			
 		}
+		if (getfile.getAbsolutePath().equals(defaultfile.getAbsolutePath())){
+			// this is a very dirty hack for having a valid property set to save
+			this.savePropertiesToXML(infile, props, "Saved as copy of "+ defaultfile.getAbsolutePath()+", "+new java.util.Date().toString());
+		}
 		
 		return props;
 	}
@@ -207,7 +213,7 @@ public class FLGProperties extends  Panel implements TextListener,FocusListener{
 
 	private void setProps(){
 		for (TabPanel.LinePanel lpl : changelist){
-			properties2.setProperty(lpl.lbl.getText(), lpl.tfld.getText().trim());
+			properties.setProperty(lpl.lbl.getText(), lpl.tfld.getText().trim());
 		}
 		changed=true;
 		changelist.removeAll(changelist);
@@ -240,7 +246,7 @@ public class FLGProperties extends  Panel implements TextListener,FocusListener{
 					//pnl.setSize(200,50);
 					LinePanel pnl = new LinePanel();
 					pnl.lbl = new Label(propkeys[i]);
-					pnl.tfld = new TextField(properties2.getProperty(propkeys[i]),30);
+					pnl.tfld = new TextField(properties.getProperty(propkeys[i]),30);
 					if (propkeys[i].codePointAt(0)=='.'){
 						pnl.tfld.setEditable(false);
 						pnl.tfld.setBackground(java.awt.Color.LIGHT_GRAY);
@@ -266,24 +272,7 @@ public class FLGProperties extends  Panel implements TextListener,FocusListener{
 	}
 
 	
-	/* public void actionPerformed(ActionEvent e) {
-		if (e.getSource()==save){
-			this.removeMouseListener(this);
-			setProps();
-			savePropertiesToXML(outfile, properties2, "Property-File by FLG-Properties V0.5 of"+parent.toString(), false);
-			makeTabs(properties2);
-			this.addMouseListener(this);
-		}
-		if (e.getSource()==saveas){
-			this.removeMouseListener(this);
-			setProps();
-			savePropertiesToXML(outfile, properties2, "Property-File by FLG-Properties V0.5 of"+parent.toString(), true);
-			makeTabs(properties2);
-			this.addMouseListener(this);
-			
-			
-		}
-	} */
+	
 	/**
 	 * EventListeners from Interfaces
 	 * a) implemented

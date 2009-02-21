@@ -18,15 +18,12 @@ public class BVBookTypeDatamodell extends javax.swing.table.AbstractTableModel{
 		isbnmalformed,
 		unknown;
 	}
-	Connection connection;
-	BVControl control;
+	
 	Vector<String> headers;
 	BVBookTypView myview;
 	Vector<Vector<Object>> tablecells=new Vector<Vector<Object>>(); 
 	int numofcolumns;
-	public BVBookTypeDatamodell(BVControl control, Connection con,BVBookTypView myview) {
-		this.control=control;
-		this.connection=con;
+	public BVBookTypeDatamodell(BVBookTypView myview) {
 		this.myview=myview;
 		this.headers=getColumnHeaders("Booktypes");
 		this.numofcolumns=getNumOfDBColumns();
@@ -47,16 +44,11 @@ public class BVBookTypeDatamodell extends javax.swing.table.AbstractTableModel{
 		return 0;
 	}
 	private int getNumOfDBRows(){
-		try{
-			ResultSet res=BVUtils.doQuery("SELECT COUNT(ISBN) FROM Booktypes");
-			res.absolute(1);
-			return res.getInt(1);
-		}catch(SQLException sqle){
-			sqle.printStackTrace();
-		}
-		return 0;
+	
+		return BVUtils.doCount("SELECT COUNT(ISBN) FROM Booktypes");
 	}
-	private boolean fillTable(){
+
+	private synchronized boolean fillTable(){
 		Vector<Object> tablerow;
 		boolean result = true;
 		debug(getNumOfDBColumns());
@@ -88,7 +80,7 @@ public class BVBookTypeDatamodell extends javax.swing.table.AbstractTableModel{
 			rs.first();
 			do{
 				ret.add(rs.getString(1));
-				//debug(rs.getString(1));
+				 debug(rs.getString(1));
 				
 			}
 			while(rs.next());
@@ -109,7 +101,7 @@ public class BVBookTypeDatamodell extends javax.swing.table.AbstractTableModel{
 					for (int i=0; i<numofcolumns;i++ ){
 								if (i==0) update.append(headers.get(i)+"='"+newvec.get(i).toString()+"'");
 								if (i>1) update.append(" , "+headers.get(i)+"='"+newvec.get(i).toString()+"'");
-								//debug(newvec.get(i).toString());
+								debug(newvec.get(i).toString());
 								};
 					try{
 						BVUtils.doUpdate("INSERT Booktypes SET "+ update.toString() +";");
@@ -130,20 +122,15 @@ public class BVBookTypeDatamodell extends javax.swing.table.AbstractTableModel{
 		return Result.unknown;
 		
 	}
+	
 	public boolean isInDataBase(String isbn){
-		try{
-			ResultSet rs=BVUtils.doQuery("SELECT * FROM Booktypes WHERE ISBN="+isbn);
-			if (rs.next()){
+			if (BVUtils.doesExist("SELECT * FROM Booktypes WHERE ISBN="+isbn)){
 				debug("ISBN already in DB!");
 				return true;
 			}else{
 				debug("ISBN not yet in DB!");
 				return false;
 			}
-		}catch(SQLException sqle){
-			sqle.printStackTrace();
-		}
-		return false;
 	}
 	
 	public int getBookCount(String ean){
@@ -161,8 +148,8 @@ public class BVBookTypeDatamodell extends javax.swing.table.AbstractTableModel{
 			ret=new Vector<String>();
 			ret.add(isbn.toString());// we got that at least;
 			for (Vector<Object> vec : tablecells){ // ISBN suchen
-				//debug(vec.get(0));
-				//debug(isbn.toString());
+				debug(vec.get(0));
+				debug(isbn.toString());
 				if (vec.get(0).toString().equals(isbn.toString())){
 					ret=new Vector<String>();
 					for (int i=0; i<vec.size();i++ ){
@@ -187,23 +174,17 @@ public class BVBookTypeDatamodell extends javax.swing.table.AbstractTableModel{
 					if (i==1) update.append(headers.get(i)+"='"+newvec.get(i).toString()+"'");
 					if (i>1) update.append(" , "+headers.get(i)+"='"+newvec.get(i).toString()+"'");
 					
-					//debug(newvec.get(i).toString());
-					};
 				}
 			}
-		try{
-			BVUtils.doUpdate("UPDATE Booktypes SET "+ update.toString() + " WHERE ISBN="+newvec.get(0));
-		}catch(Exception sqle){
-			sqle.printStackTrace();
-			return false;
 		}
+		BVUtils.doUpdate("UPDATE Booktypes SET "+ update.toString() + " WHERE ISBN="+newvec.get(0));
 		fillTable();
 		return true;
 		
 	}
 	
 	static private void debug(Object obj){
-		System.out.println(BVBookTypeDatamodell.class+": "+ obj);
+		//System.out.println(BVBookTypeDatamodell.class+": "+ obj);
 	}
 	/**
 	 *  Implemtation of Datamodel

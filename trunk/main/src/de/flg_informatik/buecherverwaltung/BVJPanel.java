@@ -17,7 +17,7 @@ public class BVJPanel extends JPanel {
 	 * setting widths of columns by and forwarding ListSelection Events to "myparent"
 	 */
 	private static final long serialVersionUID = 1L;
-	private BTVTable table;
+	BTVTable table;
 	BVJPanel me; 
 	AbstractTableModel memodell;
 	BVView meparent;

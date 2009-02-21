@@ -10,7 +10,7 @@ public class BVControl implements Runnable,BVSelectedEventListener {
 	/**
 	 * 
 	 */
-	private final String defaultfilename="buchverwaltung.default.xml";
+	private final String defaultfilename="main/buchverwaltung.default.xml";
 	private final String significantstring=".BuchverwaltungV01";
 	Properties app_settings;
 	Version version=new Version(new int[]{0,5},"09-02-02");

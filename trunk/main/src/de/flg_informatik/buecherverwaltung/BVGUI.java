@@ -1,6 +1,7 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
@@ -34,20 +35,22 @@ public class BVGUI extends FLGFrame {
 		
 		
 	}
+	
 	private JTabbedPane makeCardField(){
+		
 		JTabbedPane retpan=new JTabbedPane();
 		retpan.addTab("StapelRückgabe",makeBookBackView());
 		retpan.addTab("Buchtypen",makeBookTypView());
 		return retpan;
 	}
 	
-	private JPanel makeBookTypView(){
+	private BVBookTypView makeBookTypView(){
 		BVBookTypView retpan;
-		retpan=new BVBookTypView(control,control.connection);
+		retpan=new BVBookTypView(control);
 		return retpan;
 	}
 	
-	private JPanel makeBookBackView(){
+	private BVBookBack makeBookBackView(){
 		BVBookBack retpan;
 		retpan=new BVBookBack(control,control.connection);
 		return retpan;

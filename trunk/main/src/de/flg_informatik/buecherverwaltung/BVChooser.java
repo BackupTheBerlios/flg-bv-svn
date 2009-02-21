@@ -4,6 +4,7 @@ import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
@@ -13,9 +14,29 @@ import de.flg_informatik.buecherverwaltung.BVBookTypView.State;
 import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 
 public class BVChooser extends JPanel implements ActionListener{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private SelectedEventType[] events;
 	private JRadioButton[] radiobutton;
 	private ButtonGroup bgr=new ButtonGroup();
+	public BVChooser(ActionListener listener, ArrayList<String> names) {
+		super(new GridLayout(0,1));
+		radiobutton=new JRadioButton[names.size()];
+		for (int i=0; i< names.size(); i++){
+			radiobutton[i]=new JRadioButton();
+			radiobutton[i].setActionCommand(Integer.toString(i));
+			bgr.add(radiobutton[i]);
+			this.add(radiobutton[i]);
+			this.add(new Label(names.get(i)));
+			this.add(new Label());
+			radiobutton[i].addActionListener(listener);
+			
+		}
+		radiobutton[0].doClick();
+	}
+	
 	public BVChooser(ActionListener listener, String[] names) {
 		super(new GridLayout(0,1));
 		radiobutton=new JRadioButton[names.length];

@@ -10,10 +10,12 @@ import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.event.ListSelectionEvent;
 
 import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
@@ -24,7 +26,8 @@ public class BVBookTypView extends BVView implements ActionListener {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	final int[] columnwidth={13,20,50,50};;
+	final int[] columnwidth={13,20,50,50};
+	private final String myname="Buchtypen";
 	boolean[] columnresizable={false,true,true,true}; 
 	private BVBookTypeDatamodell mymodell;
 	private BVBookTypView me;
@@ -33,20 +36,22 @@ public class BVBookTypView extends BVView implements ActionListener {
 	private Vector<String> booktyp=null;
 	private BookTypeWhat booktypewhat = null;
 	private BVControl bvc;
+	private BVJPanel bvjp;
 	enum State{
 		info,
 		edit,
-		neu,
-		remove;
+		druck,
+		neu;
 	}
 	State state;
 	
-	public BVBookTypView(BVControl bvc,Connection connection){
+	public BVBookTypView(BVControl bvc){
 		me = this;
-		mymodell=new BVBookTypeDatamodell(bvc,connection,this);
+		mymodell=new BVBookTypeDatamodell(this);
 		this.bvc=bvc;
+		this.bvjp=new BVJPanel(me,mymodell);
 		setLayout(new BorderLayout());
-		add(new BVJPanel(me,mymodell),BorderLayout.CENTER);
+		add(bvjp,BorderLayout.CENTER);
 		add(makeChooser(this),BorderLayout.WEST);
 		booktypewhat = new BookTypeWhat(state); //adds itself
 		BVSelectedEvent.addBVSelectedEventListener(this);
@@ -60,30 +65,35 @@ public class BVBookTypView extends BVView implements ActionListener {
 	}
 	
 	public void thingSelected(BVSelectedEvent e) {
-		if (e.getId()==SelectedEventType.ISBNSelected){
-			debug("selected");
+		switch (e.getId()){
+		case ISBNSelected:
+			booktyp=mymodell.getBookType(e.getEan());
+			break;
+		case ISBNUnknownSelected:
+			booktyp=newBooktype();
 			if (e.getEan()!=null){
-				booktyp=mymodell.getBookType(e.getEan());
+				booktyp.set(0, e.getEan().toString());
 			}
-			if (booktyp==null){
-				booktyp=new Vector<String>();
-				if (e.getEan()==null){
-					booktyp.add("");
-				}else{
-					booktyp.add(e.getEan().toString());
-				}
-				for (int i=1; i<mymodell.numofcolumns;i++ ){
-					booktyp.add("");
-				};
-				if (state!=State.neu){ // neue ISBNs nur in "neu" Zustand
-					stateChanged(State.neu);
-					return; 
-				}
-				debug("neu: "+e.getEan());
-			}
-			booktypewhat.reMakePanel();
-				
+			break;
+		case ISBNBuySelected:
+			booktyp=mymodell.getBookType(e.getEan());
+			
+			break;
+		case BookUnknownSelected:	
+			
+			
 		}
+		/* 
+		 * Bin ich vorne?
+		 * Dann gebe ich an den Controller ab
+		 */	
+		if (((JTabbedPane)(this.getParent())).indexOfTab(myname)==((JTabbedPane)(this.getParent())).getSelectedIndex()){
+			
+		}
+			
+			
+		booktypewhat.reMakePanel();
+		
 		
 	}
 	/*public synchronized void validateTree(){
@@ -92,18 +102,22 @@ public class BVBookTypView extends BVView implements ActionListener {
 	
 	private JPanel makeChooser(ActionListener listener){
 		JPanel ret =new JPanel(new FlowLayout());
-		ret.add(bvchooser=new BVChooser(listener,new String[]{"info","edit","neu"}));
+		ArrayList<String> chooses=new ArrayList<String>();
+		for(State s : State.values()){
+			chooses.add(s.name());
+		}
+		ret.add(bvchooser=new BVChooser(listener,chooses));
 		state=State.info;
 	return ret;
 	}
+	
 	void stateChanged(State state){
 		bvchooser.clickOn(state);
 	}
 	
-	private Vector<String> newBooktype(String ean){
+	private Vector<String> newBooktype(){
 		Vector<String> ret=new Vector<String>();
-		ret.add(ean);
-		for (int i=1; i< mymodell.headers.size();i++){
+		for (int i=0; i< mymodell.headers.size();i++){
 			ret.add(null);
 			
 		}
@@ -127,9 +141,11 @@ public class BVBookTypView extends BVView implements ActionListener {
 		TextField[] editfields;
 		JButton save;
 		JButton remove;
+		JPanel up;
 		
 		public BookTypeWhat(State state) {
 			mebtw=this;
+			up=new JPanel(new FlowLayout());
 			save=new JButton("Speichern");
 			save.setActionCommand("save");
 			save.addActionListener(mebtw);
@@ -147,77 +163,122 @@ public class BVBookTypView extends BVView implements ActionListener {
 					newvec.add(editfields[i].getText());
 				}
 				debug("saving"+state);
-				if (state==State.neu){
-					switch (me.mymodell.setNewBooktype(newvec)){
-						case ok:
-							lastselected = me.mymodell.getRowCount()-1;
+				switch (state){
+					case neu:
+						switch (me.mymodell.setNewBooktype(newvec)){
+							case ok:
+								lastselected = me.mymodell.getRowCount()-1;
+								me.stateChanged(State.info);
+								break;
+							case unknown:
+								// Datenbankfehler
+								break;
+						}		
+						break;
+					case edit:
+						me.mymodell.setBookType(newvec);
+						booktyp=newvec;
+						me.stateChanged(State.info);
+						break;
+					
+					case druck:
+						int howmany;
+						if ((howmany=Integer.parseInt(editfields[2].getText()))>0){
+							BVBook.makeNewBooks(howmany, editfields[0].getText());
 							me.stateChanged(State.info);
-							
-					}
-				}
-				if (state==State.edit){
-					me.mymodell.setBookType(newvec);
+						}
+						
+						
+						
+						
+					
+					
 				}
 			}
 		}
 		synchronized void reMakePanel(){
 			this.removeAll();
-			JPanel up=new JPanel(new FlowLayout());
-			
-				editfields = new TextField[mymodell.numofcolumns];
-				for (int i=0; i< mymodell.numofcolumns;i++){
-					up.add(new Minipanel(mymodell.getColumnName(i),editfields[i]=new TextField(booktyp.get(i),columnwidth[i])));
-					editfields[i].setEditable(false);
-										
-					switch (state){
-						case info:
+			up.removeAll();
+			switch (state){
+				case info:
+				case edit:
+				case neu:	
+					if (booktyp!=null){
+						editfields = new TextField[mymodell.numofcolumns];
+						for (int i=0; i< mymodell.numofcolumns;i++){
+							up.add(new Minipanel(mymodell.getColumnName(i),editfields[i]=new TextField(booktyp.get(i),columnwidth[i])));
 							editfields[i].setEditable(false);
-							editfields[i].setFocusable(false);
+												
+							switch (state){
+								case info:
+									editfields[i].setEditable(false);
+									editfields[i].setFocusable(false);
+									break;
+								case edit: //man sollte jetzt die Datenbank locken
+									if (i>0){
+										editfields[i].setEditable(true);
+										editfields[i].setFocusable(true);
+									}else{
+										editfields[i].setEditable(false);
+										editfields[i].setFocusable(false);
+									}
+									break;
+								case neu:
+									
+									if (i>0){
+										editfields[i].setEditable(true);
+										editfields[i].setFocusable(true);
+									}else{
+										editfields[i].setEditable(false);
+										editfields[i].setFocusable(false);
+									}
+									if (booktyp.firstElement()==null){ // ISBN manuell eingeben
+										editfields[0].setEditable(true);
+										editfields[0].setFocusable(true);
+									}
+									break;
+							}	
+						
+						}
+						this.add(up);
+						
+						switch(state){ // Hier kommt der Rest zur Buchtyp-Zeile dazu.
+						case info:
+							up.add(new Minipanel("Bestand",new Label(Integer.toString(mymodell.getBookCount(booktyp.get(0))))));
+							up.add(new Minipanel("Im Lager",new Label(Integer.toString(mymodell.getFreeBookCount(booktyp.get(0))))));
 							break;
-						case edit: //man sollte jetzt die Datenbank locken
-							if (i>0){
-								editfields[i].setEditable(true);
-								editfields[i].setFocusable(true);
-							}else{
-								editfields[i].setEditable(false);
-								editfields[i].setFocusable(false);
-							}
+						case edit:
+							up.add(new Minipanel(null,save));
 							break;
 						case neu:
-							
-							if (i>0){
-								editfields[i].setEditable(true);
-								editfields[i].setFocusable(true);
-							}else{
-								editfields[i].setEditable(false);
-								editfields[i].setFocusable(false);
-							}
-							if (booktyp.firstElement()==""){ // ISBN manuell eingeben
-								editfields[0].setEditable(true);
-								editfields[0].setFocusable(true);
-							}
+							up.add(new Minipanel(null,save));
 							break;
-					}	
-				
-				}
-			
-			this.add(up);
-			switch(state){ // Hier kommt der Rest zur Buchtyp-Zeile dazu.
-			case info:
-				up.add(new Minipanel("Bestand",new Label(Integer.toString(mymodell.getBookCount(booktyp.get(0))))));
-				up.add(new Minipanel("Im Lager",new Label(Integer.toString(mymodell.getFreeBookCount(booktyp.get(0))))));
-				break;
-			case edit:
-				up.add(new Minipanel(null,save));
-				break;
-			case neu:
-				up.add(new Minipanel(null,save));
-				break;
-				
+							
+						}
+						bvjp.table.repaint();
+						booktyp=null;
+						
+					
+						
+					}
+					break;
+				case druck:
+					if (booktyp!=null){
+						editfields = new TextField[3];
+						for (int i=0; i< 2;i++){
+							up.add(new Minipanel(mymodell.getColumnName(i),editfields[i]=new TextField(booktyp.get(i),columnwidth[i])));
+							editfields[i].setEditable(false);
+						}
+						up.add(new Minipanel("Anzahl neu",editfields[2]=new TextField(5)));
+					}
+					up.add(new Minipanel(null,save));
+					this.add(up);
+					break;
+					
+					
 			}
-			booktyp=null;
 			me.add(this,BorderLayout.SOUTH);
-			me.validateTree();	
+			me.validate();	
 		}
 		private class Minipanel extends JPanel{
 			/**
@@ -263,19 +324,19 @@ public class BVBookTypView extends BVView implements ActionListener {
 		
 
 	public void actionPerformed(ActionEvent e) {
-		switch (Integer.parseInt(e.getActionCommand())){
-		case 0: state=State.info;
+		state=State.values()[Integer.parseInt(e.getActionCommand())];
+		switch (state){
+		case info:
 			BVSelectedEvent.makeEvent(lastselected, SelectedEventType.ISBNSelected, new Ean(((BVBookTypeDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
 			break;
-		case 1: state=State.edit;
+		case edit:
 			BVSelectedEvent.makeEvent(lastselected, SelectedEventType.ISBNSelected, new Ean(((BVBookTypeDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
 			break;
-		case 2: state=State.neu;
-			if (booktyp==null){	
-				BVSelectedEvent.makeEvent(this, BVSelectedEvent.SelectedEventType.ISBNSelected, null);
-			}else{
-				BVSelectedEvent.makeEvent(this, BVSelectedEvent.SelectedEventType.ISBNSelected, new Ean(booktyp.firstElement()));
-			}
+		case druck:
+			BVSelectedEvent.makeEvent(lastselected, SelectedEventType.ISBNBuySelected, new Ean(((BVBookTypeDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
+			break;
+		case neu:
+			BVSelectedEvent.makeEvent(null, SelectedEventType.ISBNUnknownSelected);
 			break;
 		}
 		

@@ -14,9 +14,14 @@ import javax.swing.JComboBox;
 
 import de.flg_informatik.ean13.Ean;
 import de.flg_informatik.utils.FLGFrame;
+import de.flg_informatik.utils.FLGProperties;
 
 public class ScanEmulator extends FLGFrame implements ActionListener{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/**
 	 * @param args
 	 */
@@ -86,16 +91,22 @@ public class ScanEmulator extends FLGFrame implements ActionListener{
 	}
 	
 	public static void main(String[] args) {
-		new ScanEmulator("C:\\temp\\temp.ll");
-		// TODO Auto-generated method stub
+		if(System.getProperty("os.name").equals("Linux")){
+			new ScanEmulator(new FLGProperties(null,"buchverwaltung.xml", new File("buchverwaltung.default.xml"), ".BuchverwaltungV01").getProperties().getProperty("scanner.emulator.filename_linux"));
 
+		}
+		if (System.getProperty("os.name").equals("Windows XP")){
+				
+			new ScanEmulator(new FLGProperties(null,"buchverwaltung.xml", new File("buchverwaltung.default.xml"), ".BuchverwaltungV01").getProperties().getProperty("scanner.emulator.filename_winnt"));
+		}
+		
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		try{
 			ttyfile.write(((JComboBox)(e.getSource())).getSelectedItem()+"\n");
 			ttyfile.flush();
-			System.out.println(((JComboBox)(e.getSource())).getSelectedItem()+"\n");
+			//System.out.println(((JComboBox)(e.getSource())).getSelectedItem()+"\n");
 			
 		}catch(IOException ioe){
 			ioe.printStackTrace();

@@ -10,7 +10,9 @@ public class BVUtils implements Runnable{
 		query,
 		update,
 		remove,
-		count
+		count,
+		exists,
+		insert
 		}
 	
 	static Connection connection;
@@ -19,6 +21,7 @@ public class BVUtils implements Runnable{
 	private todo what; 
 	private String command;
 	private ResultSet result=null;
+	private int count=0;
 	
 	static void setParams(BVControl control, Connection connection){
 		BVUtils.control=control;
@@ -45,9 +48,10 @@ public class BVUtils implements Runnable{
 				result = statement.executeQuery( command );
 				control.bvs.releaseStatement(statement);
 				break;
+			case insert:	
 			case update:
 				statement = control.bvs.getStatement();
-				statement.executeUpdate(command);
+				count=statement.executeUpdate(command);
 				control.bvs.releaseStatement(statement);
 				break;
 			case remove:
@@ -60,8 +64,11 @@ public class BVUtils implements Runnable{
 				result=statement.executeQuery(command);
 				control.bvs.releaseStatement(statement);
 				break;
-			
-		
+			case exists:
+				statement = control.bvs.getStatement();
+				result=statement.executeQuery(command);
+				control.bvs.releaseStatement(statement);
+				break;
 			}
 			
 		}catch(SQLException sqle){
@@ -95,17 +102,14 @@ public class BVUtils implements Runnable{
 		return new BVUtils(todo.query,query).result;
 	}
 	
-	public static void doUpdate(String update) throws SQLException{
-	/*
-	 * TODO: rewrite multithreaded - done, to be tested
-	 */
-		new BVUtils(todo.update, update );
+	public static int doUpdate(String update) {
+	
+		return (new BVUtils(todo.update, update )).count;
 	}
 	
 	public static int doCount(String query){
 		BVUtils bvutils=new BVUtils(todo.count,query);
 		try{
-			// debug(bvutils.result.toString());
 			bvutils.result.absolute(1);
 			return bvutils.result.getInt(1);
 		}catch(SQLException sqle){
@@ -113,6 +117,26 @@ public class BVUtils implements Runnable{
 		}
 		return -1;		
 	}
+	public static boolean doesExist(String query){
+		BVUtils bvutils=new BVUtils(todo.exists,query);
+		try{
+			if (bvutils.result.next()){
+				return true;
+			}else{
+				return false;
+			}
+		}catch(SQLException sqle){
+			sqle.printStackTrace();
+		}
+		return false;		
+	}
+	
+	public static int doInsert(String query){
+		
+		return (new BVUtils(todo.insert, query )).count;
+		
+	}
+	
 	static private void debug(Object obj){
 		System.out.println(BVUtils.class+": "+ obj);
 	}

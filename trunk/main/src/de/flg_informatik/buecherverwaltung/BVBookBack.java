@@ -100,14 +100,9 @@ public class BVBookBack extends BVView {
 				// write the old Condition
 			}
 		}
-		try {
-			BVUtils.doUpdate("UPDATE Books SET Location=0, Condition="+condition+" WHERE ID="+ean);
+		BVUtils.doUpdate("UPDATE Books SET Location=0, Condition="+condition+" WHERE ID="+ean);
 			// TODO: Close individual lease
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		
+	
 		return true;
 		
 		
@@ -115,7 +110,7 @@ public class BVBookBack extends BVView {
 	
 	private void publish(BVBook book){
 		idf.setText(book.ID.toString());
-		titlef.setText(book.getTitle());
+		titlef.setText(BVBookType.getTitle(book.ISBN));
 		conditionf.setText(book.Scoring_of_condition+"");
 		
 		
