@@ -35,6 +35,7 @@ public class EtikettDruck implements Printable {
 	 */
 	
 	
+	@SuppressWarnings("unused")
 	private int druckeraufloesung = 600;
 	
 	/**

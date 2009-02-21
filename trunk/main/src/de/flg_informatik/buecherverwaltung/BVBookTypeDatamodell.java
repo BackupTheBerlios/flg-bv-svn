@@ -145,6 +145,16 @@ public class BVBookTypeDatamodell extends javax.swing.table.AbstractTableModel{
 		}
 		return false;
 	}
+	
+	public int getBookCount(String ean){
+		return (BVUtils.doCount("SELECT COUNT(ISBN) FROM Books WHERE ISBN="+ean.toString()));
+	}
+	
+	public int getFreeBookCount(String ean){
+		return (BVUtils.doCount("SELECT COUNT(ISBN) FROM Books WHERE ((ISBN="+ean.toString()+ ") AND (Location = 1))"  ));
+	}
+	
+	
 	public Vector<String>  getBookType(Ean isbn){
 		Vector<String> ret=null;
 		if (isbn!=null&&isInDataBase(isbn.toString())){

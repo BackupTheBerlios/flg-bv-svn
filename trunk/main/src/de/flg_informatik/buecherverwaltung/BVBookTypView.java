@@ -204,8 +204,9 @@ public class BVBookTypView extends BVView implements ActionListener {
 			this.add(up);
 			switch(state){ // Hier kommt der Rest zur Buchtyp-Zeile dazu.
 			case info:
-				up.add(new Minipanel("Bestand",new Label(Integer.toString(bvc.gui.bvbv.getBookCount(booktyp.get(0).toString())[0]))));
-			
+				up.add(new Minipanel("Bestand",new Label(Integer.toString(mymodell.getBookCount(booktyp.get(0))))));
+				up.add(new Minipanel("Im Lager",new Label(Integer.toString(mymodell.getFreeBookCount(booktyp.get(0))))));
+				break;
 			case edit:
 				up.add(new Minipanel(null,save));
 				break;

@@ -6,6 +6,10 @@ import java.math.BigInteger;
 
 public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etikett.PrintableEtikett {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final int randvert = 10;
 	private final int randhori = 4;
 	
@@ -21,6 +25,7 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 	private Dimension offset = new Dimension(0,0);
 	
 	private int line1 = 0;
+	@SuppressWarnings("unused")
 	private int line6 = 0;
 	private int line7 = 0;
 	private int line8 = 0;

@@ -1,14 +1,15 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.sql.Connection;
 import java.util.Properties;
-
 import de.flg_informatik.utils.FLGProperties;
 import de.flg_informatik.utils.Version;
 
 public class BVControl implements Runnable,BVSelectedEventListener {
+	/**
+	 * 
+	 */
 	private final String defaultfilename="buchverwaltung.default.xml";
 	private final String significantstring=".BuchverwaltungV01";
 	Properties app_settings;

@@ -21,16 +21,8 @@ public class BVBooksDatamodell extends javax.swing.table.AbstractTableModel{
 		
 	}
 	
-	public int[] getBookCount(String ean){
-			try{
-				ResultSet res=BVUtils.doQuery("SELECT COUNT(ISBN) FROM Books WHERE ISBN="+ean.toString());
-				res.absolute(1);
-				return (new int[]{res.getInt(1),0});
-			}catch(SQLException sqle){
-				sqle.printStackTrace();
-			}
-		return (new int[]{0,0});
-	}
+		
+	
 	public int getColumnCount() {
 		// TODO Auto-generated method stub
 		return 0;
