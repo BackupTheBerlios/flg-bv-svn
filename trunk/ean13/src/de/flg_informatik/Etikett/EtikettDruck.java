@@ -1,11 +1,15 @@
 package de.flg_informatik.Etikett;
-import de.flg_informatik.ean13.*;
+import de.flg_informatik.ean13.*; //needed for testing only
+
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Dimension;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+
+import javax.print.PrintService;
 import javax.print.attribute.standard.MediaPrintableArea;
 import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.HashPrintRequestAttributeSet;
@@ -45,7 +49,7 @@ public class EtikettDruck implements Printable {
 	private MediaSizeName mediaSizeName=defaultMediaSizeName;
 	private float mediaSizeXmm=defaultMediaSizeXmm;
 	private float mediaSizeYmm=defaultMediaSizeYmm;
-	private	double scale;
+	private	double scale=1;
 	private int proseite;
 	private int seitenzahl;
 	private double originx;
@@ -112,9 +116,12 @@ public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozei
 	
 	public int druckeEtiketten(PrintableEtikett[] etiketten){
 		try{
+			pj.printDialog();
 			if (pj.printDialog(pras)){
 				//adjustMargins();
 				return drucken(etiketten);
+			}else{
+				debug("else");
 			}
 		}catch(Exception e){
 			System.out.println("druxkene: "+e);
@@ -163,16 +170,26 @@ public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozei
 		this.etiketten=etiketten;
 		proseite=spaltenanz*zeilenanz;
 		seitenzahl=(etiketten.length-1)/proseite+1;
+		debug("drucken");
+		javax.print.attribute.Attribute[] attr;
+		for (int i=(attr=this.pras.toArray()).length-1; i >= 0; i--){
+			debug(attr[i].getCategory()+" "+attr[i].getName());
+			debug(attr[i].getCategory()+" "+attr[i]);
+		}
 		
 		try{	
 			if (pj.getPrintService()!=null){
+				pj.setJobName("XXLo");
+				pj.setCopies(20);
+				pj.setPrintable(this);
 				pj.print(pras);
 				adjustPrinterAttributes();
 			}else{
-				System.out.println("Kein drucker verfügbar!");
+				debug("Kein drucker verfügbar!");
 			}
 			
 		}catch(PrinterException e){
+			e.printStackTrace();
 			return 0;
 		}
 		
@@ -181,10 +198,19 @@ public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozei
 		
 		
 	}
-	public EtikettDruck(){
+	private EtikettDruck(){
+		
+		PrintService[] list;
+		list=PrinterJob.lookupPrintServices();
+		debug(list.length);
+		for(int i=0; i<list.length;i++){
+			debug(list[i]);
+		}
+		
+		pj=PrinterJob.getPrinterJob();
 		javax.print.attribute.Attribute[] attr;
 		for (int i=(attr=this.pras.toArray()).length; i > 0; i--){
-			System.out.println(attr[i].getCategory()+" "+attr[i].getName());
+			debug(attr[i].getCategory()+" "+attr[i].getName());
 		}
 
 	}
@@ -199,7 +225,8 @@ public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozei
 		zheight=mmToP(mediaSizeYmm-(ormm+urmm))/zeilenanz;
 		originx=mmToP(lrmm);
 		originy=mmToP(ormm);
-		System.out.println("initMargins: @: "+lrmm+", "+ormm+", size: "+swidth*spaltenanz+", "+zheight+zeilenanz+", Paper: "+mediaSizeXmm+", "+mediaSizeYmm+", Box: "+swidth+", "+zheight);
+		debug(spaltenanz+" "+swidth);
+		debug("initMargins: @: "+lrmm+", "+ormm+", size: "+swidth*spaltenanz+", "+zheight+zeilenanz+", Paper: "+mediaSizeXmm+", "+mediaSizeYmm+", Box: "+swidth+", "+zheight);
 	}
 	/*private void adjustMargins(){
 		PageFormat pf=pj.getPageFormat(pras);
@@ -260,29 +287,37 @@ public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozei
 	 * @see java.awt.print.Printable#print(java.awt.Graphics, java.awt.print.PageFormat, int)
 	 */
 	public int print(Graphics g, PageFormat pageformat, int pageindex)
+		
 			throws PrinterException {
+		
 		if (pageindex>=seitenzahl){
 			return Printable.NO_SUCH_PAGE;
 		}
-		
 		Graphics2D g2    = (Graphics2D)g;
-	    g2.scale(scale,scale);
+		
+		g2.scale(scale,scale);
 	    for (int zeile=0;zeile<zeilenanz;zeile++){
 		    for (int spalte=0;spalte<spaltenanz;spalte++){
 		    	if (pageindex*proseite+zeile*spaltenanz+spalte<etiketten.length){
 		    		etiketten[pageindex*proseite+zeile*spaltenanz+spalte].printAt(g2, new Dimension((int)Math.round(swidth*spalte+originx),(int)Math.round(zheight*zeile+originy)), new Dimension ((int)Math.round(swidth),(int)Math.round(zheight)));
 		    	}
 		    }
-	    }    
+	    }
+	       
 		return Printable.PAGE_EXISTS;
+	}
+	public static void debug(Object o){
+		// System.out.println(EtikettDruck.class+":"+o);
 	}
 	/*
 	 * Testcode
-	 */
-	
+	 * needs import of de.flg_informatik.ean13.*;
+	*/
 	public static void main(String[] args){
 		
 	Ean ean=new Ean("123456123456");
-	etikettenDruck(new Ean[]{ean},4,2,(float)20,(float)50,(float)8,(float)8);
+	etikettenDruck(new Ean[]{ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean},4,14,(float)8,(float)8,(float)8,(float)8);
 		}
+	/*
+	*/
 }

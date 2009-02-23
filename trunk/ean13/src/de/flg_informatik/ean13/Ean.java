@@ -96,10 +96,11 @@ public class Ean implements Ean13, de.flg_informatik.Etikett.PrintableEtikett{
 			me = new EanCanvas(this);
 		}
 		me.printAt(g, position, boxgroesse);
+		debug("printing"+this+"@:"+position+","+boxgroesse);
 		return 0;
 	}
 	static private void debug(Object obj){
-		System.out.println(Ean.class+": "+ obj);
+		//System.out.println(Ean.class+": "+ obj);
 	}
 
 }
