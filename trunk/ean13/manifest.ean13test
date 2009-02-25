@@ -1,3 +1,5 @@
 Manifest-Version: 1.0
 Main-Class: de.flg_informatik.Etikett.EtikettDruck
+Class-Path: flgutils.jar
+
 

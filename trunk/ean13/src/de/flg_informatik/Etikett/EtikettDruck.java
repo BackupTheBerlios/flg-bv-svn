@@ -1,7 +1,7 @@
 package de.flg_informatik.Etikett;
 import de.flg_informatik.ean13.*; //needed for testing only
+import de.flg_informatik.utils.FLGProperties;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Dimension;
 import java.awt.print.PageFormat;
@@ -16,39 +16,37 @@ import javax.print.attribute.HashPrintRequestAttributeSet;
 
 
 import java.awt.Graphics2D;
+import java.io.File;
+import java.util.Properties;
 
 public class EtikettDruck implements Printable {
 	
 	
 	/**
-	 * Properties, sollten noch extern gespeichert werden, hier defaults
+	 * Properties, extern gespeichert s. infilename="etiketten.xml", "etiketten.default.xml", 
+	 * default-defaults fest eincodiert
+	 * Ränder und Page-Style veränderbar durch Druckdialog
+	 * Ränder und Zeilen Spaltenzahl können beim Aufruf überschrieben werden.
+	 * alle Aurufe auch mit etikettoffset = Anzahl leerer Etiketten von oben links zum
+	 * bedrucken angefangener Bögen
 	 */
 	
-	private int zeilenanz=11;
-	private int spaltenanz=4;
-	private float lrmm = 12;
-	private float rrmm = 8;
-	private float ormm = 12;
-	private float urmm = 8;
-	private MediaSizeName defaultMediaSizeName = MediaSizeName.ISO_A4;
-	private float defaultMediaSizeXmm = (float) 210;
-	private float defaultMediaSizeYmm = (float) 297;
-	
-	/**
-	 * ... können von der Kommandozeile / beim Aufruf überschrieben werden.
-	 */
+	private final String infilename="etiketten.xml";
+	private final String defaultfilename="etiketten.default.xml";
+	private final String significantstring=".EtikettenV1";
+	private MediaSizeName mediaSizeName = MediaSizeName.ISO_A4; // this would be a tricky typecast
 	
 	
-	@SuppressWarnings("unused")
-	private int druckeraufloesung = 600;
+	private int zeilenproseite;
+	private int spaltenprozeile;
+	private float randlinksmm;
+	private float randrechtsmm;
+	private float randobenmm;
+	private float randuntenmm;
+	private float mediaSizeXmm;
+	private float mediaSizeYmm;
 	
-	/**
-	 * Ende defaults
-	 */
-	
-	private MediaSizeName mediaSizeName=defaultMediaSizeName;
-	private float mediaSizeXmm=defaultMediaSizeXmm;
-	private float mediaSizeYmm=defaultMediaSizeYmm;
+	private int etikettoffset=0;
 	private	double scale=1;
 	private int proseite;
 	private int seitenzahl;
@@ -67,45 +65,58 @@ public class EtikettDruck implements Printable {
  */	
 	
 	public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozeile, int zeilenproblatt, float lrmm, float ormm, float rrmm, float urmm, MediaSizeName msn){
-		
+		return etikettenDruck(etiketten, spaltenprozeile, zeilenproblatt, lrmm, ormm, rrmm, urmm, msn, 0);
+	}
+	public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozeile, int zeilenproblatt, float lrmm, float ormm, float rrmm, float urmm, MediaSizeName msn, int etikettoffset){
 		EtikettDruck ed=new EtikettDruck();
-		ed.zeilenanz=zeilenproblatt;
-		ed.spaltenanz=spaltenprozeile;
-		ed.lrmm=lrmm;
-		ed.rrmm=rrmm;
-		ed.ormm=ormm;
-		ed.urmm=urmm;
+		ed.etikettoffset=etikettoffset;
+		ed.zeilenproseite=zeilenproblatt;
+		ed.spaltenprozeile=spaltenprozeile;
+		ed.randlinksmm=lrmm;
+		ed.randrechtsmm=rrmm;
+		ed.randobenmm=ormm;
+		ed.randuntenmm=urmm;
 		ed.mediaSizeName=msn;
 		ed.initMargins();
 		ed.initPrinterAttributes();
 		return ed.drucken(etiketten);
-		//toBeAdded
-		
 	}
-public static void printAtrr(){
+	public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozeile, int zeilenproblatt, float lrmm, float ormm, float rrmm, float urmm){
+		return etikettenDruck(etiketten, spaltenprozeile, zeilenproblatt, lrmm, ormm, rrmm, urmm, 0);
 	}
-public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozeile, int zeilenproblatt, float lrmm, float ormm, float rrmm, float urmm){
+	public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozeile, int zeilenproblatt, float lrmm, float ormm, float rrmm, float urmm, int etikettoffset){
 		EtikettDruck ed=new EtikettDruck();
-		ed.zeilenanz=zeilenproblatt;
-		ed.spaltenanz=spaltenprozeile;
-		ed.lrmm=lrmm;
-		ed.rrmm=rrmm;
-		ed.ormm=ormm;
-		ed.urmm=urmm;
+		ed.etikettoffset=etikettoffset;
+		ed.zeilenproseite=zeilenproblatt;
+		ed.spaltenprozeile=spaltenprozeile;
+		ed.randlinksmm=lrmm;
+		ed.randrechtsmm=rrmm;
+		ed.randobenmm=ormm;
+		ed.randuntenmm=urmm;
 		ed.initMargins();
 		ed.initPrinterAttributes();
 		return ed.drucken(etiketten);
-		//toBeAdded
-		
+				
 	}
+	
 	public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozeile, int zeilenproblatt){
+		return etikettenDruck(etiketten, spaltenprozeile, zeilenproblatt, 0);	
+	}
+	
+	public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozeile, int zeilenproblatt, int etikettoffset){
 		EtikettDruck ed=new EtikettDruck();
-		ed.zeilenanz=zeilenproblatt;
-		ed.spaltenanz=spaltenprozeile;
+		ed.etikettoffset=etikettoffset;
+		ed.zeilenproseite=zeilenproblatt;
+		ed.spaltenprozeile=spaltenprozeile;
 		return ed.druckeEtiketten(etiketten);
 	}
+	
 	public static int etikettenDruck(PrintableEtikett[] etiketten){
+		return etikettenDruck(etiketten, 0);
+	}
+	public static int etikettenDruck(PrintableEtikett[] etiketten, int etikettoffset){
 		EtikettDruck ed=new EtikettDruck();
+		ed.etikettoffset=etikettoffset;
 		return ed.druckeEtiketten(etiketten);
 	}
 	/**
@@ -115,37 +126,36 @@ public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozei
 	 */
 	
 	public int druckeEtiketten(PrintableEtikett[] etiketten){
+		initPrinterAttributes();
 		try{
-			pj.printDialog();
 			if (pj.printDialog(pras)){
-				//adjustMargins();
+				adjustMargins();
 				return drucken(etiketten);
 			}else{
-				debug("else");
+				return 0;
 			}
 		}catch(Exception e){
-			System.out.println("druxkene: "+e);
+			e.printStackTrace();
+			return -1;
 		}
-		return 0;
-		
 	}
 	
 	
 	
 	public int druckeEtiketten(PrintableEtikett[] etiketten, int spaltenprozeile, int zeilenproblatt){
-		this.zeilenanz=zeilenproblatt;
-		this.spaltenanz=spaltenprozeile;
+		this.zeilenproseite=zeilenproblatt;
+		this.spaltenprozeile=spaltenprozeile;
 		return druckeEtiketten(etiketten);
 		
 	}
 
 	public int druckeEtiketten(PrintableEtikett[] etiketten, int spaltenprozeile, int zeilenproblatt, float lrmm, float ormm, float rrmm, float urmm){
-		this.zeilenanz=zeilenproblatt;
-		this.spaltenanz=spaltenprozeile;
-		this.lrmm=lrmm;
-		this.rrmm=rrmm;
-		this.ormm=ormm;
-		this.urmm=urmm;
+		this.zeilenproseite=zeilenproblatt;
+		this.spaltenprozeile=spaltenprozeile;
+		this.randlinksmm=lrmm;
+		this.randrechtsmm=rrmm;
+		this.randobenmm=ormm;
+		this.randuntenmm=urmm;
 		this.initMargins();
 		this.initPrinterAttributes();
 		return drucken(etiketten);
@@ -153,23 +163,26 @@ public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozei
 	}
 	public int druckeEtiketten(PrintableEtikett[] etiketten, int spaltenprozeile, int zeilenproblatt, float lrmm, float ormm, float rrmm, float urmm, MediaSizeName msn){
 		int seiten=0;
-		this.zeilenanz=zeilenproblatt;
-		this.spaltenanz=spaltenprozeile;
-		this.lrmm=lrmm;
-		this.rrmm=rrmm;
-		this.ormm=ormm;
-		this.urmm=urmm;
-		this.defaultMediaSizeName=msn;
+		this.zeilenproseite=zeilenproblatt;
+		this.spaltenprozeile=spaltenprozeile;
+		this.randlinksmm=lrmm;
+		this.randrechtsmm=rrmm;
+		this.randobenmm=ormm;
+		this.randuntenmm=urmm;
+		this.mediaSizeName=msn;
 		this.initMargins();
 		this.initPrinterAttributes();
 		return seiten;
-		//toBeAdded
+		
 		
 	}
+	
+	
 	private int drucken(PrintableEtikett[] etiketten){
 		this.etiketten=etiketten;
-		proseite=spaltenanz*zeilenanz;
-		seitenzahl=(etiketten.length-1)/proseite+1;
+		proseite=spaltenprozeile*zeilenproseite;
+		etikettoffset=etikettoffset%proseite;
+		seitenzahl=(etiketten.length-1+etikettoffset)/proseite+1;
 		debug("drucken");
 		javax.print.attribute.Attribute[] attr;
 		for (int i=(attr=this.pras.toArray()).length-1; i >= 0; i--){
@@ -179,8 +192,7 @@ public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozei
 		
 		try{	
 			if (pj.getPrintService()!=null){
-				pj.setJobName("XXLo");
-				pj.setCopies(20);
+				pj.setJobName("Etikettendruck");
 				pj.setPrintable(this);
 				pj.print(pras);
 				adjustPrinterAttributes();
@@ -201,6 +213,19 @@ public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozei
 	private EtikettDruck(){
 		
 		PrintService[] list;
+		Properties properties =null;
+
+		if ((properties=new FLGProperties(properties,infilename, new File(defaultfilename), significantstring).getProperties())==null){
+			properties=PropertiesDialog.showSettingsDialog(properties,"etiketten.xml", new File(defaultfilename), significantstring);
+		}
+		zeilenproseite=Integer.valueOf(properties.getProperty("zeilenproseite","1"));
+		spaltenprozeile=Integer.valueOf(properties.getProperty("spaltenprozeile","1"));
+		randlinksmm = Float.valueOf(properties.getProperty("randlinksmm","2.54"));
+		randrechtsmm = Float.valueOf(properties.getProperty("randrechtsmm","2.54"));
+		randobenmm = Float.valueOf(properties.getProperty("randobenmm","2.54"));
+		randuntenmm = Float.valueOf(properties.getProperty("randuntenmm","2.54"));
+		mediaSizeXmm = Float.valueOf(properties.getProperty("mediaSizeXmm","210"));;
+		mediaSizeYmm = Float.valueOf(properties.getProperty("mediaSizeYmm","297"));;
 		list=PrinterJob.lookupPrintServices();
 		debug(list.length);
 		for(int i=0; i<list.length;i++){
@@ -217,41 +242,44 @@ public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozei
 	/*
 	 * most work is done here
 	 * on my Linux machine (debian etch, jdk 1.6.0_02) getImageableY
-	 * always is the same as getImageableX -- maybe a Bug?!  
+	 * always is the same as getImageableX -- maybe a Bug?! 
+	 * not longer true on jdk 1.6.0_12
 	 */
 	private void initMargins(){
 		
-		swidth=mmToP(mediaSizeXmm-(lrmm+rrmm))/spaltenanz;
-		zheight=mmToP(mediaSizeYmm-(ormm+urmm))/zeilenanz;
-		originx=mmToP(lrmm);
-		originy=mmToP(ormm);
-		debug(spaltenanz+" "+swidth);
-		debug("initMargins: @: "+lrmm+", "+ormm+", size: "+swidth*spaltenanz+", "+zheight+zeilenanz+", Paper: "+mediaSizeXmm+", "+mediaSizeYmm+", Box: "+swidth+", "+zheight);
+		swidth=mmToP(mediaSizeXmm-(randlinksmm+randrechtsmm))/spaltenprozeile;
+		zheight=mmToP(mediaSizeYmm-(randobenmm+randuntenmm))/zeilenproseite;
+		originx=mmToP(randlinksmm);
+		originy=mmToP(randobenmm);
+		debug(spaltenprozeile+" "+swidth);
+		debug("initMargins: @: "+randlinksmm+", "+randobenmm+", size: "+swidth*spaltenprozeile+", "+zheight+zeilenproseite+", Paper: "+mediaSizeXmm+", "+mediaSizeYmm+", Box: "+swidth+", "+zheight);
 	}
-	/*private void adjustMargins(){
+	private void adjustMargins(){
 		PageFormat pf=pj.getPageFormat(pras);
-		swidth=pxToP(pf.getImageableWidth())/spaltenanz;
-		zheight=pxToP(pf.getImageableHeight())/zeilenanz;
+		debug(pf.getImageableWidth());
+		debug(pf.getImageableHeight());
+		swidth=pxToP(pf.getImageableWidth())/spaltenprozeile;
+		zheight=pxToP(pf.getImageableHeight())/zeilenproseite;
 		mediaSizeXmm=pxToMm(pf.getWidth());
 		mediaSizeYmm=pxToMm(pf.getHeight());
-		lrmm=pxToMm(pf.getImageableX());
-		ormm=pxToMm(pf.getImageableY()); // This one does not work properly on jdk 1.6.0_02
-		rrmm=mediaSizeXmm-(lrmm+pxToMm(pf.getImageableWidth()));
-		urmm=mediaSizeYmm-(ormm+pxToMm(pf.getImageableHeight()));
+		randlinksmm=pxToMm(pf.getImageableX());
+		randobenmm=pxToMm(pf.getImageableY()); // This one does not work properly on jdk 1.6.0_02, works on jdk 1.6.0_12
+		randrechtsmm=mediaSizeXmm-(randlinksmm+pxToMm(pf.getImageableWidth()));
+		randuntenmm=mediaSizeYmm-(randobenmm+pxToMm(pf.getImageableHeight()));
 		originx=pxToP(pf.getImageableX());
 		originy=pxToP(pf.getImageableY());
-		System.out.println("adjustMargins: @: "+lrmm+"="+pf.getImageableX()+", "+ormm+"="+pf.getImageableY()+", size: "+pxToMm(pf.getImageableWidth())+", "+pxToMm(pf.getImageableHeight())+", Paper: "+mediaSizeXmm+", "+mediaSizeYmm+", Box: "+swidth+", "+zheight);
+		debug("adjustMargins: @: "+randlinksmm+"="+pf.getImageableX()+", "+randobenmm+"="+pf.getImageableY()+", size: "+pxToMm(pf.getImageableWidth())+", "+pxToMm(pf.getImageableHeight())+", Paper: "+mediaSizeXmm+", "+mediaSizeYmm+", Box: "+swidth+"= "+ pToMm(swidth)+", "+zheight);
 		
 	}
-	*/
+	
 	private void initPrinterAttributes(){
 		//pj.getPageFormat(pras);
-		pras.add(new MediaPrintableArea(lrmm,ormm,mediaSizeXmm-(rrmm+lrmm),mediaSizeYmm-(ormm+urmm),MediaPrintableArea.MM));
+		pras.add(new MediaPrintableArea(randlinksmm,randobenmm,mediaSizeXmm-(randrechtsmm+randlinksmm),mediaSizeYmm-(randobenmm+randuntenmm),MediaPrintableArea.MM));
 		pras.add(mediaSizeName);
 	}
 	
 	private synchronized void adjustPrinterAttributes(){
-		pras.add(new MediaPrintableArea(lrmm,ormm,mediaSizeXmm-(rrmm+lrmm),mediaSizeYmm-(ormm+urmm),MediaPrintableArea.MM));
+		pras.add(new MediaPrintableArea(randlinksmm,randobenmm,mediaSizeXmm-(randrechtsmm+randlinksmm),mediaSizeYmm-(randobenmm+randuntenmm),MediaPrintableArea.MM));
 	}
 	
 	/*
@@ -293,30 +321,37 @@ public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozei
 		if (pageindex>=seitenzahl){
 			return Printable.NO_SUCH_PAGE;
 		}
-		Graphics2D g2    = (Graphics2D)g;
+		debug("print");
 		
+		Graphics2D g2    = (Graphics2D)g;
+		// debug only g2.fillOval(100,100,100,100); 
 		g2.scale(scale,scale);
-	    for (int zeile=0;zeile<zeilenanz;zeile++){
-		    for (int spalte=0;spalte<spaltenanz;spalte++){
-		    	if (pageindex*proseite+zeile*spaltenanz+spalte<etiketten.length){
-		    		etiketten[pageindex*proseite+zeile*spaltenanz+spalte].printAt(g2, new Dimension((int)Math.round(swidth*spalte+originx),(int)Math.round(zheight*zeile+originy)), new Dimension ((int)Math.round(swidth),(int)Math.round(zheight)));
-		    	}
+	    for (int zeile=0;zeile<zeilenproseite;zeile++){
+		    for (int spalte=0;spalte<spaltenprozeile;spalte++){
+		    	if (!(pageindex*proseite+zeile*spaltenprozeile+spalte<etikettoffset)){
+		    		if (pageindex*proseite+zeile*spaltenprozeile+spalte<etiketten.length+etikettoffset){
+		    		etiketten[pageindex*proseite+zeile*spaltenprozeile+spalte-etikettoffset].printAt(g2, new Dimension((int)Math.round(swidth*spalte+originx),(int)Math.round(zheight*zeile+originy)), new Dimension ((int)Math.round(swidth),(int)Math.round(zheight)));
+		    		}
+		    	}else{ //offset etikett
+		    	}	
+		    	
 		    }
 	    }
 	       
 		return Printable.PAGE_EXISTS;
 	}
 	public static void debug(Object o){
-		// System.out.println(EtikettDruck.class+":"+o);
+		System.out.println(EtikettDruck.class+":"+o);
 	}
-	/*
+	/**
 	 * Testcode
 	 * needs import of de.flg_informatik.ean13.*;
 	*/
 	public static void main(String[] args){
 		
 	Ean ean=new Ean("123456123456");
-	etikettenDruck(new Ean[]{ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean},4,14,(float)8,(float)8,(float)8,(float)8);
+	// etikettenDruck(new Ean[]{ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean},4,14,(float)8,(float)8,(float)8,(float)8);
+	etikettenDruck(new Ean[]{ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean},4,14,6);
 		}
 	/*
 	*/
