@@ -33,7 +33,7 @@ public class ScanEmulator extends FLGFrame implements ActionListener{
 	FileWriter ttyfile;
 	ScanEmulator(String filename){
 		try{
-			ttyfile=new FileWriter(new File(filename),true);
+			ttyfile=new FileWriter(new File(filename),false);
 		}catch(IOException ioe){
 			ioe.printStackTrace();
 		}
@@ -42,6 +42,7 @@ public class ScanEmulator extends FLGFrame implements ActionListener{
 		PersString=getPersString(10);
 		
 		for(String id : IDString){
+			selector.addItem(id);
 			selector.addItem(id);
 		}
 		for(String id : ISBNString){
@@ -62,7 +63,7 @@ public class ScanEmulator extends FLGFrame implements ActionListener{
 		ArrayList<String> ret= new ArrayList<String>();
 		
 		for (int i=1; i<=num; i++){
-			ret.add(new Ean(new BigInteger("200000000000").add(new BigInteger(i+""))).toString());
+			ret.add(new Ean(new BigInteger("200000000015").add(new BigInteger(i+""))).toString());
 		}
 		return ret;
 		
@@ -102,10 +103,15 @@ public class ScanEmulator extends FLGFrame implements ActionListener{
 		
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	public synchronized void actionPerformed(ActionEvent e) {
 		try{
 			ttyfile.write(((JComboBox)(e.getSource())).getSelectedItem()+"\n");
 			ttyfile.flush();
+			try{
+				Thread.sleep(500);
+			}catch(InterruptedException ie){
+				
+			}
 			//System.out.println(((JComboBox)(e.getSource())).getSelectedItem()+"\n");
 			
 		}catch(IOException ioe){

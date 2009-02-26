@@ -4,6 +4,7 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.io.File;
+import java.math.BigInteger;
 
 import de.flg_informatik.ean13.Ean;
 import de.flg_informatik.scanner.ScanFile;
@@ -18,7 +19,7 @@ public class BVScanAdapter {
 		emulator,
 		file;
 	}
-		
+	
 	BVScanAdapter(BVControl control){
 		File file1=null; //TODO should be an enumeration of /dev/tty files, by now of Property scanner.scanfile
 		if (control.app_settings.getProperty("scanner.typ").equals("emulator")){
@@ -30,14 +31,36 @@ public class BVScanAdapter {
 		
 	}
 	
-	public void eanScanned(String eanstring){
-		if (eanstring.startsWith("978")||eanstring.startsWith("979")){ // Ean-Bookland -> ISBN
-			//if ( isInBooktypes(eanstring)){
-				
-			//}
-			BVSelectedEvent.makeEvent(this, BVSelectedEvent.SelectedEventType.ISBNSelected, new Ean(eanstring));
+	public synchronized void eanScanned(String eanstring){
+		Ean ean=new Ean(eanstring);
+		if (BVBookType.isISBN(ean)){ // Ean-Bookland -> ISBN
+			if ( BVBookType.isKnownISBN(ean)){
+				BVSelectedEvent.makeEvent(this, BVSelectedEvent.SelectedEventType.ISBNSelected, ean);
+			}else{
+				BVSelectedEvent.makeEvent(this, BVSelectedEvent.SelectedEventType.ISBNUnknownSelected, ean);
+			}
+			
 		}
-		// Ean.checkEan(new Ean(eanstring));
+		if (BVBook.isBookEan(ean)){
+			//debug("book: ;" + ean);
+			BVBook book= new BVBook(ean);
+			//debug("book");
+				if (book.ISBN==BVBookType.ISBNNullEan.getEan()){
+					BVSelectedEvent.makeEvent(this, BVSelectedEvent.SelectedEventType.BookUnknownSelected, ean);
+				}else{
+					if (book.Location.equals(new BigInteger("1"))){
+						BVSelectedEvent.makeEvent(this, BVSelectedEvent.SelectedEventType.BookFreeSelected, ean);
+					}else{
+						
+							BVSelectedEvent.makeEvent(this, BVSelectedEvent.SelectedEventType.BookLeasedSelected, ean);
+						
+						
+					}
+				}
+			
+			
+			
+		}// Ean.checkEan(new Ean(eanstring));
 			
 	}
 	
@@ -58,6 +81,9 @@ public class BVScanAdapter {
 	public static void main(String[] args) {
 		new BVScanAdapter(null);
 
+	}
+	static private void debug(Object obj){
+		System.out.println(BVScanAdapter.class+": "+ obj);
 	}
 
 }

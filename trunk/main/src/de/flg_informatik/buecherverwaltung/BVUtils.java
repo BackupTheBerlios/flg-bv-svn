@@ -95,19 +95,21 @@ public class BVUtils implements Runnable{
 		}
 	}
 	
-	public static	ResultSet doQuery(String query) throws SQLException{
+	public static synchronized	ResultSet doQuery(String query) throws SQLException{
 	/*
 	 * TODO: rewrite multithreaded - done, to be tested
 	 */
-		return new BVUtils(todo.query,query).result;
+		ResultSet ret=new BVUtils(todo.query,query).result;
+		ret.first();
+		return ret;
 	}
 	
-	public static int doUpdate(String update) {
+	public static synchronized int doUpdate(String update) {
 	
 		return (new BVUtils(todo.update, update )).count;
 	}
 	
-	public static int doCount(String query){
+	public static synchronized int doCount(String query){
 		BVUtils bvutils=new BVUtils(todo.count,query);
 		try{
 			bvutils.result.absolute(1);
@@ -117,7 +119,7 @@ public class BVUtils implements Runnable{
 		}
 		return -1;		
 	}
-	public static boolean doesExist(String query){
+	public static synchronized boolean doesExist(String query){
 		BVUtils bvutils=new BVUtils(todo.exists,query);
 		try{
 			if (bvutils.result.next()){
@@ -131,7 +133,7 @@ public class BVUtils implements Runnable{
 		return false;		
 	}
 	
-	public static int doInsert(String query){
+	public static synchronized int doInsert(String query){
 		
 		return (new BVUtils(todo.insert, query )).count;
 		

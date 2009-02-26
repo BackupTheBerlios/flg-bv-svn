@@ -13,6 +13,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 
+import de.flg_informatik.ean13.Ean;
+
 public class BVBookBack extends BVView {
 
 	/**
@@ -28,12 +30,14 @@ public class BVBookBack extends BVView {
 	 */
 	
 	private static final long serialVersionUID = 1L;
-	private Integer condition;
-	private BVBook book;
+	private Integer condition=0;
+	private BVBook book=null;
 	private TextField idf = new TextField("",13);
 	private TextField titlef = new TextField("",30);
 	private JLabel conditionf = new JLabel("w");
-	public BVBookBack(BVControl bvc,Connection connection){
+	public BVBookBack(BVControl bvc,int index){
+		super(index);
+		BVSelectedEvent.addBVSelectedEventListener(this);
 		this.setLayout(new FlowLayout());
 		idf.setEditable(false);
 		titlef.setEditable(false);
@@ -42,11 +46,13 @@ public class BVBookBack extends BVView {
 		this.add(idf);
 		this.add(titlef);
 		this.add(conditionf);
-		this.setBackground(Color.BLUE);
+		publish(book);
 		this.setVisible(true);
 		
 		
 	}
+	
+	
 	
 	
 	private BVControl bvc;
@@ -63,44 +69,51 @@ public class BVBookBack extends BVView {
 		// No List, no Selection, nurh
 		
 	}
+	public void toClose(){
+		synchronized(condition){
+			condition.notify();
+			book=null;
+			publish(book);
+		}
+	}
 
 	public void thingSelected(BVSelectedEvent e) {
+		debug("selected "+e.getEan());
+		debug(e.getId());
 		switch (e.getId()){
-			case AgainSelected:
-				incCondition(1); // same Book = Condition + 1
-				break;
 			case BookLeasedSelected:
-				incCondition(0); // next Book = Condition unchanged
-				bookBack(e.getEan().toString());
+				incCondition(BVBook.makeBookID(e.getEan())); // same Book = Condition + 1
+				// next Book = Condition unchanged
 				break;
+				
 			default:
-				bvc.thingSelected(e);
+				toClose();
+				
 		// TODO Auto-generated method stub
 		}
 	}
+	
+	
+	private boolean bookBack(BigInteger id){
 		
-	private synchronized boolean bookBack(String ean){
 		
-		try{
-			ResultSet rs=BVUtils.doQuery("SELECT * FROM Book WHERE ID="+ean);
-			rs.first();
-			book=new BVBook(new BigInteger(rs.getString("ID")), rs.getString("Purchased"), 
-					rs.getInt("scoring_of_condition"),new BigInteger(rs.getString("Location")), new BigInteger(rs.getString("ISBN")));
-		}catch(SQLException sqle){
-			sqle.printStackTrace();
-			return false;
-		}
 		synchronized(condition) {
-			condition=book.Scoring_of_condition;
+			book=new BVBook(id);
+			debug (1);
+			//condition=Integer.valueOf(book.Scoring_of_condition);
 			publish(book);
 			
 			try{
 				condition.wait();
+				
 			}catch(InterruptedException ie){
-				// write the old Condition
+				ie.printStackTrace();
 			}
+			BVUtils.doUpdate("UPDATE Books SET Location=1, Scoring_of_Condition="+book.Scoring_of_condition+" WHERE ID="+book.ID);
+			debug("Rückbuchung: "+book.ID);
+			
 		}
-		BVUtils.doUpdate("UPDATE Books SET Location=0, Condition="+condition+" WHERE ID="+ean);
+		
 			// TODO: Close individual lease
 	
 		return true;
@@ -109,20 +122,50 @@ public class BVBookBack extends BVView {
 	}
 	
 	private void publish(BVBook book){
-		idf.setText(book.ID.toString());
-		titlef.setText(BVBookType.getTitle(book.ISBN));
-		conditionf.setText(book.Scoring_of_condition+"");
-		
-		
-	}
-	
-	private void incCondition(int inc){
-		synchronized(condition){
-			condition=condition+inc;
-			condition.notify();
-		}
-	
-	
-	}
+		if (book==null){
+			idf.setText("");
+			titlef.setText("");
+			conditionf.setText("-");
+			this.setBackground(new Color(150,150,150));
 
+		}else{
+			idf.setText(BVBook.makeBookEan(book.ID).toString());
+			titlef.setText(BVBookType.getTitle(new Ean(book.ISBN)));
+			conditionf.setText(book.Scoring_of_condition+"");
+			this.setBackground(new Color((int)Math.min((book.Scoring_of_condition-1)*60,255),(int)Math.min((6-(book.Scoring_of_condition))*60,255),0));
+		}
+		this.validate();
+		
+		
+	}
+	
+	private void incCondition(BigInteger id){
+		
+		if (book!=null){
+			debug("book.id: "+book.ID+" id: "+ id);
+			if (book.ID.equals(id)){
+				debug(2);
+				book.Scoring_of_condition+=1;
+				publish(book);
+				
+			}else{
+				debug(3);
+				synchronized(condition){
+					condition.notify();
+				}
+				bookBack(id);
+					
+			}
+		}else{
+			debug("bookBack: "+id);
+			bookBack(id);
+			
+		
+		}
+		
+	
+	}
+	static private void debug(Object obj){
+		System.out.println(BVBookBack.class+": "+ obj);
+	}
 }

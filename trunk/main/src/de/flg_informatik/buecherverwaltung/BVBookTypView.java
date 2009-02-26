@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ListSelectionEvent;
 
+import de.flg_informatik.Etikett.EtikettDruck;
 import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 
@@ -41,11 +42,13 @@ public class BVBookTypView extends BVView implements ActionListener {
 		info,
 		edit,
 		druck,
+		register,
 		neu;
 	}
 	State state;
 	
-	public BVBookTypView(BVControl bvc){
+	public BVBookTypView(BVControl bvc, int index){
+		super(index);
 		me = this;
 		mymodell=new BVBookTypeDatamodell(this);
 		this.bvc=bvc;
@@ -67,13 +70,21 @@ public class BVBookTypView extends BVView implements ActionListener {
 	public void thingSelected(BVSelectedEvent e) {
 		switch (e.getId()){
 		case ISBNSelected:
+			if (state==State.neu){
+				stateChanged(State.info);
+				
+			}
 			booktyp=mymodell.getBookType(e.getEan());
 			break;
 		case ISBNUnknownSelected:
 			booktyp=newBooktype();
 			if (e.getEan()!=null){
 				booktyp.set(0, e.getEan().toString());
+				stateChanged(State.neu);
 			}
+			
+			
+			
 			break;
 		case ISBNBuySelected:
 			booktyp=mymodell.getBookType(e.getEan());
@@ -140,6 +151,7 @@ public class BVBookTypView extends BVView implements ActionListener {
 		BookTypeWhat mebtw;
 		TextField[] editfields;
 		JButton save;
+		JButton directprint;
 		JButton remove;
 		JPanel up;
 		
@@ -149,6 +161,9 @@ public class BVBookTypView extends BVView implements ActionListener {
 			save=new JButton("Speichern");
 			save.setActionCommand("save");
 			save.addActionListener(mebtw);
+			directprint=new JButton("sofort drucken");
+			directprint.setActionCommand("directprint");
+			directprint.addActionListener(mebtw);
 			remove=new JButton("Buchtyp löschen");
 			remove.setActionCommand("remonve");
 			remove.addActionListener(mebtw);
@@ -156,12 +171,11 @@ public class BVBookTypView extends BVView implements ActionListener {
 			
 		}
 		public void actionPerformed(ActionEvent e) {
+			Vector<String> newvec = new Vector<String>();
+			for (int i=0; i< editfields.length;i++){
+				newvec.add(editfields[i].getText());
+			}
 			if (e.getActionCommand().equals("save")){
-				
-				Vector<String> newvec = new Vector<String>();
-				for (int i=0; i< editfields.length;i++){
-					newvec.add(editfields[i].getText());
-				}
 				debug("saving"+state);
 				switch (state){
 					case neu:
@@ -182,11 +196,9 @@ public class BVBookTypView extends BVView implements ActionListener {
 						break;
 					
 					case druck:
-						int howmany;
-						if ((howmany=Integer.parseInt(editfields[2].getText()))>0){
-							BVBook.makeNewBooks(howmany, editfields[0].getText());
-							me.stateChanged(State.info);
-						}
+						// TODO there should be a nice fifo for storing Etiketten to print
+						// maybe in BVStorage and a nice frontend to print it
+					
 						
 						
 						
@@ -195,6 +207,14 @@ public class BVBookTypView extends BVView implements ActionListener {
 					
 				}
 			}
+			if (e.getActionCommand().equals("directprint")){
+				debug("printing"+state);
+				int howmany;
+				if ((howmany=Integer.parseInt(editfields[2].getText()))>0){
+					EtikettDruck.etikettenDruck(BVBook.makeNewBooks(howmany, editfields[0].getText()),Integer.parseInt(editfields[3].getText()));
+					me.stateChanged(State.info);
+				}
+			}	
 		}
 		synchronized void reMakePanel(){
 			this.removeAll();
@@ -264,14 +284,15 @@ public class BVBookTypView extends BVView implements ActionListener {
 					break;
 				case druck:
 					if (booktyp!=null){
-						editfields = new TextField[3];
+						editfields = new TextField[4];
 						for (int i=0; i< 2;i++){
 							up.add(new Minipanel(mymodell.getColumnName(i),editfields[i]=new TextField(booktyp.get(i),columnwidth[i])));
 							editfields[i].setEditable(false);
 						}
-						up.add(new Minipanel("Anzahl neu",editfields[2]=new TextField(5)));
+						up.add(new Minipanel("Anzahl neu",editfields[2]=new TextField("0",5)));
+						up.add(new Minipanel("Etiketten Offset",editfields[3]=new TextField("0",5)));
 					}
-					up.add(new Minipanel(null,save));
+					up.add(new Minipanel(null,directprint));
 					this.add(up);
 					break;
 					
@@ -327,16 +348,31 @@ public class BVBookTypView extends BVView implements ActionListener {
 		state=State.values()[Integer.parseInt(e.getActionCommand())];
 		switch (state){
 		case info:
-			BVSelectedEvent.makeEvent(lastselected, SelectedEventType.ISBNSelected, new Ean(((BVBookTypeDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
+			BVSelectedEvent.makeEvent(this, SelectedEventType.ISBNSelected, new Ean(((BVBookTypeDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
 			break;
 		case edit:
-			BVSelectedEvent.makeEvent(lastselected, SelectedEventType.ISBNSelected, new Ean(((BVBookTypeDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
+			BVSelectedEvent.makeEvent(this, SelectedEventType.ISBNSelected, new Ean(((BVBookTypeDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
 			break;
 		case druck:
-			BVSelectedEvent.makeEvent(lastselected, SelectedEventType.ISBNBuySelected, new Ean(((BVBookTypeDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
+			BVSelectedEvent.makeEvent(this, SelectedEventType.ISBNBuySelected, new Ean(((BVBookTypeDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
+			break;
+		case register:
+			
+			BVSelectedEvent.makeEvent(this, SelectedEventType.ISBNSelected, new Ean(((BVBookTypeDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
 			break;
 		case neu:
-			BVSelectedEvent.makeEvent(null, SelectedEventType.ISBNUnknownSelected);
+			if(booktyp==null){ // new selected manually
+				BVSelectedEvent.makeEvent(this, SelectedEventType.ISBNUnknownSelected);
+				break;
+			}else{
+				if(BVBookType.isKnownISBN(new Ean(booktyp.get(0)))){
+					BVSelectedEvent.makeEvent(this, SelectedEventType.ISBNUnknownSelected);
+					break;
+				}
+			}
+			// selected by scan nothing to do!
+			
+			
 			break;
 		}
 		

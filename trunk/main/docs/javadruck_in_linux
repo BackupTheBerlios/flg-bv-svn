@@ -1,0 +1,51 @@
+Another workaround: pre-filtering in cups
+debian etch, but should work in other cases too
+
+(add things between #nurh and #hrun)
+
+new line in /etc/cups/mime.types
+# Application-generated files...
+#
+#nurh
+application/javapostscript	contains(0,4096,"/DeferredMediaSelection true")
+#hrun
+
+new line in /etc/cups/mime.convs
+
+# PostScript filters
+#
+#nurh
+application/javapostscript application/postscript	33	javapsclean
+#hrun
+
+add new filterfile:
+
+/usr/lib/cups/filter/javapsclean
+
+#!/bin/sh
+#
+# javapsclean
+# by nurh	
+# 
+# addressing bug Java 6 ID: 6506286
+#
+# enshure input 
+if test -z "$6"; then
+	ifile="-"
+else
+	ifile="$6"
+fi
+
+
+echo INFO: Cleaning java postscript-file "$ifile" 1>&2
+#
+sed -e's+/DeferredMediaSelection true+ +' "$ifile"
+#
+# end of javapsclean
+
+& restart cups
+
+ 
+see also:
+http://de.opensuse.org/SDB:Selbst_erstellte_Filter_zum_Ausdruck_mit_CUPS#Hintergrundinformation_zum_CUPS-Filtersystem
+http://www.cups.org/doc-1.1/spm.html#4_1

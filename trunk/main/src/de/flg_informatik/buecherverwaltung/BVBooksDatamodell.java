@@ -58,6 +58,6 @@ public class BVBooksDatamodell extends javax.swing.table.AbstractTableModel{
 	
 	
 	static private void debug(Object obj){
-		System.out.println(BVControl.class+": "+ obj);
+		System.out.println(BVBooksDatamodell.class+": "+ obj);
 	}
 }

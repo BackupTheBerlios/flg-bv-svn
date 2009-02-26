@@ -19,17 +19,19 @@ public class BVGUI extends FLGFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	BVControl control;
-	BVBooksDatamodell bvbv;
+	//BVBooksDatamodell bvbv;
 	FireButton cancel = new FireButton("Abbrechen");
+	JTabbedPane centerpane;
 	public BVGUI(BVControl control){
 		this.control=control;
 		this.setLayout(new BorderLayout());
-		this.bvbv=new BVBooksDatamodell(control, control.connection);
+		//this.bvbv=new BVBooksDatamodell(control, control.connection);
 		this.add(makeButtonfield(),BorderLayout.SOUTH);
 		this.add(makeCardField(),BorderLayout.CENTER);;
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.pack();
 		this.setVisible(true);
+		this.setInFront(1);
 		this.validate();
 			
 		
@@ -38,21 +40,21 @@ public class BVGUI extends FLGFrame {
 	
 	private JTabbedPane makeCardField(){
 		
-		JTabbedPane retpan=new JTabbedPane();
-		retpan.addTab("StapelRückgabe",makeBookBackView());
-		retpan.addTab("Buchtypen",makeBookTypView());
-		return retpan;
+		centerpane=new JTabbedPane();
+		centerpane.addTab("StapelRückgabe",makeBookBackView(0)); // don't alter   
+		centerpane.addTab("Buchtypen",makeBookTypView(1));
+		return centerpane;
 	}
 	
-	private BVBookTypView makeBookTypView(){
+	private BVBookTypView makeBookTypView(int index){
 		BVBookTypView retpan;
-		retpan=new BVBookTypView(control);
+		retpan=new BVBookTypView(control,index);
 		return retpan;
 	}
 	
-	private BVBookBack makeBookBackView(){
+	private BVBookBack makeBookBackView(int index){
 		BVBookBack retpan;
-		retpan=new BVBookBack(control,control.connection);
+		retpan=new BVBookBack(control,index);
 		return retpan;
 	}
 	
@@ -79,6 +81,12 @@ public class BVGUI extends FLGFrame {
 	}
 	public void toClose(){
 		((FireButton)(BVCEventObjects.stop.ev)).fire();
+	}
+	
+	public void setInFront(int i){
+		centerpane.setComponentZOrder(centerpane.getComponent(i), 1);
+		
+		centerpane.validate();
 	}
 	public static void main(String[] args) {
 		BVControl bvc=new BVControl();

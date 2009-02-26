@@ -58,7 +58,7 @@ public class BVControl implements Runnable,BVSelectedEventListener {
 	}
 	
 	static private void debug(Object obj){
-		System.out.println(BVControl.class+": "+ obj);
+		//System.out.println(BVControl.class+": "+ obj);
 	}
 	
 	/**
@@ -69,7 +69,11 @@ public class BVControl implements Runnable,BVSelectedEventListener {
 	 */
 
 	public void thingSelected(BVSelectedEvent e) {
-		// TODO Auto-generated method stub
-		
+		switch (e.getId()){
+			case ISBNUnknownSelected:
+				gui.setInFront(((BVView)(e.getSource())).index);
+				break;
+				// TODO Auto-generated method stub
+		}
 	}
 }

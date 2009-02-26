@@ -53,6 +53,6 @@ public class BVDataBase {
 		
 	}
 	static private void debug(Object obj){
-		System.out.println(BVDataBase.class+": "+ obj);
+		//System.out.println(BVDataBase.class+": "+ obj);
 	}
 }

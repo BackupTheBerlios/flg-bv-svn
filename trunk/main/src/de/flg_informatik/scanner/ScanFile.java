@@ -68,7 +68,7 @@ public class ScanFile implements Runnable{
 		
 	}
 	static private void debug(Object obj){
-		System.out.println(ScanFile.class+": "+ obj);
+		//System.out.println(ScanFile.class+": "+ obj);
 	
 	}
 	/**

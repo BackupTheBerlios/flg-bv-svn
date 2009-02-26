@@ -8,7 +8,7 @@ import de.flg_informatik.buecherverwaltung.BVUtils.todo;
 import de.flg_informatik.ean13.Ean;
 
 public class BVBook {
-	public static final BigInteger praefix=new BigInteger("200000000000");
+	public static final BigInteger Book12=new BigInteger("200000000000");
 	public BigInteger ID;
 	public String Purchased;
  	public int Scoring_of_condition;
@@ -25,10 +25,54 @@ public class BVBook {
 		ISBN = isbn;
 	}
  	
- 	public static String getISBN(BigInteger ID){
- 		
+ 	public BVBook(BigInteger id) {
+		super();
+		try{
+			ResultSet rs=BVUtils.doQuery("SELECT * FROM Books WHERE ID="+id);
+			if (rs.first()){
+				ID = new BigInteger(rs.getString("ID"));
+				Purchased = rs.getString("Purchased"); 
+				Scoring_of_condition = rs.getInt("Scoring_of_condition");
+				Location = new BigInteger(rs.getString("Location"));
+				ISBN = new BigInteger(rs.getString("ISBN"));
+			}
+			
+		}catch(SQLException sqle){
+			// sqle.printStackTrace();
+		}
+		
+	}
+ 	
+ 	public BVBook(Ean ean) {
+		this(makeBookID(ean));
+ 	}
+ 	
+ 	public static int getLocation(Ean ean){
+ 		return getLocation(makeBookID(ean));	
+	}
+ 	
+ 	
+ 	public static synchronized int getLocation(BigInteger ID){
+ 		debug("getLocation "+ID);
  		try {
-			return BVUtils.doQuery("SELECT ISBN FROM Books WHERE ID="+ID).getString(1);
+			return BVUtils.doQuery("SELECT Location FROM Books WHERE ID="+ID).getInt(1);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return 0;
+		}
+		
+ 	}
+ 	
+ 	public static Ean getISBN(Ean ean){
+ 		return getISBN(makeBookID(ean));	
+	}
+ 	
+ 	
+ 	public static synchronized Ean getISBN(BigInteger ID){
+ 		debug("getIsbn "+ID);
+ 		try {
+			return new Ean(BVUtils.doQuery("SELECT ISBN FROM Books WHERE ID="+ID).getString(1));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -36,10 +80,34 @@ public class BVBook {
 		}
 		
  	}
+ 	
  	public static synchronized Ean makeBookEan(BigInteger num){
  		
- 		return new Ean(num.add(praefix));
+ 		return new Ean(num.add(Book12));
  	}
+ 	
+ 	public static BigInteger makeBookID(Ean ean){
+ 		if (isBookEan(ean)){
+ 			debug(ean.toString());
+ 			debug((ean.getEan().divide(BigInteger.TEN)).subtract(Book12));
+ 			return ((ean.getEan().divide(BigInteger.TEN)).subtract(Book12));
+ 		}else{
+ 			return null;
+ 		}
+ 	}
+ 	
+ 	public static boolean isBookEan(Ean ean){
+ 		if(Ean.checkEan(ean)[0]==Ean.Result.ok){
+ 			if (ean.toString().startsWith("20")){
+ 				return true;
+ 			}
+ 		}
+ 	return false;
+ 		
+ 	}
+
+
+
  	
  	
  	public static synchronized Ean[] makeNewBooks(int howmany, String ISBN){
@@ -56,7 +124,7 @@ public class BVBook {
  		}
  		
  		
- 		if ((howmany=BVUtils.doInsert("INSERT INTO Books VALUES "+strbuf))==0){ // something went wron
+ 		if ((howmany=BVUtils.doInsert("INSERT INTO Books VALUES "+strbuf))==0){ // something went wrong
  			return null;
  		}
  		ret=new Ean[howmany];
@@ -64,11 +132,10 @@ public class BVBook {
  			ResultSet result=BVUtils.doQuery("SELECT * FROM Books WHERE ISBN="+ISBN);
  			for (int i=0;i<howmany;i++){
  				result.absolute(i+1);
- 	 			ret[i]=new Ean(result.getString("ID"));
  	 			BVUtils.doUpdate("UPDATE Books SET ISBN=" +new BigInteger(ISBN).add(subtract13).toString() + " WHERE ID="+result.getString("ID"));
+ 	 			ret[i]=new Ean(new BigInteger(result.getString("ID")).add(Book12));
  	 		}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -80,5 +147,8 @@ public class BVBook {
  		
  		
  	}
+ 	static private void debug(Object obj){
+		//System.out.println(BVBook.class+": "+ obj);
+	}
 
 }
