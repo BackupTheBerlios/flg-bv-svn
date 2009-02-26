@@ -37,6 +37,7 @@ public class BVBookBack extends BVView {
 	private JLabel conditionf = new JLabel("w");
 	public BVBookBack(BVControl bvc,int index){
 		super(index);
+		debug(this.index);
 		BVSelectedEvent.addBVSelectedEventListener(this);
 		this.setLayout(new FlowLayout());
 		idf.setEditable(false);

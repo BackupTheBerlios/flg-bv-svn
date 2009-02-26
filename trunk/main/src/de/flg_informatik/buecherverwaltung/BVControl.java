@@ -8,6 +8,11 @@ import de.flg_informatik.utils.Version;
 
 public class BVControl implements Runnable,BVSelectedEventListener {
 	/**
+	 * controller for flg-bv,
+	 * get properties, start all components in order
+	 * 
+	 * should make use-case switch if a component can't cope with a (Scanner-)Event
+	 * need to have a model of tabs in gui
 	 * 
 	 */
 	private final String defaultfilename="main/buchverwaltung.default.xml";
@@ -20,7 +25,6 @@ public class BVControl implements Runnable,BVSelectedEventListener {
 	BVScanAdapter scanner;
 
 	public BVControl(){
-		// TODO: save properties after prog terminated
 		app_settings=new FLGProperties(app_settings,"buchverwaltung.xml", new File(defaultfilename), significantstring).getProperties();
 		debug(app_settings);
 		// BVCEventObjects.listener=this;

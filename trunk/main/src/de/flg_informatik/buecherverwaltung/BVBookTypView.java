@@ -49,6 +49,7 @@ public class BVBookTypView extends BVView implements ActionListener {
 	
 	public BVBookTypView(BVControl bvc, int index){
 		super(index);
+		debug(this.index);
 		me = this;
 		mymodell=new BVBookTypeDatamodell(this);
 		this.bvc=bvc;
@@ -70,6 +71,7 @@ public class BVBookTypView extends BVView implements ActionListener {
 	public void thingSelected(BVSelectedEvent e) {
 		switch (e.getId()){
 		case ISBNSelected:
+			bvc.gui.setInFront(index);
 			if (state==State.neu){
 				stateChanged(State.info);
 				

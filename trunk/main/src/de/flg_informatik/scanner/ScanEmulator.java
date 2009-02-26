@@ -74,7 +74,7 @@ public class ScanEmulator extends FLGFrame implements ActionListener{
 		ArrayList<String>  ret= new ArrayList<String> ();
 		
 		for (int i=1; i<=num; i++){
-			ret.add(new Ean(new BigInteger("9783141006000").add(new BigInteger(i+""))).toString());
+			ret.add(new Ean(new BigInteger("978314100600").add(new BigInteger(i+""))).toString());
 		}
 		return ret;
 		

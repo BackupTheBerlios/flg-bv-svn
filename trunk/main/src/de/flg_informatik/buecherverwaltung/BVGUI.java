@@ -84,13 +84,17 @@ public class BVGUI extends FLGFrame {
 	}
 	
 	public void setInFront(int i){
-		centerpane.setComponentZOrder(centerpane.getComponent(i), 1);
-		
-		centerpane.validate();
+		debug("setinfront");
+		centerpane.setComponentZOrder(centerpane.getComponent(i), 0);
+		centerpane.doLayout();
+		this.validate();
 	}
 	public static void main(String[] args) {
 		BVControl bvc=new BVControl();
 		
+	}
+	static private void debug(Object obj){
+		System.out.println(BVGUI.class+": "+ obj);
 	}
 
 }
