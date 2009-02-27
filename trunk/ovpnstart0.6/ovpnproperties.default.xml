@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Hi</comment>
+	<entry key="flgovpnV0">.6</entry>
+	<entry key="osses">linux,winnt</entry>
+	<entry key="hostname">10.16.1.1</entry>
+<entry key="username">hr</entry>
+	<entry key="linux.mountpath">~/schulserver/</entry>
+	<entry key="linux.mountpoints">H,T</entry>
+	<entry key="linux.mountshares">hr,share</entry>
+	<entry key="winnt.volumes">H:</entry>
+	<entry key="winnt.mountshares">hr</entry>
+</properties>
