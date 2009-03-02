@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Saved as copy of /home/notkers/workspace/ovpnstart/ovpnproperties.default.xml, Mon Mar 02 21:56:31 CET 2009</comment>
+<entry key="osses">linux,winnt</entry>
+<entry key="linux.mountshares">hr,share</entry>
+<entry key="linux.mountpath">~/schulserver/</entry>
+<entry key="username">hr</entry>
+<entry key="winnt.volumes">H:</entry>
+<entry key="propertyfilename">/home/notkers/.ovpnproperties.xml</entry>
+<entry key="linux.mountpoints">H,T</entry>
+<entry key="hostname">10.16.1.1</entry>
+<entry key="winnt.mountshares">hr</entry>
+<entry key="flgovpnV0">.6</entry>
+</properties>
