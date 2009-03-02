@@ -30,6 +30,7 @@ public class StartVPNControl implements ActionListener, Runnable {
 		properties = this.svpn.flgprops.getProperties();
 		cstatus=cinit;
 		(new Thread(this)).start();
+		
 	}
 	
 	public static void main(String[] args){
@@ -115,6 +116,11 @@ public class StartVPNControl implements ActionListener, Runnable {
 				
 		if (e.getSource()== svpn.beenden){
 				beenden=true;
+				if(javax.swing.JOptionPane.showConfirmDialog(this.svpn, "Wirklich beenden, Verbindung wird nicht getrennt!", "Beenden", javax.swing.JOptionPane.YES_NO_OPTION)==javax.swing.JOptionPane.YES_OPTION){
+					this.svpn.dispose();
+					System.exit(0); 
+				}
+				
 			}
 			
 			

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="de/flg_informatik/paedmlovpn/CopyOfDecissionBox.java|de/flg_informatik/paedmlovpn/CopyOfStartTelnet.java|de/flg_informatik/paedmlovpn/CopyOfStartTelnetold.java|de/flg_informatik/paedmlovpn/CopyOfStartVPNControl.java|de/flg_informatik/paedmlovpn/CopyOfStartVPNSetup090125.java|de/flg_informatik/paedmlovpn/DecissionBox.java|de/flg_informatik/paedmlovpn/StartVPNSetup.java|de/flg_informatik/paedmlovpn/StartVPNSetup090226.java" kind="src" path="src"/>
+	<classpathentry excluding="examples/|examples/nntp/|examples/ntp/|org/apache/commons/net/bsd/|org/apache/commons/net/ftp/|org/apache/commons/net/ftp/parser/|org/apache/commons/net/nntp/|org/apache/commons/net/ntp/|org/apache/commons/net/pop3/|org/apache/commons/net/smtp/|org/apache/commons/net/tftp/" kind="src" path="commons"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="lib" path="src/flgutils.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
