@@ -17,6 +17,12 @@ public class BVGUI extends FLGFrame {
 	/**
 	 * Hauptklasse, jeder usecase bekommt ein Panel im JTabbedPane
 	 */
+	enum tabbedpanes{
+		StapelRückgabe,
+		Buchtypen,
+		
+		
+	}
 	private static final long serialVersionUID = 1L;
 	BVControl control;
 	//BVBooksDatamodell bvbv;
@@ -41,8 +47,8 @@ public class BVGUI extends FLGFrame {
 	private JTabbedPane makeCardField(){
 		
 		centerpane=new JTabbedPane();
-		centerpane.addTab("StapelRückgabe",makeBookBackView(0)); // don't alter   
-		centerpane.addTab("Buchtypen",makeBookTypView(1));
+		centerpane.addTab("StapelRückgabe",makeBookBackView(tabbedpanes.StapelRückgabe.ordinal())); // don't alter   
+		centerpane.addTab("Buchtypen",makeBookTypView(tabbedpanes.Buchtypen.ordinal()));
 		return centerpane;
 	}
 	
@@ -85,9 +91,9 @@ public class BVGUI extends FLGFrame {
 	
 	public void setInFront(int i){
 		debug("setinfront");
-		centerpane.setComponentZOrder(centerpane.getComponent(i), 0);
+		centerpane.setSelectedIndex(i);
 		centerpane.doLayout();
-		this.validate();
+		centerpane.validate();
 	}
 	public static void main(String[] args) {
 		BVControl bvc=new BVControl();
