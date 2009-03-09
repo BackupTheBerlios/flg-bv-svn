@@ -1,8 +1,8 @@
 package de.flg_informatik.utils;
 
 public class Version implements Comparable<Version>{
-	int[] version={0,0};
-	String date = "0000-00-00";
+	int[] version={1,1};
+	String date = "2009-03-01";
 	public Version(){
 		System.out.println(this);
 	}

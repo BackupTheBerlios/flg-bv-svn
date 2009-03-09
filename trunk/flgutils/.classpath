@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="de/flg_informatik/utils/DecissionBoxOld.java" kind="src" path="src"/>
+	<classpathentry excluding="de/flg_informatik/utils/DecissionBoxOld.java|de/flg_informatik/utils/Test.java|de/flg_informatik/utils/FileDialog.java|de/flg_informatik/utils/XmlHashMap.java|de/flg_informatik/utils/XmlProgramProperties.java" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="src"/>
 </classpath>

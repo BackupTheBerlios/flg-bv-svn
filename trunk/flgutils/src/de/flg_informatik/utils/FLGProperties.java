@@ -1,35 +1,22 @@
 package de.flg_informatik.utils;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
-import java.awt.Dialog;
 import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.Panel;
 import java.awt.TextField;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-
 
 public class FLGProperties extends  Panel implements TextListener,FocusListener{
 	/**
@@ -45,7 +32,6 @@ public class FLGProperties extends  Panel implements TextListener,FocusListener{
 	private ArrayList<String> groups;
 	private ArrayList<ArrayList<String>> keys;
 	private ArrayList<TabPanel.LinePanel> changelist = new ArrayList<TabPanel.LinePanel>();
-	private File outfile;
 	private boolean changed=false;
 	/**
 	 * @param (Properties properties) Properties als Objekt für die Rückgabe, wenn null, dann wird das Propertyfile (infile bzw defaultfile) geladen.
@@ -133,20 +119,36 @@ public class FLGProperties extends  Panel implements TextListener,FocusListener{
 		File infile = new File(infilename);
 		File getfile = new File(infilename);
 		Properties props = new Properties();
-		while(!props.containsKey(significantkey)){
-			try{FileInputStream fis =new FileInputStream(getfile);
+		// Try infile
+		try{
+			try{
+				FileInputStream fis =new FileInputStream(getfile);
 				props.loadFromXML(fis);
+				if (!props.containsKey(significantkey)){ // infile not valid
+					javax.swing.JOptionPane.showMessageDialog(null, "Die gefundene Einstellungsdatei hat nicht die richtige Kennung (key:\""+significantkey+"\"!");
+					throw new java.io.FileNotFoundException(); // like infile missing
+				}
 			}catch(java.io.FileNotFoundException e){
-				javax.swing.JOptionPane.showMessageDialog(null, "Eine Einstellungsdatei wurde nicht in ihrem Benutzerverzeichnis gefunden. Es werden die Standardeinstellungen geladen.");
+				// infile file missing
+				javax.swing.JOptionPane.showMessageDialog(null, "Eine gültige Einstellungsdatei wurde nicht in ihrem Benutzerverzeichnis gefunden. Es werden die Standardeinstellungen geladen.");
+				getfile=defaultfile;
+				debug("loading defaults from: "+getfile.getAbsolutePath());
+				try{
+					FileInputStream fis =new FileInputStream(getfile);
+					props.loadFromXML(fis);
+				}catch(java.io.FileNotFoundException fnfe2){
+					javax.swing.JOptionPane.showMessageDialog(null, "Konnte die Standardeinstellungen nicht laden, näheres in der Fehlerkonsole!");
+				}
+				if (!props.containsKey(significantkey)){
+					javax.swing.JOptionPane.showMessageDialog(null, "Die Default-Einstellungsdatei hat nicht die richtige Kennung (key:\""+significantkey+"\"! Breche das Programm ab!");
+					System.exit(1);
+				}
 				/* switch(DecisionBox.getLabel(this,"Einstellungsdatei",
-							new String[]{"In Ihrem Benutzerverzeichnis gibt es keine",
-								"Einstellungsdatei: (\""+infilename+"\")",
-								"Was wollen Sie: Die Einstellungsdatei..."},
-							new String[]{"... aus default neu erstellen?","...suchen?"})){
-						case 1:{ */
-							getfile=defaultfile;
-							debug("loading defaults from: "+getfile.getAbsolutePath());
-							
+				new String[]{"In Ihrem Benutzerverzeichnis gibt es keine",
+					"Einstellungsdatei: (\""+infilename+"\")",
+					"Was wollen Sie: Die Einstellungsdatei..."},
+				new String[]{"... aus default neu erstellen?","...suchen?"})){
+			case 1:{ */
 						/* }
 						case 2:{
 							JFileChooser jfc = new javax.swing.JFileChooser();
@@ -157,17 +159,14 @@ public class FLGProperties extends  Panel implements TextListener,FocusListener{
 							break;
 						}
 					} */
-			}catch(java.util.InvalidPropertiesFormatException e){
-				debug("Format of props not valid!");
-			}
-			catch(java.io.IOException e){
-				e.printStackTrace();
-			}
-			//File outfile=new File(infile.getAbsolutePath());
-			//efaultfile=infile;
-			
-			
 		}
+		}catch(java.util.InvalidPropertiesFormatException e){
+			debug("Format of props not valid!");
+		}
+		catch(java.io.IOException e){
+			e.printStackTrace();
+		}
+				
 		if (getfile.getAbsolutePath().equals(defaultfile.getAbsolutePath())){
 			// this is a very dirty hack for having a valid property set to save
 			this.savePropertiesToXML(infile, props, "Saved as copy of "+ defaultfile.getAbsolutePath()+", "+new java.util.Date().toString());
@@ -229,6 +228,8 @@ public class FLGProperties extends  Panel implements TextListener,FocusListener{
 		 * Creates the list of Label-TextField pairs
 		 * TextFields of dotted propkeys are set "setEditable(false)"
 		 * and grayed out
+		 * 
+		 * TextFields of *propkeys are displayed as ****
 		 */
 		private static final long serialVersionUID = -4718591306709206094L;
 
@@ -298,7 +299,7 @@ public class FLGProperties extends  Panel implements TextListener,FocusListener{
 	
 
 	public void focusGained(FocusEvent e) {
-		// TODO Auto-generated method stub
+		// nothing to do
 		
 	}
 	
