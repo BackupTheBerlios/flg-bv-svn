@@ -93,7 +93,9 @@ public class MountDirLin extends MountVPNDir implements Runnable {
 					case 0:
 						status=statsucmnt;
 						break;
-						
+					case 32:
+						printError("Fehler beim mounten von "+dir+" haben Sie mount-Unterstützung für smb-filesysteme?");
+						break;	
 					default:
 						printError( this.toString() + " OSCExitCode: " + res );
 						break;
@@ -201,6 +203,10 @@ public class MountDirLin extends MountVPNDir implements Runnable {
 			printError("askMnt(): " + this.toString() + " OSExitCode: " + res );
 			return false;
 		}
+	}
+	public static void main(String[] args) {
+		new MountDirLin(new java.util.LinkedList<String>()).askMnt("H");
+		
 	}
 	
 }

@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: de.flg_informatik.paedmlovpn.StartVPNControl
+Class-Path: flgutils.jar
+
