@@ -6,24 +6,29 @@ import java.util.Properties;
 import de.flg_informatik.utils.FLGProperties;
 import de.flg_informatik.utils.Version;
 
-public class BVControl implements Runnable,BVSelectedEventListener {
+public class BVControl implements Runnable {
 	/**
 	 * controller for flg-bv,
 	 * get properties, start all components in order
 	 * 
-	 * should make use-case switch if a component can't cope with a (Scanner-)Event
-	 * need to have a model of tabs in gui
+	 * doesn't implement BVSelectedEventListener but
+	 * has a static(!) thingSelected(BVSelectedEvent e)
+	 * to make usecase switch if a selected component (on top)
+	 * can't consume a (Scanner-)Event
+	 * 
+	 * 
 	 * 
 	 */
 	private final String defaultfilename="main/buchverwaltung.default.xml";
 	private final String significantstring=".BuchverwaltungV01";
+	private static BVControl thecontrol;
 	Properties app_settings;
 	Version version=new Version(new int[]{0,5},"09-02-02");
 	BVGUI gui;
 	BVStorage bvs;
 	Connection connection;
 	BVScanAdapter scanner;
-
+	
 	public BVControl(){
 		app_settings=new FLGProperties(app_settings,"buchverwaltung.xml", new File(defaultfilename), significantstring).getProperties();
 		debug(app_settings);
@@ -39,14 +44,16 @@ public class BVControl implements Runnable,BVSelectedEventListener {
 				PropertiesDialog.showSettingsDialog(app_settings,"buchverwaltung.xml", new File(defaultfilename), significantstring);
 			}
 		} while (connection == null);
-
+		BVControl.thecontrol=this;
 		BVUtils.setParams(this,connection);
 		bvs=new BVStorage(this,connection);
 		gui=new BVGUI(this);
 		scanner=new BVScanAdapter(this);
 			
 	}
-	
+	public static BVControl getControl(){
+		return thecontrol;
+	}
 	
 	
 	
@@ -66,18 +73,27 @@ public class BVControl implements Runnable,BVSelectedEventListener {
 	}
 	
 	/**
-	 * @param args
-	 * BVSelectetEvent forwarded by any view which doesn't know what to do
-	 * with that particular BVSelectedEvent,
-	 * should change tab on top and forward event to it.
+	 * @param BVSelectetEvent: forwarded by selected (on top) view which
+	 * doesn't know what to do with that particular BVSelectedEvent.
+	 * 
+	 * typically triggered by view's BVSelectedEventListener: 
+	 * 		switch(e.getId()) 
+	 * 			...default: if (BVGUI.isSelected(this)){
+	 * 							//maybe some cleaning up ...
+	 * 							BVControl.thingSelected(e);
+	 * 						}
+	 * 
+	 * 
 	 */
 
-	public void thingSelected(BVSelectedEvent e) {
+	public static void thingSelected(BVSelectedEvent e) {
 		switch (e.getId()){
 			case ISBNUnknownSelected:
-				gui.setInFront(((BVView)(e.getSource())).index);
+				BVGUI.selectView(BVUsecases.Buchtypen);
 				break;
-				// TODO Auto-generated method stub
+			case BookLeasedSelected:
+				BVGUI.selectView(BVUsecases.StapelRückgabe);
+				break;	
 		}
 	}
 }

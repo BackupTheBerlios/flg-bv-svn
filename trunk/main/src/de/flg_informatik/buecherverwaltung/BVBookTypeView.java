@@ -22,7 +22,7 @@ import de.flg_informatik.Etikett.EtikettDruck;
 import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 
-public class BVBookTypView extends BVView implements ActionListener {
+public class BVBookTypeView extends BVView implements ActionListener {
 	/**
 	 * 
 	 */
@@ -31,12 +31,11 @@ public class BVBookTypView extends BVView implements ActionListener {
 	private final String myname="Buchtypen";
 	boolean[] columnresizable={false,true,true,true}; 
 	private BVBookTypeDatamodell mymodell;
-	private BVBookTypView me;
+	private BVBookTypeView me;
 	private int lastselected=1;
 	private BVChooser bvchooser;
 	private Vector<String> booktyp=null;
 	private BookTypeWhat booktypewhat = null;
-	private BVControl bvc;
 	private BVJPanel bvjp;
 	enum State{
 		info,
@@ -47,12 +46,9 @@ public class BVBookTypView extends BVView implements ActionListener {
 	}
 	State state;
 	
-	public BVBookTypView(BVControl bvc, int index){
-		super(index);
-		debug(this.index);
+	public BVBookTypeView(){
 		me = this;
 		mymodell=new BVBookTypeDatamodell(this);
-		this.bvc=bvc;
 		this.bvjp=new BVJPanel(me,mymodell);
 		setLayout(new BorderLayout());
 		add(bvjp,BorderLayout.CENTER);
@@ -71,7 +67,6 @@ public class BVBookTypView extends BVView implements ActionListener {
 	public void thingSelected(BVSelectedEvent e) {
 		switch (e.getId()){
 		case ISBNSelected:
-			bvc.gui.setInFront(index);
 			if (state==State.neu){
 				stateChanged(State.info);
 				
@@ -92,17 +87,13 @@ public class BVBookTypView extends BVView implements ActionListener {
 			booktyp=mymodell.getBookType(e.getEan());
 			
 			break;
-		case BookUnknownSelected:	
-			
-			
-		}
-		/* 
-		 * Bin ich vorne?
-		 * Dann gebe ich an den Controller ab
-		 */	
-		if (((JTabbedPane)(this.getParent())).indexOfTab(myname)==((JTabbedPane)(this.getParent())).getSelectedIndex()){
+		default:	
+			if (BVGUI.isSelectedView(this)){
+				BVControl.thingSelected(e);
+			}
 			
 		}
+		
 			
 			
 		booktypewhat.reMakePanel();
@@ -381,7 +372,7 @@ public class BVBookTypView extends BVView implements ActionListener {
 		
 	}
 	static private void debug(Object obj){
-		System.out.println(BVBookTypView.class+": "+ obj);
+		System.out.println(BVBookTypeView.class+": "+ obj);
 	}
 	
 	

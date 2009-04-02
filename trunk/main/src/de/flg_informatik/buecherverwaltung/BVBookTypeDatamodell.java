@@ -20,10 +20,10 @@ public class BVBookTypeDatamodell extends javax.swing.table.AbstractTableModel{
 	}
 	
 	Vector<String> headers;
-	BVBookTypView myview;
+	BVBookTypeView myview;
 	Vector<Vector<Object>> tablecells=new Vector<Vector<Object>>(); 
 	int numofcolumns;
-	public BVBookTypeDatamodell(BVBookTypView myview) {
+	public BVBookTypeDatamodell(BVBookTypeView myview) {
 		this.myview=myview;
 		this.headers=getColumnHeaders("Booktypes");
 		this.numofcolumns=getNumOfDBColumns();

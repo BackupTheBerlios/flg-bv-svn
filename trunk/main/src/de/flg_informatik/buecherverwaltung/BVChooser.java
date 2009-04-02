@@ -10,7 +10,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import de.flg_informatik.buecherverwaltung.BVBookTypView.State;
+import de.flg_informatik.buecherverwaltung.BVBookTypeView.State;
 import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 
 public class BVChooser extends JPanel implements ActionListener{

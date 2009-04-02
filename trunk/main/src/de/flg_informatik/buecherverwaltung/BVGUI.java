@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,21 +16,19 @@ import de.flg_informatik.utils.FireButton;
 
 public class BVGUI extends FLGFrame {
 
-	/**
+	/*
 	 * Hauptklasse, jeder usecase bekommt ein Panel im JTabbedPane
+	 * definiert in BVUsecases
+	 * 
 	 */
-	enum tabbedpanes{
-		StapelRückgabe,
-		Buchtypen,
-		
-		
-	}
+	
 	private static final long serialVersionUID = 1L;
+	private static BVGUI thegui;
 	BVControl control;
-	//BVBooksDatamodell bvbv;
 	FireButton cancel = new FireButton("Abbrechen");
 	JTabbedPane centerpane;
 	public BVGUI(BVControl control){
+		thegui=this;
 		this.control=control;
 		this.setLayout(new BorderLayout());
 		//this.bvbv=new BVBooksDatamodell(control, control.connection);
@@ -37,32 +37,26 @@ public class BVGUI extends FLGFrame {
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.pack();
 		this.setVisible(true);
-		this.setInFront(1);
+		selectView(BVUsecases.Buchtypen); // default usecase
 		this.validate();
-			
-		
-		
 	}
+	
+	public static boolean isSelectedView(BVView view){
+		debug(view.getName());
+		debug(thegui.centerpane.getSelectedComponent().getName());
+		return (view.getName().equals(thegui.centerpane.getSelectedComponent().getName()));
+	}
+	
 	
 	private JTabbedPane makeCardField(){
 		
 		centerpane=new JTabbedPane();
-		centerpane.addTab("StapelRückgabe",makeBookBackView(tabbedpanes.StapelRückgabe.ordinal())); // don't alter   
-		centerpane.addTab("Buchtypen",makeBookTypView(tabbedpanes.Buchtypen.ordinal()));
+		for (BVUsecases usecase:BVUsecases.values()){
+			centerpane.addTab(usecase.view.getName(),usecase.view);
+		}
 		return centerpane;
 	}
 	
-	private BVBookTypView makeBookTypView(int index){
-		BVBookTypView retpan;
-		retpan=new BVBookTypView(control,index);
-		return retpan;
-	}
-	
-	private BVBookBack makeBookBackView(int index){
-		BVBookBack retpan;
-		retpan=new BVBookBack(control,index);
-		return retpan;
-	}
 	
 	
 	
@@ -89,11 +83,11 @@ public class BVGUI extends FLGFrame {
 		((FireButton)(BVCEventObjects.stop.ev)).fire();
 	}
 	
-	public void setInFront(int i){
+	public static void selectView(BVUsecases usecase){
 		debug("setinfront");
-		centerpane.setSelectedIndex(i);
-		centerpane.doLayout();
-		centerpane.validate();
+		thegui.centerpane.setSelectedIndex(usecase.ordinal());
+		thegui.centerpane.doLayout();
+		thegui.centerpane.validate();
 	}
 	public static void main(String[] args) {
 		BVControl bvc=new BVControl();

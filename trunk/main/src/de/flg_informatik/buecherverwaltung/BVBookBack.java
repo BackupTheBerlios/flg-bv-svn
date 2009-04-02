@@ -35,15 +35,12 @@ public class BVBookBack extends BVView {
 	private TextField idf = new TextField("",13);
 	private TextField titlef = new TextField("",30);
 	private JLabel conditionf = new JLabel("w");
-	public BVBookBack(BVControl bvc,int index){
-		super(index);
-		debug(this.index);
+	public BVBookBack(){
 		BVSelectedEvent.addBVSelectedEventListener(this);
 		this.setLayout(new FlowLayout());
 		idf.setEditable(false);
 		titlef.setEditable(false);
 		conditionf.setFont(new Font(null,	Font.BOLD, 96 ));
-		this.bvc=bvc;
 		this.add(idf);
 		this.add(titlef);
 		this.add(conditionf);
@@ -56,7 +53,6 @@ public class BVBookBack extends BVView {
 	
 	
 	
-	private BVControl bvc;
 	/**
 	 * @param args
 	 */
@@ -79,18 +75,23 @@ public class BVBookBack extends BVView {
 	}
 
 	public void thingSelected(BVSelectedEvent e) {
-		debug("selected "+e.getEan());
 		debug(e.getId());
 		switch (e.getId()){
-			case BookLeasedSelected:
+			case BookLeasedSelected: // we stay on top
 				incCondition(BVBook.makeBookID(e.getEan())); // same Book = Condition + 1
 				// next Book = Condition unchanged
 				break;
 				
 			default:
-				toClose();
-				
-		// TODO Auto-generated method stub
+				if (book!=null){ // we have been in business
+					toClose(); // close Transaction
+				}else{
+					// somebody else's problem
+				}
+				if (BVGUI.isSelectedView(this)){ // we have been on top
+					BVControl.thingSelected(e); // passing control, another usecase
+				}
+			
 		}
 	}
 	
