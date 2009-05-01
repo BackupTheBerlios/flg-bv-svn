@@ -8,17 +8,14 @@ import java.math.BigInteger;
 
 import de.flg_informatik.ean13.Ean;
 import de.flg_informatik.scanner.ScanFile;
+import de.flg_informatik.scanner.ScanAdapter;
 import de.flg_informatik.utils.FLGProperties;
 
 /**
  * @author notkers
  *
  */
-public class BVScanAdapter {
-	enum types { // enumeration of ScannerInterfaces 
-		emulator,
-		file;
-	}
+public class BVScanAdapter implements ScanAdapter{
 	
 	BVScanAdapter(BVControl control){
 		File file1=null; //TODO should be an enumeration of /dev/tty files, by now of Property scanner.scanfile
@@ -27,6 +24,12 @@ public class BVScanAdapter {
 				file1=new File(new FLGProperties(null,"buchverwaltung.xml", new File("buchverwaltung.default.xml"), ".BuchverwaltungV01").getProperties().getProperty("scanner.emulator.filename_linux"));
 			}
 		}
+		if (control.app_settings.getProperty("scanner.typ").equals("file")){
+			if (System.getProperty("os.name").equals("Linux")){
+				file1=new File(new FLGProperties(null,"buchverwaltung.xml", new File("buchverwaltung.default.xml"), ".BuchverwaltungV01").getProperties().getProperty("scanner.file.filename_linux"));
+			}
+		}
+		debug(file1);
 		initScanner(file1);
 		
 	}
@@ -34,6 +37,7 @@ public class BVScanAdapter {
 	public synchronized void eanScanned(String eanstring){
 		Ean ean=new Ean(eanstring);
 		if (BVBookType.isISBN(ean)){ // Ean-Bookland -> ISBN
+			debug("isISBN()");
 			if ( BVBookType.isKnownISBN(ean)){
 				BVSelectedEvent.makeEvent(this, BVSelectedEvent.SelectedEventType.ISBNSelected, ean);
 			}else{
@@ -69,7 +73,7 @@ public class BVScanAdapter {
 	 */
 	
 	private boolean initScanner(File file){
-		if (ScanFile.getScan1(this, file)==null){
+		if (ScanFile.getScanner(this, file)==null){
 			return false;
 		}
 		return true;

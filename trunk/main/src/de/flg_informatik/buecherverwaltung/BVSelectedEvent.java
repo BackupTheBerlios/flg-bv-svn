@@ -107,7 +107,7 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 	
 	private static final long serialVersionUID = 1L;
 	private static void debug(Object o) {
-		//System.out.println(BVSelectedEvent.class+": "+o);
+		System.out.println(BVSelectedEvent.class+": "+o);
 		
 	}
 

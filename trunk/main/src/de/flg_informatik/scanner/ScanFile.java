@@ -5,7 +5,7 @@ import java.io.FileReader;
 import de.flg_informatik.buecherverwaltung.BVScanAdapter;
 
 
-public class ScanFile implements Runnable{
+public class ScanFile extends Scanner implements Runnable{
 	FileReader rf;
 	BVScanAdapter adapter;
 	static ScanFile scanFile=null; 
@@ -68,21 +68,28 @@ public class ScanFile implements Runnable{
 		
 	}
 	static private void debug(Object obj){
-		//System.out.println(ScanFile.class+": "+ obj);
+		//
+		System.out.println(ScanFile.class+": "+ obj);
 	
 	}
 	/**
 	 *  Testing only
 	 */
 	public static void main(String[] args) {
-		getScan1(null, new File("C:\\temp\\temp.ll") );
+		//getScan1(null, new File("C:\\temp\\temp.ll") );
+	getScanner(null, new File("/dev/ttyUSB0"));
 	}
-	public static ScanFile getScan1(BVScanAdapter adapter, File file) {
+	public static Scanner getScanner(BVScanAdapter adapter, Object file) {
 		debug("try");
 		if (scanFile==null){
-			new ScanFile(adapter, file);
+			new ScanFile(adapter, (File)file);
 		}	
 		return scanFile;
 		
 	}
+	public void closeScanner() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

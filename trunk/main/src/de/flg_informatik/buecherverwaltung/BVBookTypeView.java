@@ -28,7 +28,6 @@ public class BVBookTypeView extends BVView implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	final int[] columnwidth={13,20,50,50};
-	private final String myname="Buchtypen";
 	boolean[] columnresizable={false,true,true,true}; 
 	private BVBookTypeDatamodell mymodell;
 	private BVBookTypeView me;
@@ -72,6 +71,7 @@ public class BVBookTypeView extends BVView implements ActionListener {
 				
 			}
 			booktyp=mymodell.getBookType(e.getEan());
+			debug(booktyp);
 			break;
 		case ISBNUnknownSelected:
 			booktyp=newBooktype();

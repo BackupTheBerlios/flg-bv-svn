@@ -24,11 +24,14 @@ public class BVGUI extends FLGFrame {
 	
 	private static final long serialVersionUID = 1L;
 	private static BVGUI thegui;
+	public FireButton cancelbutton = new FireButton("Abbrechen");
+	public FireButton closebutton = new FireButton("Beenden");
 	BVControl control;
-	FireButton cancel = new FireButton("Abbrechen");
 	JTabbedPane centerpane;
 	public BVGUI(BVControl control){
 		thegui=this;
+		this.setQuitsystem(false);
+		this.setClosewindow(false);
 		this.control=control;
 		this.setLayout(new BorderLayout());
 		//this.bvbv=new BVBooksDatamodell(control, control.connection);
@@ -42,8 +45,9 @@ public class BVGUI extends FLGFrame {
 	}
 	
 	public static boolean isSelectedView(BVView view){
-		debug(view.getName());
-		debug(thegui.centerpane.getSelectedComponent().getName());
+		debug("isSelectedView() from: "+view.getName());
+		debug("Selected is: "+ thegui.centerpane.getSelectedComponent().getName());
+		debug(view.getName().equals(thegui.centerpane.getSelectedComponent().getName()));
 		return (view.getName().equals(thegui.centerpane.getSelectedComponent().getName()));
 	}
 	
@@ -71,20 +75,20 @@ public class BVGUI extends FLGFrame {
 			add(new JPanel());
 			add(new JPanel());
 			add(new JPanel(new FlowLayout()){{
-				this.add((FireButton)(BVCEventObjects.cancel.ev));
-				BVCEventObjects.cancel.register();
-				this.add((FireButton)(BVCEventObjects.stop.ev));
-				BVCEventObjects.stop.register();
-				}});
+				this.add(cancelbutton);
+				cancelbutton.addActionListener(control);
+				this.add(closebutton);
+				closebutton.addActionListener(control);
+			}});
 		}});
 		return retpan;
 	}
 	public void toClose(){
-		((FireButton)(BVCEventObjects.stop.ev)).fire();
+		closebutton.fire();
 	}
 	
 	public static void selectView(BVUsecases usecase){
-		debug("setinfront");
+		debug("selectView: "+ usecase);
 		thegui.centerpane.setSelectedIndex(usecase.ordinal());
 		thegui.centerpane.doLayout();
 		thegui.centerpane.validate();

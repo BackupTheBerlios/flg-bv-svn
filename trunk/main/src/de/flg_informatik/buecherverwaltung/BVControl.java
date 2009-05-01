@@ -1,12 +1,14 @@
 package de.flg_informatik.buecherverwaltung;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.Connection;
 import java.util.Properties;
 import de.flg_informatik.utils.FLGProperties;
 import de.flg_informatik.utils.Version;
 
-public class BVControl implements Runnable {
+public class BVControl implements Runnable,ActionListener {
 	/**
 	 * controller for flg-bv,
 	 * get properties, start all components in order
@@ -31,8 +33,7 @@ public class BVControl implements Runnable {
 	
 	public BVControl(){
 		app_settings=new FLGProperties(app_settings,"buchverwaltung.xml", new File(defaultfilename), significantstring).getProperties();
-		debug(app_settings);
-		// BVCEventObjects.listener=this;
+		debug("fetched properties");
 		if (!BVDataBase.getDataBankDrivers(app_settings))
 			javax.swing.JOptionPane.showMessageDialog(null, "'sun.jdbc.odbc.JdbcOdbcDriver' or 'com.mysql.jdbc.Driver' nicht gefunden.\nDas Programm wird jetzt beendet");
 		
@@ -59,6 +60,7 @@ public class BVControl implements Runnable {
 	
 	private void shutDown(){
 		BVDataBase.CloseConnection(connection);
+		debug("closing");
 		// TODO: uncomment, implement
 		// savePropertiesToXML(file, props, comment);
 		System.exit(0);
@@ -69,7 +71,7 @@ public class BVControl implements Runnable {
 	}
 	
 	static private void debug(Object obj){
-		//System.out.println(BVControl.class+": "+ obj);
+		System.out.println(BVControl.class+": "+ obj);
 	}
 	
 	/**
@@ -88,6 +90,7 @@ public class BVControl implements Runnable {
 
 	public static void thingSelected(BVSelectedEvent e) {
 		switch (e.getId()){
+			case ISBNSelected:
 			case ISBNUnknownSelected:
 				BVGUI.selectView(BVUsecases.Buchtypen);
 				break;
@@ -95,5 +98,10 @@ public class BVControl implements Runnable {
 				BVGUI.selectView(BVUsecases.StapelRückgabe);
 				break;	
 		}
+	}
+	public void actionPerformed(ActionEvent e) {
+		shutDown();
+		
+		
 	}
 }
