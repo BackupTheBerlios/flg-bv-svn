@@ -37,7 +37,7 @@ public class BVBookTypeView extends BVView implements ActionListener {
 	private BookTypeWhat booktypewhat = null;
 	private BVJPanel bvjp;
 	enum State{
-		info,8
+		info,
 		edit,
 		druck,
 		register,
