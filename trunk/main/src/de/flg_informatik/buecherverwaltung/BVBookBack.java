@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,7 +36,11 @@ public class BVBookBack extends BVView {
 	private TextField idf = new TextField("",13);
 	private TextField titlef = new TextField("",30);
 	private JLabel conditionf = new JLabel("w");
+	private BVBook lastbook=null;
 	public BVBookBack(){
+		ConsumedEvents.addElement(
+				BVSelectedEvent.SelectedEventType.BookLeasedSelected
+				);
 		BVSelectedEvent.addBVSelectedEventListener(this);
 		this.setLayout(new FlowLayout());
 		idf.setEditable(false);
@@ -44,86 +49,47 @@ public class BVBookBack extends BVView {
 		this.add(idf);
 		this.add(titlef);
 		this.add(conditionf);
-		publish(book);
 		this.setVisible(true);
 		
 		
 	}
-	
-	
-	
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void itemSelected(ListSelectionEvent e) {
 		// No List, no Selection, nurh
 		
 	}
-	public void toClose(){
-		synchronized(condition){
-			condition.notify();
-			book=null;
-			publish(book);
-		}
-	}
-
-	public void thingSelected(BVSelectedEvent e) {
-		debug(e.getId());
+	
+	public synchronized void thingSelected(BVSelectedEvent e) {
+		debug(e.getEan());
 		switch (e.getId()){
-			case BookLeasedSelected: // we stay on top
-				incCondition(BVBook.makeBookID(e.getEan())); // same Book = Condition + 1
-				// next Book = Condition unchanged
-				break;
-				
-			default:
-				if (book!=null){ // we have been in business
-					toClose(); // close Transaction
+		
+			case BookLeasedSelected:// we stay on top
+				if (lastbook != null){
+					if (BVBook.makeBookID(e.getEan()).equals(lastbook.ID)){
+						incCondition(lastbook);
+					}else{
+						commit(lastbook);
+						lastbook = new BVBook(e.getEan());
+					}	
 				}else{
-					// somebody else's problem
+					lastbook = new BVBook(e.getEan());
 				}
-				if (BVGUI.isSelectedView(this)){ // we have been on top
-					BVControl.thingSelected(e); // passing control, another usecase
-				}
-			
-		}
-	}
-	
-	
-	private boolean bookBack(BigInteger id){
-		
-		
-		synchronized(condition) {
-			book=new BVBook(id);
-			debug (1);
-			//condition=Integer.valueOf(book.Scoring_of_condition);
-			publish(book);
-			
-			try{
-				condition.wait();
-				
-			}catch(InterruptedException ie){
-				ie.printStackTrace();
+				debug(publish(lastbook));
+				break;
+			default: // do nothing
 			}
-			BVUtils.doUpdate("UPDATE Books SET Location=1, Scoring_of_Condition="+book.Scoring_of_condition+" WHERE ID="+book.ID);
-			debug("Rückbuchung: "+book.ID);
 			
-		}
-		
-			// TODO: Close individual lease
-	
-		return true;
-		
 		
 	}
 	
-	private void publish(BVBook book){
+	private synchronized void commit(BVBook book){
+		debug ("commit");
+		BVUtils.doUpdate("UPDATE Books SET Location=1, Scoring_of_Condition="+book.Scoring_of_condition+" WHERE ID="+book.ID);
+	
+	}
+	
+	
+	
+	private boolean publish(BVBook book){
 		if (book==null){
 			idf.setText("");
 			titlef.setText("");
@@ -134,40 +100,34 @@ public class BVBookBack extends BVView {
 			idf.setText(BVBook.makeBookEan(book.ID).toString());
 			titlef.setText(BVBookType.getTitle(new Ean(book.ISBN)));
 			conditionf.setText(book.Scoring_of_condition+"");
+		
 			this.setBackground(new Color((int)Math.min((book.Scoring_of_condition-1)*60,255),(int)Math.min((6-(book.Scoring_of_condition))*60,255),0));
 		}
-		this.validate();
+		
+		BVGUI.val();
+		return true;
 		
 		
 	}
 	
-	private void incCondition(BigInteger id){
-		
-		if (book!=null){
-			debug("book.id: "+book.ID+" id: "+ id);
-			if (book.ID.equals(id)){
-				debug(2);
-				book.Scoring_of_condition+=1;
-				publish(book);
-				
-			}else{
-				debug(3);
-				synchronized(condition){
-					condition.notify();
-				}
-				bookBack(id);
-					
-			}
+	private void incCondition(BVBook book){
+		book.Scoring_of_condition++;
+	}
+
+	
+	@Override
+	void toBackground() {
+		if (lastbook!=null){ // we have been in business
+			commit(lastbook); // close Transaction
+			lastbook=null;
+			debug(publish(lastbook));
 		}else{
-			debug("bookBack: "+id);
-			bookBack(id);
-			
-		
+			// nothing to do
 		}
 		
-	
+		
 	}
 	static private void debug(Object obj){
-		System.out.println(BVBookBack.class+": "+ obj);
+		//System.out.println(BVBookBack.class+": "+ obj);
 	}
 }

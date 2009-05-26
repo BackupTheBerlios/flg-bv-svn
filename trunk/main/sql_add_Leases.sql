@@ -1,4 +1,4 @@
-CREATE TABLE `Books2`.`Leases` (
+CREATE TABLE `Leases` (
   `LID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'LeaseID Ausleihvorgang',
   `OutTime` DATETIME  NOT NULL COMMENT 'Leihbeginn',
   `BackTime` DATETIME  DEFAULT NULL COMMENT 'Leihende',

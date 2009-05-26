@@ -21,6 +21,13 @@ public enum ScanEnum implements ScanParams{
 					
 			
 			}
+			if (this.name().equals("file")){
+				
+				}
+				
+					
+			
+			
 		
 	}
 	ScanEnum(Scanner scanner){

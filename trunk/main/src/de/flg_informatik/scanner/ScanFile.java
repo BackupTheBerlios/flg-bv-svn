@@ -6,7 +6,7 @@ import de.flg_informatik.buecherverwaltung.BVScanAdapter;
 
 
 public class ScanFile extends Scanner implements Runnable{
-	FileReader rf;
+	public FileReader rf=null;
 	BVScanAdapter adapter;
 	static ScanFile scanFile=null; 
 	
@@ -20,7 +20,9 @@ public class ScanFile extends Scanner implements Runnable{
 		Thread thread=new Thread(this);
 		thread.start();
 		}catch(Exception e){
-			e.printStackTrace();
+			debug("No File: "+file);
+			scanFile=null;
+			//e.printStackTrace();
 		}
 		
 	}
@@ -83,6 +85,7 @@ public class ScanFile extends Scanner implements Runnable{
 		debug("try");
 		if (scanFile==null){
 			new ScanFile(adapter, (File)file);
+			debug(scanFile);
 		}	
 		return scanFile;
 		

@@ -17,7 +17,7 @@ public class BVBook {
 	
  	public BVBook(BigInteger id, String purchased, int scoring_of_condition,
 			BigInteger location, BigInteger isbn) {
-		super();
+		
 		ID = id;
 		Purchased = purchased;
 		Scoring_of_condition = scoring_of_condition;
@@ -26,7 +26,8 @@ public class BVBook {
 	}
  	
  	public BVBook(BigInteger id) {
-		super();
+	
+		debug("new book"+ id);
 		try{
 			ResultSet rs=BVUtils.doQuery("SELECT * FROM Books WHERE ID="+id);
 			if (rs.first()){
@@ -35,16 +36,42 @@ public class BVBook {
 				Scoring_of_condition = rs.getInt("Scoring_of_condition");
 				Location = new BigInteger(rs.getString("Location"));
 				ISBN = new BigInteger(rs.getString("ISBN"));
+			}else{
+				debug("no book");
 			}
+			debug(rs.getWarnings());
 			
 		}catch(SQLException sqle){
-			// sqle.printStackTrace();
+			sqle.printStackTrace();
 		}
+		debug("built book"+ ID);
+			
 		
 	}
  	
  	public BVBook(Ean ean) {
-		this(makeBookID(ean));
+ 		
+ 			debug("new book"+ ean);
+ 			try{
+ 				ResultSet rs=BVUtils.doQuery("SELECT * FROM Books WHERE ID="+makeBookID(ean));
+ 				if (rs.first()){
+ 					ID = new BigInteger(rs.getString("ID"));
+ 					Purchased = rs.getString("Purchased"); 
+ 					Scoring_of_condition = rs.getInt("Scoring_of_condition");
+ 					Location = new BigInteger(rs.getString("Location"));
+ 					ISBN = new BigInteger(rs.getString("ISBN"));
+ 				}else{
+ 					debug("no book");
+ 				}
+ 				debug(rs.getWarnings());
+ 				
+ 			}catch(SQLException sqle){
+ 				sqle.printStackTrace();
+ 			}
+ 			debug("built book"+ ID);
+ 				
+ 			
+ 		
  	}
  	
  	public static int getLocation(Ean ean){
@@ -64,7 +91,7 @@ public class BVBook {
 		
  	}
  	
- 	public static Ean getISBN(Ean ean){
+ 	public static synchronized Ean getISBN(Ean ean){
  		return getISBN(makeBookID(ean));	
 	}
  	
@@ -86,17 +113,16 @@ public class BVBook {
  		return new Ean(num.add(Book12));
  	}
  	
- 	public static BigInteger makeBookID(Ean ean){
+ 	public synchronized static BigInteger makeBookID(Ean ean){
  		if (isBookEan(ean)){
- 			debug(ean.toString());
- 			debug((ean.getEan().divide(BigInteger.TEN)).subtract(Book12));
  			return ((ean.getEan().divide(BigInteger.TEN)).subtract(Book12));
  		}else{
+ 			debug("no bookean");
  			return null;
  		}
  	}
  	
- 	public static boolean isBookEan(Ean ean){
+ 	public synchronized static boolean isBookEan(Ean ean){
  		if(Ean.checkEan(ean)[0]==Ean.Result.ok){
  			if (ean.toString().startsWith("20")){
  				return true;
@@ -148,7 +174,7 @@ public class BVBook {
  		
  	}
  	static private void debug(Object obj){
-		//System.out.println(BVBook.class+": "+ obj);
+		// System.out.println(BVBook.class+": "+ obj);
 	}
 
 }

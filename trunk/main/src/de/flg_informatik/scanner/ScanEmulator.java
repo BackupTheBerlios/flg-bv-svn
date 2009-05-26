@@ -32,8 +32,11 @@ public class ScanEmulator extends FLGFrame implements ActionListener{
 
 	FileWriter ttyfile;
 	ScanEmulator(String filename){
+		this(new File(filename));
+	}
+	public ScanEmulator(File file){
 		try{
-			ttyfile=new FileWriter(new File(filename),false);
+			ttyfile=new FileWriter(file,false);
 		}catch(IOException ioe){
 			ioe.printStackTrace();
 		}

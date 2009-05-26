@@ -1,4 +1,4 @@
-CREATE TABLE `Books2`.`UsingBooks` (
+CREATE TABLE `UsingBooks` (
 `ISBN` BIGINT UNSIGNED NOT NULL,
 `BCID` INT  DEFAULT NULL COMMENT 'BookClassID	gibt Klassen von äquivalenten ISBNs an, ohne NULL.',
 `Grades` SET NOT NULL COMMENT 'Klassenstufen in denen das Buch verwendet wird',

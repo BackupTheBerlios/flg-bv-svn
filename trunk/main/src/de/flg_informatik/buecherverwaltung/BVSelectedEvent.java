@@ -22,7 +22,6 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 		BTnew,
 		BTedit,
 		EanUnknown;
-		
 	}
 	private SelectedEventType id=null;
 	private Ean ean=null;
@@ -77,7 +76,7 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 		copyfinished=true;
 		debug("Event to Dispatch:"+this.source+", "+this.id+", "+this.ean+", "+this.wildcards);
 		for (BVSelectedEventListener listener:dispatchlist ){
-			debug(listener);
+			debug(listener.getClass());
 			listener.thingSelected(new BVSelectedEvent (source, id, ean, wildcards));
 		}
 	
@@ -87,7 +86,7 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 			debug("locked");
 			try{
 				while(!((BVSelectedEvent)listener).copyfinished){
-					Thread.sleep(1);
+					Thread.sleep(0,0);
 				}
 			}catch(InterruptedException ie){
 			}
@@ -107,7 +106,7 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 	
 	private static final long serialVersionUID = 1L;
 	private static void debug(Object o) {
-		System.out.println(BVSelectedEvent.class+": "+o);
+		//System.out.println(BVSelectedEvent.class+": "+o);
 		
 	}
 

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Vector;
 
 public class BVUtils implements Runnable{
 	enum todo{
@@ -31,8 +32,12 @@ public class BVUtils implements Runnable{
 	private BVUtils(BVUtils.todo what, String command){
 		this.what=what;
 		this.command=command;
-		new Thread(this).start();
-		this.waitForSemaphore();
+		//new Thread(this).start();
+		//this.waitForSemaphore();
+		run();
+	}
+	public BVUtils(){
+		 
 	}
 	
 	public BVUtils(BVControl control, Connection connection){
@@ -40,7 +45,7 @@ public class BVUtils implements Runnable{
 		BVUtils.connection=connection;
 	}
 	
-	public void run() {
+	public synchronized void run() {
 		Statement statement = control.bvs.getStatement();
 		try{
 			switch (this.what){
@@ -75,25 +80,10 @@ public class BVUtils implements Runnable{
 			sqle.printStackTrace();
 			
 		}
-		releaseSemaphore();
+		
 	}
 	
-	private Object semaphore=new Object(); // Semaphore
-	private void waitForSemaphore(){
-		synchronized (semaphore){
-			try{
-				semaphore.wait();
-			}catch(InterruptedException ie){
-				ie.printStackTrace();
-			}
-		}
-	}
-
-	private void releaseSemaphore(){
-		synchronized (semaphore){
-			semaphore.notify();
-		}
-	}
+	
 	
 	public static synchronized	ResultSet doQuery(String query) throws SQLException{
 	/*
@@ -138,8 +128,67 @@ public class BVUtils implements Runnable{
 		return (new BVUtils(todo.insert, query )).count;
 		
 	}
+	public static synchronized int doDelete(String query){
+		
+		return (new BVUtils(todo.remove, query )).count;
+		
+	}
+	public static Vector<String> getColumnHeaders(String tablename){
+		Vector<String> ret=new Vector<String>();
+		try{
+			ResultSet rs=BVUtils.doQuery("DESCRIBE "+tablename);
+			rs.first();
+			do{
+				ret.add(rs.getString(1));
+				 debug(rs.getString(1));
+				
+			}
+			while(rs.next());
+		}catch(SQLException sqle){
+			sqle.printStackTrace();
+		}
+		return ret;
+			
+	}
+	public static int getNumOfDBColumns(String tablename){
+		try{
+			ResultSet res=BVUtils.doQuery("DESCRIBE " + tablename);
+			res.last();
+			return res.getRow();
+		}catch(SQLException sqle){
+			sqle.printStackTrace();
+		}
+		return 0;
+	}
+	public static int getNumOfDBRows(String tablename){
+
+		return BVUtils.doCount("SELECT COUNT * FROM tablename");
+	}
+	public static Vector<String> getSetTokens(String tablename, String col_set){
+		Vector<String> set = new Vector<String>();
+		ResultSet rs;
+		String[] res;
+		try{
+			rs=BVUtils.doQuery("SHOW COLUMNS FROM "+ tablename +" LIKE '" + col_set +"'");
+			if (rs.first()){
+				debug(rs.getString("Type"));
+					res=rs.getString("Type").split(new String("(set\\(')|(',')|('\\))"));
+				
+				for (int i=0; i< res.length;i++){ // this is strange! it starts with a ""
+					if (!res[i].equals("")){
+						set.add(res[i]);
+						debug(res[i]);
+					}
+				}
+			}
+		}catch(SQLException sqe){
+			sqe.printStackTrace();
+		}
+		
+		return (set);
+	}
 	
 	static private void debug(Object obj){
-		System.out.println(BVUtils.class+": "+ obj);
+		//System.out.println(BVUtils.class+": "+ obj);
 	}
 }

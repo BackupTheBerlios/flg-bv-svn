@@ -12,6 +12,7 @@ public class BVBookTypeDatamodell extends javax.swing.table.AbstractTableModel{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static final String tablename = "Booktypes";
 	enum Result{
 		ok,
 		isbnexists,
@@ -25,34 +26,20 @@ public class BVBookTypeDatamodell extends javax.swing.table.AbstractTableModel{
 	int numofcolumns;
 	public BVBookTypeDatamodell(BVBookTypeView myview) {
 		this.myview=myview;
-		this.headers=getColumnHeaders("Booktypes");
-		this.numofcolumns=getNumOfDBColumns();
+		this.headers=BVUtils.getColumnHeaders(tablename);
+		this.numofcolumns=BVUtils.getNumOfDBColumns(tablename);
 		this.fillTable();
 		debug("fertig");
 	}
 	
 	
 	
-	private int getNumOfDBColumns(){
-		try{
-			ResultSet res=BVUtils.doQuery("DESCRIBE Booktypes");
-			res.last();
-			return res.getRow();
-		}catch(SQLException sqle){
-			sqle.printStackTrace();
-		}
-		return 0;
-	}
-	private int getNumOfDBRows(){
 	
-		return BVUtils.doCount("SELECT COUNT(ISBN) FROM Booktypes");
-	}
+	
 
 	private synchronized boolean fillTable(){
 		Vector<Object> tablerow;
 		boolean result = true;
-		debug(getNumOfDBColumns());
-		debug(getNumOfDBRows());
 		try{
 			tablecells.clear();
 			ResultSet rs=BVUtils.doQuery("SELECT * FROM Booktypes");
@@ -73,23 +60,7 @@ public class BVBookTypeDatamodell extends javax.swing.table.AbstractTableModel{
 	}
 	
 	
-	private Vector<String> getColumnHeaders(String tablename){
-		Vector<String> ret=new Vector<String>();
-		try{
-			ResultSet rs=BVUtils.doQuery("DESCRIBE "+tablename);
-			rs.first();
-			do{
-				ret.add(rs.getString(1));
-				 debug(rs.getString(1));
-				
-			}
-			while(rs.next());
-		}catch(SQLException sqle){
-			sqle.printStackTrace();
-		}
-		return ret;
-			
-	}
+	
 	public Result setNewBooktype(Vector<String> newvec){
 		
 		String isbn=newvec.firstElement();

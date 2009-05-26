@@ -4,12 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import de.flg_informatik.utils.FLGFrame;
 import de.flg_informatik.utils.FireButton;
@@ -29,35 +32,60 @@ public class BVGUI extends FLGFrame {
 	BVControl control;
 	JTabbedPane centerpane;
 	public BVGUI(BVControl control){
+		debug("setting Variables");
+		this.setVisible(false);
 		thegui=this;
+		this.control=control;
+		debug("configuring FLGFrame");
 		this.setQuitsystem(false);
 		this.setClosewindow(false);
-		this.control=control;
+		debug("setting Layout");
 		this.setLayout(new BorderLayout());
-		//this.bvbv=new BVBooksDatamodell(control, control.connection);
+		debug("making Buttonfield");
 		this.add(makeButtonfield(),BorderLayout.SOUTH);
-		this.add(makeCardField(),BorderLayout.CENTER);;
+		debug("making CardField");
+		this.add(makeCardField(),BorderLayout.CENTER);
+		debug("finishing");
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.pack();
 		this.setVisible(true);
-		selectView(BVUsecases.Buchtypen); // default usecase
-		this.validate();
+		debug("finished");
+		
+		
 	}
 	
 	public static boolean isSelectedView(BVView view){
+		if (view==null){
+			return false;
+		}
 		debug("isSelectedView() from: "+view.getName());
-		debug("Selected is: "+ thegui.centerpane.getSelectedComponent().getName());
-		debug(view.getName().equals(thegui.centerpane.getSelectedComponent().getName()));
-		return (view.getName().equals(thegui.centerpane.getSelectedComponent().getName()));
+		if(thegui.centerpane.getSelectedComponent()==null){
+			return false;
+		}else{
+			return (view.getName().equals(thegui.centerpane.getSelectedComponent().getName()));
+		}
+		
+	}
+	public static BVView getSelectedView(){
+		if(thegui.centerpane.getSelectedComponent()==null){
+			return null;
+		}else{
+			return (BVView) thegui.centerpane.getSelectedComponent();
+		}
+		
 	}
 	
-	
 	private JTabbedPane makeCardField(){
-		
 		centerpane=new JTabbedPane();
 		for (BVUsecases usecase:BVUsecases.values()){
+			debug("centerpane: "+ usecase.view.getName());
 			centerpane.addTab(usecase.view.getName(),usecase.view);
 		}
+		centerpane.addChangeListener(BVControl.getControl());
+		
+		
+		
+		
 		return centerpane;
 	}
 	
@@ -90,15 +118,22 @@ public class BVGUI extends FLGFrame {
 	public static void selectView(BVUsecases usecase){
 		debug("selectView: "+ usecase);
 		thegui.centerpane.setSelectedIndex(usecase.ordinal());
-		thegui.centerpane.doLayout();
-		thegui.centerpane.validate();
+		thegui.centerpane.invalidate();
+		thegui.validate();
 	}
 	public static void main(String[] args) {
 		BVControl bvc=new BVControl();
 		
 	}
 	static private void debug(Object obj){
-		System.out.println(BVGUI.class+": "+ obj);
+		// System.out.println(BVGUI.class+": "+ obj);
 	}
-
+	public synchronized void validate(){
+		super.validate();
+		
+	}
+	public static void val(){
+		thegui.validate();
+		
+	}
 }
