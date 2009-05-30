@@ -10,6 +10,7 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 	/**
 	 * 
 	 */
+	private static boolean debug=false;
 	public enum SelectedEventType{
 		ISBNSelected,
 		ISBNUnknownSelected,
@@ -31,7 +32,8 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 		
 	
 	public BVSelectedEvent(Object source, SelectedEventType id, Ean ean, int wildcards){
-		super(source);
+		super(source
+				);
 		this.id=id;
 		this.ean=ean;
 		this.wildcards=wildcards;
@@ -67,30 +69,30 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 	}
 	
 	public void run(){
-		debug("copy");
+		new BVD(debug,"copy");
 		Vector<BVSelectedEventListener> dispatchlist = new Vector<BVSelectedEventListener>();
 		for (BVSelectedEventListener listener:listenerlist ){
 			dispatchlist.add(listener);
 		}
-		debug("copyfinished");
+		new BVD(debug,"copyfinished");
 		copyfinished=true;
-		debug("Event to Dispatch:"+this.source+", "+this.id+", "+this.ean+", "+this.wildcards);
+		new BVD(debug,"Event to Dispatch:"+this.source+", "+this.id+", "+this.ean+", "+this.wildcards);
 		for (BVSelectedEventListener listener:dispatchlist ){
-			debug(listener.getClass());
+			new BVD(debug,listener.getClass());
 			listener.thingSelected(new BVSelectedEvent (source, id, ean, wildcards));
 		}
 	
 	}
 	private static synchronized void manipulateList(BVSelectedEventListener listener, boolean add){
 		if (listener.getClass()==BVSelectedEvent.class){
-			debug("locked");
+			new BVD(debug,"locked");
 			try{
 				while(!((BVSelectedEvent)listener).copyfinished){
 					Thread.sleep(0,0);
 				}
 			}catch(InterruptedException ie){
 			}
-			debug("unlocked");
+			new BVD(debug,"unlocked");
 		}else{
 			if (add){
 				if (!listenerlist.contains(listener)){
@@ -105,10 +107,7 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 
 	
 	private static final long serialVersionUID = 1L;
-	private static void debug(Object o) {
-		//System.out.println(BVSelectedEvent.class+": "+o);
-		
-	}
+	
 
 	public void thingSelected(BVSelectedEvent e) {
 		// stub für um mit BVSelectedEvent(this) manipulateList() zu locken;

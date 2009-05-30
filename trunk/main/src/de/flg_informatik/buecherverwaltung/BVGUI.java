@@ -27,29 +27,30 @@ public class BVGUI extends FLGFrame {
 	
 	private static final long serialVersionUID = 1L;
 	private static BVGUI thegui;
+	private static boolean debug=false;
 	public FireButton cancelbutton = new FireButton("Abbrechen");
 	public FireButton closebutton = new FireButton("Beenden");
 	BVControl control;
 	JTabbedPane centerpane;
 	public BVGUI(BVControl control){
-		debug("setting Variables");
+		new BVD(debug,"setting Variables");
 		this.setVisible(false);
 		thegui=this;
 		this.control=control;
-		debug("configuring FLGFrame");
+		new BVD(debug,"configuring FLGFrame");
 		this.setQuitsystem(false);
 		this.setClosewindow(false);
-		debug("setting Layout");
+		new BVD(debug,"setting Layout");
 		this.setLayout(new BorderLayout());
-		debug("making Buttonfield");
+		new BVD(debug,"making Buttonfield");
 		this.add(makeButtonfield(),BorderLayout.SOUTH);
-		debug("making CardField");
+		new BVD(debug,"making CardField");
 		this.add(makeCardField(),BorderLayout.CENTER);
-		debug("finishing");
+		new BVD(debug,"finishing");
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.pack();
 		this.setVisible(true);
-		debug("finished");
+		new BVD(debug,"finished");
 		
 		
 	}
@@ -58,7 +59,7 @@ public class BVGUI extends FLGFrame {
 		if (view==null){
 			return false;
 		}
-		debug("isSelectedView() from: "+view.getName());
+		new BVD(debug,"isSelectedView() from: "+view.getName());
 		if(thegui.centerpane.getSelectedComponent()==null){
 			return false;
 		}else{
@@ -78,7 +79,7 @@ public class BVGUI extends FLGFrame {
 	private JTabbedPane makeCardField(){
 		centerpane=new JTabbedPane();
 		for (BVUsecases usecase:BVUsecases.values()){
-			debug("centerpane: "+ usecase.view.getName());
+			new BVD(debug,"centerpane: "+ usecase.view.getName());
 			centerpane.addTab(usecase.view.getName(),usecase.view);
 		}
 		centerpane.addChangeListener(BVControl.getControl());
@@ -116,7 +117,7 @@ public class BVGUI extends FLGFrame {
 	}
 	
 	public static void selectView(BVUsecases usecase){
-		debug("selectView: "+ usecase);
+		new BVD(debug,"selectView: "+ usecase);
 		thegui.centerpane.setSelectedIndex(usecase.ordinal());
 		thegui.centerpane.invalidate();
 		thegui.validate();
@@ -125,9 +126,7 @@ public class BVGUI extends FLGFrame {
 		BVControl bvc=new BVControl();
 		
 	}
-	static private void debug(Object obj){
-		// System.out.println(BVGUI.class+": "+ obj);
-	}
+	
 	public synchronized void validate(){
 		super.validate();
 		

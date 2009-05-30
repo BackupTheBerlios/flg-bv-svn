@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.Vector;
 
 public class BVUtils implements Runnable{
+	private static boolean debug=false;
 	enum todo{
 		query,
 		update,
@@ -140,7 +141,7 @@ public class BVUtils implements Runnable{
 			rs.first();
 			do{
 				ret.add(rs.getString(1));
-				 debug(rs.getString(1));
+				 new BVD(debug,rs.getString(1));
 				
 			}
 			while(rs.next());
@@ -171,13 +172,13 @@ public class BVUtils implements Runnable{
 		try{
 			rs=BVUtils.doQuery("SHOW COLUMNS FROM "+ tablename +" LIKE '" + col_set +"'");
 			if (rs.first()){
-				debug(rs.getString("Type"));
+				new BVD(debug,rs.getString("Type"));
 					res=rs.getString("Type").split(new String("(set\\(')|(',')|('\\))"));
 				
 				for (int i=0; i< res.length;i++){ // this is strange! it starts with a ""
 					if (!res[i].equals("")){
 						set.add(res[i]);
-						debug(res[i]);
+						new BVD(debug,res[i]);
 					}
 				}
 			}
@@ -188,7 +189,5 @@ public class BVUtils implements Runnable{
 		return (set);
 	}
 	
-	static private void debug(Object obj){
-		//System.out.println(BVUtils.class+": "+ obj);
-	}
+
 }

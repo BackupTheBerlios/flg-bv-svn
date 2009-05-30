@@ -21,6 +21,7 @@ public class BVBookType {
 			String publisher) {
 		super();
 		ISBN = isbn;
+		
 		Author = author;
 		Title = title;
 		Publisher = publisher;
@@ -30,6 +31,7 @@ public class BVBookType {
  	public static String getTitle(Ean ISBN){
  		
  		try {
+ 			
 			return BVUtils.doQuery("SELECT Title FROM Booktypes WHERE ISBN="+ISBN).getString(1);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -55,9 +57,7 @@ public class BVBookType {
  		 }	 
  	}
  	
- 	static private void debug(Object obj){
-		//System.out.println(BVBookType.class+": "+ obj);
-	}
+ 	
  	
  	
  	

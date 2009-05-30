@@ -18,6 +18,7 @@ import de.flg_informatik.utils.FLGProperties;
  *
  */
 public class BVScanAdapter implements ScanAdapter, Runnable{
+	private static boolean debug=true;
 	private static BVControl control;
 	private Ean ean;
 	
@@ -36,13 +37,13 @@ public class BVScanAdapter implements ScanAdapter, Runnable{
 				
 			}
 		}
-		debug(file1);
+		new BVD(debug,file1);
 		initScanner(file1);
 		
 	}
 	BVScanAdapter(Ean ean){
 		this.ean=ean;
-		debug("eanScanned");
+		new BVD(debug,"eanScanned");
 		(new Thread(this)).start();
 	}
 	
@@ -68,27 +69,27 @@ public class BVScanAdapter implements ScanAdapter, Runnable{
 		if (BVBookType.isISBN(ean)){ // Ean-Bookland -> ISBN
 			
 			if ( BVBookType.isKnownISBN(ean)){
-				debug("isKownISBN()");
+				new BVD(debug,"isKownISBN()");
 				control.newEvent(this, BVSelectedEvent.SelectedEventType.ISBNSelected, ean);
 			}else{
-				debug("isUnknownISBN()");
+				new BVD(debug,"isUnknownISBN()");
 				control.newEvent(this, BVSelectedEvent.SelectedEventType.ISBNUnknownSelected, ean);
 			}
 			
 		}else{
 			if (BVBook.isBookEan(ean)){
-				debug("isBookEan()");
+				new BVD(debug,"isBookEan()");
 				BVBook book = new BVBook(ean);
-				debug("wasBookEan()");
+				new BVD(debug,"wasBookEan()");
 				if (book.ISBN==BVBookType.ISBNNullEan.getEan()){
-						debug("isISBNNullEan");
+						new BVD(debug,"isISBNNullEan");
 						control.newEvent(this, BVSelectedEvent.SelectedEventType.BookUnknownSelected, ean);
 					}else{
 						if (book.Location.equals(new BigInteger("1"))){
-							debug("isFreeBook");
+							new BVD(debug,"isFreeBook");
 							control.newEvent(this, BVSelectedEvent.SelectedEventType.BookFreeSelected, ean);
 						}else{
-							debug("isLeasedBook");
+							new BVD(debug,"isLeasedBook");
 							control.newEvent(this, BVSelectedEvent.SelectedEventType.BookLeasedSelected, ean);
 							
 							
@@ -98,11 +99,9 @@ public class BVScanAdapter implements ScanAdapter, Runnable{
 				
 				
 			}else{
-				debug("unclear ean");// Ean.checkEan(new Ean(eanstring));
+				new BVD(debug,"unclear ean");// Ean.checkEan(new Ean(eanstring));
 			}
 		}
 	}
-	static private void debug(Object obj){
-		// System.out.println(BVScanAdapter.class+": "+ obj);
-	}
+	
 }

@@ -27,6 +27,7 @@ public class BVBookTypeView extends BVView implements ActionListener {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static boolean debug=true;
 	final int[] columnwidth={13,20,50,50};
 	boolean[] columnresizable={false,true,true,true}; 
 	private BVBookTypeDatamodell mymodell;
@@ -34,7 +35,7 @@ public class BVBookTypeView extends BVView implements ActionListener {
 	private int lastselected=1;
 	private BVChooser bvchooser;
 	private Vector<String> booktyp=null;
-	private BookTypePanel booktypepanel = null;
+	private BookTypeSouthPanel booktypepanel = null;
 	private BVJPanel bvjp;
 	enum State{
 		info,
@@ -55,7 +56,7 @@ public class BVBookTypeView extends BVView implements ActionListener {
 		ConsumedEvents.addElement(BVSelectedEvent.SelectedEventType.BTnew);
 		mymodell=new BVBookTypeDatamodell(this);
 		this.bvjp=new BVJPanel(me,mymodell);
-		this.booktypepanel=new BookTypePanel(state,this);
+		this.booktypepanel=new BookTypeSouthPanel(state,this);
 		setLayout(new BorderLayout());
 		add(bvjp,BorderLayout.CENTER);
 		add(makeChooser(this),BorderLayout.WEST);
@@ -78,7 +79,7 @@ public class BVBookTypeView extends BVView implements ActionListener {
 				
 			}
 			booktyp=mymodell.getBookType(e.getEan());
-			debug(booktyp);
+			new BVD(debug,booktyp);
 			break;
 		case ISBNUnknownSelected:
 			booktyp=newBooktype();
@@ -104,9 +105,7 @@ public class BVBookTypeView extends BVView implements ActionListener {
 		
 		
 	}
-	/*public synchronized void validateTree(){
-		super.validateTree();
-	}*/
+	
 	
 	private JPanel makeChooser(ActionListener listener){
 		JPanel ret =new JPanel(new FlowLayout());
@@ -201,13 +200,10 @@ public class BVBookTypeView extends BVView implements ActionListener {
 	void setBookType(Vector<String> booktyp){
 		this.booktyp = booktyp;
 	}
-	static private void debug(Object obj){
-		System.out.println(BVBookTypeView.class+": "+ obj);
-	}
-
+	
 	@Override
 	void toBackground() {
-		debug("retireing");
+		new BVD(debug,"retireing");
 		
 		
 	}

@@ -41,7 +41,7 @@ public class BVControl implements Runnable,ActionListener,ChangeListener {
 	public BVControl(){
 		
 		app_settings=new FLGProperties(app_settings,propertyfilename, new File(defaultfilename), significantstring).getProperties();
-		debug("fetched properties");
+		// new BVD("fetched properties");
 		if (!BVDataBase.getDataBankDrivers(app_settings))
 			javax.swing.JOptionPane.showMessageDialog(null, "'sun.jdbc.odbc.JdbcOdbcDriver' or 'com.mysql.jdbc.Driver' nicht gefunden.\nDas Programm wird jetzt beendet");
 		
@@ -52,25 +52,25 @@ public class BVControl implements Runnable,ActionListener,ChangeListener {
 				javax.swing.JOptionPane.showMessageDialog(null, "Konnte nicht mit Datenbank verbinden, bitte Einstellungen überprüfen!");
 				PropertiesDialog.showSettingsDialog(app_settings,propertyfilename, new File(defaultfilename), significantstring);
 			}
-		debug("connecting");	
+		// new BVD("connecting");	
 		} while (connection == null);
-		debug("connected");
+		// new BVD("connected");
 		BVControl.thecontrol=this;
 		BVUtils.setParams(this,connection);
-		debug("initialized UtilsParams");
+		// new BVD("initialized UtilsParams");
 		bvs=new BVStorage(this,connection);
-		debug("initialized bvs");
+		// new BVD("initialized bvs");
 		BVBookUse.init();
 		gui=new BVGUI(this);
-		debug("initialized gui");
+		// new BVD("initialized gui");
 		switchusecases = new BVSwitchUsecases();
-		debug("initialized switchusecases");
+		// new BVD("initialized switchusecases");
 		SwitchEvents=new java.util.Hashtable<BVSelectedEvent.SelectedEventType, BVUsecases>();
-		debug("initialized SwitchEvents");
+		// new BVD("initialized SwitchEvents");
 		scanner=new BVScanAdapter(this);
-		debug("initialized SCANNER");
+		// new BVD("initialized SCANNER");
 		BVGUI.selectView(BVUsecases.Buchtypen); // default usecase
-		debug("End of Constructor of BVControl");
+		// new BVD("End of Constructor of BVControl");
 		
 		
 		
@@ -85,7 +85,7 @@ public class BVControl implements Runnable,ActionListener,ChangeListener {
 	
 	private void shutDown(){
 		BVDataBase.CloseConnection(connection);
-		debug("closing");
+		// new BVD("closing");
 		// TODO: uncomment, implement
 		// savePropertiesToXML(file, props, comment);
 		System.exit(0);
@@ -95,9 +95,7 @@ public class BVControl implements Runnable,ActionListener,ChangeListener {
 		
 	}
 	
-	static private void debug(Object obj){
-		// System.out.println(BVControl.class+": "+ obj);
-	}
+	
 	
 	/**
 	 * Central Dispatcher of interaction (i.e. Eans or Clicks)
@@ -127,7 +125,7 @@ public class BVControl implements Runnable,ActionListener,ChangeListener {
 	}
 	public synchronized void newEvent(Object source, SelectedEventType id, Ean ean, int wildcards){
 		BVView activeview=BVGUI.getSelectedView();
-		debug(activeview.getName()+"->"+id+"->"+switchusecases.get(id));
+		// new BVD(activeview.getName()+"->"+id+"->"+switchusecases.get(id));
 		
 		if (!activeview.ConsumedEvents.contains(id)){
 			activeview.toBackground();

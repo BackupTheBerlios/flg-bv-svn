@@ -5,6 +5,7 @@ package de.flg_informatik.buecherverwaltung;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Label;
@@ -26,12 +27,13 @@ import de.flg_informatik.buecherverwaltung.BVBookTypeView.State;
  * @author notkers
  *
  */
-class BookTypePanel extends JPanel implements ActionListener{
+class BookTypeSouthPanel extends JPanel implements ActionListener{
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		BookTypePanel mebtp;
+		private static boolean debug=true;
+		BookTypeSouthPanel mebtp;
 		BVBookTypeView myview;
 		TextField[] editfields;
 		JButton save;
@@ -40,11 +42,11 @@ class BookTypePanel extends JPanel implements ActionListener{
 		JPanel up;
 		State state;
 		
-		public BookTypePanel(State state, BVBookTypeView myview) {
+		public BookTypeSouthPanel(State state, BVBookTypeView myview) {
 			mebtp=this;
 			this.myview=myview;
 			this.state=state;
-			up=new JPanel(new FlowLayout());
+			up=new JPanel();
 			save=new JButton("Speichern");
 			save.setActionCommand("save");
 			save.addActionListener(mebtp);
@@ -55,6 +57,9 @@ class BookTypePanel extends JPanel implements ActionListener{
 			remove.setActionCommand("remonve");
 			remove.addActionListener(mebtp);
 			this.setLayout(new GridLayout(0,1));
+			myview.add(this,BorderLayout.SOUTH);
+			myview.validate();
+			
 			
 		}
 		public void actionPerformed(ActionEvent e) {
@@ -63,7 +68,7 @@ class BookTypePanel extends JPanel implements ActionListener{
 				newvec.add(editfields[i].getText());
 			}
 			if (e.getActionCommand().equals("save")){
-				debug("saving"+state);
+				new BVD(debug,"saving"+state);
 				switch (state){
 					case neu:
 						switch (myview.getModell().setNewBooktype(newvec)){
@@ -95,7 +100,7 @@ class BookTypePanel extends JPanel implements ActionListener{
 				}
 			}
 			if (e.getActionCommand().equals("directprint")){
-				debug("printing"+state);
+				new BVD(debug,"printing"+state);
 				int howmany;
 				if ((howmany=Integer.parseInt(editfields[2].getText()))>0){
 					EtikettDruck.etikettenDruck(BVBook.makeNewBooks(howmany, editfields[0].getText()),Integer.parseInt(editfields[3].getText()));
@@ -104,8 +109,10 @@ class BookTypePanel extends JPanel implements ActionListener{
 			}	
 		}
 		synchronized void reMakePanel(State state, Vector<String> booktyp){
+			myview.remove(this);
 			this.removeAll();
 			up.removeAll();
+			
 			switch (state){
 				case info:
 				case edit:
@@ -157,9 +164,7 @@ class BookTypePanel extends JPanel implements ActionListener{
 							break;
 						case edit:
 							up.add(new Minipanel(null,save));
-							this.add(new VerticalPanel(){{
-								add(new BVBookUsePanel(new Ean(editfields[0].getText())));
-							}});
+							add(new BVBookUsePanel(new Ean(editfields[0].getText())));
 							break;
 						case neu:
 							up.add(new Minipanel(null,save));
@@ -167,7 +172,6 @@ class BookTypePanel extends JPanel implements ActionListener{
 							
 						}
 						this.add(up);
-						//bvjp.table.repaint();
 						booktyp=null;
 						
 					
@@ -190,8 +194,11 @@ class BookTypePanel extends JPanel implements ActionListener{
 					
 					
 			}
+			up.invalidate();
+			invalidate();
 			myview.add(this,BorderLayout.SOUTH);
-			myview.validate();	
+			myview.validate();
+			
 		}
 		private class Minipanel extends JPanel{
 			/**
@@ -213,14 +220,14 @@ class BookTypePanel extends JPanel implements ActionListener{
 			private static final long serialVersionUID = 1L;
 
 			VerticalPanel(){
-				setLayout(new GridLayout(1,0));
+				setLayout(new GridLayout(0,1));
 				
-			} 
+			}
+		public Dimension getSize(){
+				return getParent().getSize();
+			}
 		}
 		
 	
-	static private void debug(Object obj){
-		System.out.println(BookTypePanel.class+": "+ obj);
-	}
-
+	
 }

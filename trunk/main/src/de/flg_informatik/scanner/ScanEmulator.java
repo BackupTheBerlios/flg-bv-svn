@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import javax.swing.JComboBox;
 
+import de.flg_informatik.buecherverwaltung.BVD;
 import de.flg_informatik.ean13.Ean;
 import de.flg_informatik.utils.FLGFrame;
 import de.flg_informatik.utils.FLGProperties;
@@ -22,6 +23,7 @@ public class ScanEmulator extends FLGFrame implements ActionListener{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static boolean debug=true;
 	/**
 	 * @param args
 	 */
@@ -115,7 +117,7 @@ public class ScanEmulator extends FLGFrame implements ActionListener{
 			}catch(InterruptedException ie){
 				
 			}
-			//System.out.println(((JComboBox)(e.getSource())).getSelectedItem()+"\n");
+			new BVD(debug,((JComboBox)(e.getSource())).getSelectedItem()+"\n");
 			
 		}catch(IOException ioe){
 			ioe.printStackTrace();

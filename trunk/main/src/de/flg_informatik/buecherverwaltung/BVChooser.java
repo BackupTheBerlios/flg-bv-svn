@@ -1,6 +1,7 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.awt.Button;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
@@ -20,6 +22,7 @@ public class BVChooser extends JPanel implements ActionListener{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static boolean debug=true;
 	public enum Orientation{
 		VERTICAL,
 		HORZONTAL;
@@ -30,72 +33,84 @@ public class BVChooser extends JPanel implements ActionListener{
 	public BVChooser(ActionListener listener, ArrayList<String> names, Orientation o) {
 		switch(o){
 		case VERTICAL: 
-			setLayout(new GridLayout(names.size(),0));
+			setLayout(new GridLayout(names.size(),1));
 			break;
 		case HORZONTAL:
-			setLayout(new GridLayout(0,names.size()));
+			setLayout(new GridLayout(1,names.size()));
 			break;
 		}
+		
 		radiobutton=new JRadioButton[names.size()];
 		
 		for (int i=0; i< names.size(); i++){
 			radiobutton[i]=new JRadioButton(names.get(i));
 			radiobutton[i].setActionCommand(Integer.toString(i));
 			bgr.add(radiobutton[i]);
-			this.add(radiobutton[i]);
+			add(radiobutton[i]);
 			radiobutton[i].addActionListener(listener);
 		}
+		validate();
 	}
 	public BVChooser(ActionListener listener, Vector<String> names, Orientation o) {
+		new BVD(true,names.size());
 		switch(o){
 		case VERTICAL: 
-			setLayout(new GridLayout(names.size(),0));
+			this.setLayout(new GridLayout(20,(names.size()/20+1)));
 			break;
 		case HORZONTAL:
-			setLayout(new GridLayout(0,names.size()));
+			this.setLayout(new GridLayout((names.size()/20+1),20));
 			break;
+		default:
+			new BVE();
 		}
+		validate();
 		radiobutton=new JRadioButton[names.size()];
+		
 		
 		for (int i=0; i< names.size(); i++){
 			radiobutton[i]=new JRadioButton(names.get(i));
-			debug(i+" "+radiobutton[i]);
 			radiobutton[i].setActionCommand(Integer.toString(i));
 			bgr.add(radiobutton[i]);
-			this.add(radiobutton[i]);
+			add(radiobutton[i]);
+		
 			radiobutton[i].addActionListener(listener);
 			
 		}
 		
+		invalidate();
+		
 	}
+	
+	
 	public BVChooser(ActionListener listener, String[] names, Orientation o) {
 		switch(o){
 		case VERTICAL: 
-			setLayout(new GridLayout(names.length,0));
+			setLayout(new GridLayout(names.length,1));
 			break;
 		case HORZONTAL:
-			setLayout(new GridLayout(0,names.length));
+			setLayout(new GridLayout(1,names.length));
 			break;
 		}
 		radiobutton=new JRadioButton[names.length];
 		
 		for (int i=0; i< names.length; i++){
 			radiobutton[i]=new JRadioButton(names[i]);
-			debug(i+" "+radiobutton[i]);
+			new BVD(debug,i+" "+radiobutton[i]);
 			radiobutton[i].setActionCommand(Integer.toString(i));
 			bgr.add(radiobutton[i]);
-			this.add(radiobutton[i]);
+			add(radiobutton[i]);
 			radiobutton[i].addActionListener(listener);
 			
 		}
+		validate();
 	}
 	public BVChooser(String[] names, SelectedEventType[] events, Orientation o) {
 		switch(o){
 		case VERTICAL: 
-			setLayout(new GridLayout(names.length,0));
+			setLayout(new GridLayout(names.length,1));
 			break;
 		case HORZONTAL:
-			setLayout(new GridLayout(0,names.length));
+			setLayout(new GridLayout(1,names.length));
 			break;
 		}
 		
@@ -106,12 +121,13 @@ public class BVChooser extends JPanel implements ActionListener{
 			radiobutton[i]=new JRadioButton(names[i]);
 			radiobutton[i].setActionCommand(Integer.toString(i));
 			bgr.add(radiobutton[i]);
-			this.add(radiobutton[i]);
+			add(radiobutton[i]);
 			radiobutton[i].addActionListener(this);
 			
 		}
+		validate();
 		
-		// TODO Auto-generated constructor stub
+		
 	}
 	public void clickOn(State state){
 		radiobutton[state.ordinal()].doClick();
@@ -149,9 +165,14 @@ public class BVChooser extends JPanel implements ActionListener{
 			
 		}
 	}
-	
-	static private void debug(Object obj){
-		//System.out.println(BVChooser.class+": "+ obj);
+	class MP extends JPanel{
+		MP(){
+			
+			
+		}
+		
 	}
+	
+	
 
 }

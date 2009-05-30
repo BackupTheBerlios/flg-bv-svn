@@ -31,6 +31,7 @@ public class BVBookBack extends BVView {
 	 */
 	
 	private static final long serialVersionUID = 1L;
+	private static boolean debug=true;
 	private Integer condition=0;
 	private BVBook book=null;
 	private TextField idf = new TextField("",13);
@@ -59,7 +60,7 @@ public class BVBookBack extends BVView {
 	}
 	
 	public synchronized void thingSelected(BVSelectedEvent e) {
-		debug(e.getEan());
+		new BVD(debug,e.getEan());
 		switch (e.getId()){
 		
 			case BookLeasedSelected:// we stay on top
@@ -73,7 +74,7 @@ public class BVBookBack extends BVView {
 				}else{
 					lastbook = new BVBook(e.getEan());
 				}
-				debug(publish(lastbook));
+				new BVD(debug,publish(lastbook));
 				break;
 			default: // do nothing
 			}
@@ -82,7 +83,7 @@ public class BVBookBack extends BVView {
 	}
 	
 	private synchronized void commit(BVBook book){
-		debug ("commit");
+		new BVD (debug,"commit");
 		BVUtils.doUpdate("UPDATE Books SET Location=1, Scoring_of_Condition="+book.Scoring_of_condition+" WHERE ID="+book.ID);
 	
 	}
@@ -120,14 +121,12 @@ public class BVBookBack extends BVView {
 		if (lastbook!=null){ // we have been in business
 			commit(lastbook); // close Transaction
 			lastbook=null;
-			debug(publish(lastbook));
+			new BVD(debug,publish(lastbook));
 		}else{
 			// nothing to do
 		}
 		
 		
 	}
-	static private void debug(Object obj){
-		//System.out.println(BVBookBack.class+": "+ obj);
-	}
+	
 }

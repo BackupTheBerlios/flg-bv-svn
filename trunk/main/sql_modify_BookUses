@@ -1,0 +1,2 @@
+ALTER TABLE `booksbase`.`BookUses` MODIFY COLUMN `Grades` SET('5','6','7','8','9','10','J1','J2','S8','S9','S10','N8','N9','N10')  CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+ MODIFY COLUMN `Subjects` SET('Sonst','Rev','Rrk','Eth','D','G','Ek','Gk','E','F','L','M','NP','Ph','Ch','B','Sp','Mu','Bk','NWT','F3','L3','Ru3')  CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL;
