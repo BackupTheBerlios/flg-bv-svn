@@ -19,7 +19,7 @@ import de.flg_informatik.utils.FLGFrame;
 import de.flg_informatik.utils.FireButton;
 
 public class BVBookUsePanel extends JPanel  implements ActionListener {
-	private static boolean debug=true;
+	private static boolean debug=false;
 	private Ean isbn=null;
 	private BVBookUsePanel me;
 	private FireButton add = new FireButton("hinzufügen");
@@ -120,7 +120,7 @@ public class BVBookUsePanel extends JPanel  implements ActionListener {
 			setLayout(new FlowLayout());
 			if (BVBookUse.getBCIDOf(isbn)>0){
 				add(new JLabel("Äquivalent zu:"));
-				bvc=new BVChooser(null,BVBookUse.getAequisOfString(isbn),BVChooser.Orientation.HORZONTAL);
+				bvc=new BVChooser(null,BVBookUse.getEquisOfString(isbn),BVChooser.Orientation.HORZONTAL);
 				add(bvc);
 				add(remove);
 				remove.setLabel("Äquiv. entfernen");
@@ -147,7 +147,7 @@ public class BVBookUsePanel extends JPanel  implements ActionListener {
 				new BVD(debug,bvc.getSelectedIndex());
 				new BVD(debug,bvc.getSelected());
 				if (bvc.getSelectedIndex()>-1){
-					BVBookUse.delAequi(new Ean(BVBookUse.getAequisOfString(isbn).get(bvc.getSelectedIndex())));
+					BVBookUse.delEqui(new Ean(BVBookUse.getEquisOfString(isbn).get(bvc.getSelectedIndex())));
 				}else{
 					new BVW("Keine Äquivalenz gewählt!\n Ignoriere Anweisung.");
 				}
@@ -161,7 +161,7 @@ public class BVBookUsePanel extends JPanel  implements ActionListener {
 	class WaitingForAequi extends JPanel implements BVSelectedEventListener{
 		public void thingSelected(BVSelectedEvent e) {
 			if (e.getId()==BVSelectedEvent.SelectedEventType.ISBNSelected){
-				BVBookUse.makeAequi(isbn,e.getEan());
+				BVBookUse.makeEqui(isbn,e.getEan());
 				BVSelectedEvent.removeBVSelectedEventListener(this);
 				new BVM(isbn+" & "+e.getEan() );
 				BVSelectedEvent.makeEvent(this,BVSelectedEvent.SelectedEventType.ISBNSelected,isbn);

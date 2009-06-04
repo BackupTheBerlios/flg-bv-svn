@@ -7,13 +7,16 @@ import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Vector;
 
+import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 
+import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 import de.flg_informatik.utils.FLGProperties;
 import de.flg_informatik.utils.FireButton;
 
-public class BVPropertyView extends BVView implements ActionListener {
+public class BVPropertyView extends JPanel implements BVView, ActionListener {
 	FireButton save = new FireButton("save properties to file");
 	FLGProperties props;
 	BVPropertyView(){
@@ -34,7 +37,7 @@ public class BVPropertyView extends BVView implements ActionListener {
 		save.addActionListener(this);
 	}
 
-	@Override
+
 	public void itemSelected(ListSelectionEvent e) {
 		// TODO Auto-generated method stub
 
@@ -55,8 +58,8 @@ public class BVPropertyView extends BVView implements ActionListener {
 		
 	}
 
-	@Override
-	void toBackground() {
+
+	public void toBackground() {
 		if (javax.swing.JOptionPane.showConfirmDialog(BVControl.getControl().gui,
 				"Sollen die Einstellungen übernommen werden?",
 				"Einstellungen",
@@ -66,6 +69,23 @@ public class BVPropertyView extends BVView implements ActionListener {
 			
 		}
 		// TODO Does'nt work yet
+		
+	}
+
+	public void toClose() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public Vector<SelectedEventType> getConsumedEvents() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public void toFront() {
+		// TODO Auto-generated method stub
 		
 	}
 

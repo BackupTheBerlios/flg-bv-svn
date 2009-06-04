@@ -161,9 +161,64 @@ public class BVUtils implements Runnable{
 		}
 		return 0;
 	}
+	public static Vector<Boolean>  getNotNullColumns(String tablename){
+		Vector<Boolean> ret=new Vector<Boolean>(); 
+		try{
+			ResultSet res=BVUtils.doQuery("DESCRIBE " + tablename); //Cols 1-6
+			res.beforeFirst();
+			while (res.next()){
+				ret.add(new Boolean(!res.getBoolean(3)));
+				
+				new BVD(debug,res.getString(4));
+				new BVD(debug,res.getString(5));
+				new BVD(debug,res.getString(6));
+			}
+			
+		}catch(SQLException sqle){
+			sqle.printStackTrace();
+		}
+		return ret;
+	}
+	public static Vector<String>  getDefaults(String tablename){
+		Vector<String> ret=new Vector<String>(); 
+		try{
+			ResultSet res=BVUtils.doQuery("DESCRIBE " + tablename); //Cols 1-6
+			res.beforeFirst();
+			while (res.next()){
+				ret.add(res.getString(5));
+			}
+			
+		}catch(SQLException sqle){
+			sqle.printStackTrace();
+		}
+		return ret;
+	}
 	public static int getNumOfDBRows(String tablename){
 
 		return BVUtils.doCount("SELECT COUNT * FROM tablename");
+	}
+	public static Vector<String> getEnumTokens(String tablename, String col_set){
+		Vector<String> set = new Vector<String>();
+		ResultSet rs;
+		String[] res;
+		try{
+			rs=BVUtils.doQuery("SHOW COLUMNS FROM "+ tablename +" LIKE '" + col_set +"'");
+			if (rs.first()){
+				new BVD(debug,rs.getString("Type"));
+					res=rs.getString("Type").split(new String("(enum\\(')|(',')|('\\))"));
+				
+				for (int i=0; i< res.length;i++){ // this is strange! it starts with a ""
+					if (!res[i].equals("")){
+						set.add(res[i]);
+						new BVD(debug,res[i]);
+					}
+				}
+			}
+		}catch(SQLException sqe){
+			sqe.printStackTrace();
+		}
+		
+		return (set);
 	}
 	public static Vector<String> getSetTokens(String tablename, String col_set){
 		Vector<String> set = new Vector<String>();

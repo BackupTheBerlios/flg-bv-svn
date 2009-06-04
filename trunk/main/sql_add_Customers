@@ -1,0 +1,13 @@
+CREATE TABLE `booksbase`.`Customers` (
+  `id` BIGINT UNSIGNED NOT NULL,
+  `Name` TINYTEXT  NOT NULL,
+  `Chrname` TINYTEXT  NOT NULL,
+  `CID` INTEGER  NOT NULL,
+  `FL1` ENUM ('E','F','L','RU')  NOT NULL,
+  `FL2` ENUM ,
+  `FL3` ENUM ,
+  `FL4` ENUM ,
+  `Extra` SET ,
+  PRIMARY KEY (`id`)
+)
+ENGINE = MyISAM;

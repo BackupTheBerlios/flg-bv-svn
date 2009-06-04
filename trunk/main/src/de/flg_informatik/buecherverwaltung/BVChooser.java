@@ -22,7 +22,7 @@ public class BVChooser extends JPanel implements ActionListener{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static boolean debug=true;
+	private static boolean debug=false;
 	public enum Orientation{
 		VERTICAL,
 		HORZONTAL;
@@ -30,6 +30,9 @@ public class BVChooser extends JPanel implements ActionListener{
 	private SelectedEventType[] events;
 	private JRadioButton[] radiobutton;
 	private ButtonGroup bgr=new ButtonGroup();
+	public BVChooser(){//dummy
+		this.add(new Label("BVChooser()"));
+	}
 	public BVChooser(ActionListener listener, ArrayList<String> names, Orientation o) {
 		switch(o){
 		case VERTICAL: 
@@ -49,7 +52,7 @@ public class BVChooser extends JPanel implements ActionListener{
 			add(radiobutton[i]);
 			radiobutton[i].addActionListener(listener);
 		}
-		validate();
+		invalidate();
 	}
 	public BVChooser(ActionListener listener, Vector<String> names, Orientation o) {
 		new BVD(true,names.size());
@@ -68,7 +71,7 @@ public class BVChooser extends JPanel implements ActionListener{
 		
 		
 		for (int i=0; i< names.size(); i++){
-			radiobutton[i]=new JRadioButton(names.get(i));
+			radiobutton[i]=new JRadioButton(names.get(i).toString());
 			radiobutton[i].setActionCommand(Integer.toString(i));
 			bgr.add(radiobutton[i]);
 			add(radiobutton[i]);
@@ -80,7 +83,35 @@ public class BVChooser extends JPanel implements ActionListener{
 		invalidate();
 		
 	}
-	
+	public BVChooser(Vector<Object> names, Orientation o, ActionListener listener) {
+		new BVD(true,names.size());
+		switch(o){
+		case VERTICAL: 
+			this.setLayout(new GridLayout(20,(names.size()/20+1)));
+			break;
+		case HORZONTAL:
+			this.setLayout(new GridLayout((names.size()/20+1),20));
+			break;
+		default:
+			new BVE();
+		}
+		validate();
+		radiobutton=new JRadioButton[names.size()];
+		
+		
+		for (int i=0; i< names.size(); i++){
+			radiobutton[i]=new JRadioButton(names.get(i).toString());
+			radiobutton[i].setActionCommand(Integer.toString(i));
+			bgr.add(radiobutton[i]);
+			add(radiobutton[i]);
+		
+			radiobutton[i].addActionListener(listener);
+			
+		}
+		
+		invalidate();
+		
+	}
 	
 	public BVChooser(ActionListener listener, String[] names, Orientation o) {
 		switch(o){
@@ -97,6 +128,7 @@ public class BVChooser extends JPanel implements ActionListener{
 			radiobutton[i]=new JRadioButton(names[i]);
 			new BVD(debug,i+" "+radiobutton[i]);
 			radiobutton[i].setActionCommand(Integer.toString(i));
+			new BVD(debug,radiobutton[i].getActionCommand());
 			bgr.add(radiobutton[i]);
 			add(radiobutton[i]);
 			radiobutton[i].addActionListener(listener);
@@ -132,7 +164,9 @@ public class BVChooser extends JPanel implements ActionListener{
 	public void clickOn(State state){
 		radiobutton[state.ordinal()].doClick();
 	}
-
+	public void clickOn(int index){
+		radiobutton[index].doClick();
+	}
 	public void actionPerformed(ActionEvent arg0) {
 		BVSelectedEvent.makeEvent(this,events[Integer.parseInt(arg0.getActionCommand())]);
 		// TODO Auto-generated method stub
@@ -164,6 +198,7 @@ public class BVChooser extends JPanel implements ActionListener{
 			}
 			
 		}
+		validate();
 	}
 	class MP extends JPanel{
 		MP(){
@@ -171,6 +206,11 @@ public class BVChooser extends JPanel implements ActionListener{
 			
 		}
 		
+	}
+	public void removeActionListener(ActionListener al) {
+		for(JRadioButton rb:radiobutton){
+			rb.removeActionListener(al);
+		}
 	}
 	
 	

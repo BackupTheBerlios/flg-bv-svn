@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 
 public class BVD extends Throwable{
 	String who="";
-	int mydebuglevel=1;
+	int mydebuglevel=0;
 	/*
 	 * public BVD(String text){
 		this(true,text);
@@ -26,6 +26,19 @@ public class BVD extends Throwable{
 				}
 			}
 		}
+
+	
+	}
+	private BVD(int debuglevel, String text){	
+		mydebuglevel=debuglevel;
+			if (mydebuglevel>0){
+				System.out.println(getStackTrace()[0].getFileName()+"("+getStackTrace()[0].getLineNumber()+"): "+text);
+			
+				for (int i=0; i< Math.min(this.getStackTrace().length, mydebuglevel);i++){
+					who = who+"\n"+this.getStackTrace()[i].toString();
+				}
+			}
+		
 
 	
 	}
@@ -63,7 +76,38 @@ public class BVD extends Throwable{
 		}
 	
 	}
+	public BVD(int debuglevel, Object o){
+		String text;
+		mydebuglevel=debuglevel;
+		if (o!=null){
+		
+			text=o.toString();
+			
+			if (mydebuglevel>0){
+				System.out.println(getStackTrace()[0].getFileName()+"("+getStackTrace()[0].getLineNumber()+"): "+text);
+			
+				for (int i=0; i< Math.min(this.getStackTrace().length, mydebuglevel);i++){
+					who = who+"\n"+this.getStackTrace()[i].toString();
+				}
+			}
+		
+		}else{
+		
+			text="null-Object";
+			
+			if (mydebuglevel>0){
+				System.out.println(getStackTrace()[0].getFileName()+"("+getStackTrace()[0].getLineNumber()+"): "+text);
+			
+				for (int i=0; i< Math.min(this.getStackTrace().length, mydebuglevel);i++){
+					who = who+"\n"+this.getStackTrace()[i].toString();
+				}
+			}
+			
+		}
+	
+	}
 }
+
 	
 
 

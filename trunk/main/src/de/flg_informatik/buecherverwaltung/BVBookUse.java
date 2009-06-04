@@ -20,7 +20,7 @@ public class BVBookUse{
 	 */
 	public static Vector<String> getSubjects(){
 		subjects=BVUtils.getSetTokens(tablename, col_subname);
-		new BVD(true,subjects);
+		new BVD(debug,subjects);
 		return (subjects);
 	}
 	
@@ -86,8 +86,13 @@ public class BVBookUse{
 		}
 		return 0;
 	}
+	/**
+	 * get equivalent ISBN
+	 * @param ISBN
+	 * @return
+	 */
 	
-	public static Vector<String> getAequisOfString(Ean ISBN){
+	public static Vector<String> getEquisOfString(Ean ISBN){
 		ResultSet rs;
 		Vector<String> ret=new Vector<String>();
 		for (BVBookUse bv:getBVOf(getBCIDOf(ISBN), false)){
@@ -98,10 +103,16 @@ public class BVBookUse{
 		}
 		return ret;
 	}
+	/**
+	 * Set two ISBN or bcid as equivalent.
+	 * Make a new BookClassID bcid. 
+	 * Merge all uses and store it for bcid.  
+	 * @param ean1
+	 * @param ean2
+	 */
 	
 	
-	
-	public static void makeAequi(Ean ean1, Ean ean2){
+	public static void makeEqui(Ean ean1, Ean ean2){
 		new BVD(debug,"making "+ean1+" equivalent to "+ean2);
 		ResultSet rs;
 		if (ean1.toString().equals(ean2.toString())){
@@ -142,7 +153,7 @@ public class BVBookUse{
 			if (getBCIDOf(ean1)!=0){
 				bcid=getBCIDOf(ean1);
 				if (getBCIDOf(ean2)!=0){ // much work to do
-					for (String ean:getAequisOfString(ean2)){
+					for (String ean:getEquisOfString(ean2)){
 						setBCIDOf(new Ean(ean),bcid);
 					}
 				}
@@ -166,7 +177,7 @@ public class BVBookUse{
 		
 		
 	}
-	public static void delAequi(Ean ean1){
+	public static void delEqui(Ean ean1){
 		Vector<BVBookUse> uses = new Vector<BVBookUse>();
 		Vector<BVBookUse> equis = new Vector<BVBookUse>();
 		// Collect uses first and delete them
@@ -263,12 +274,6 @@ public class BVBookUse{
 	}
 	
 	
-	boolean delUse(){
-	new BVD(true,"deleting"+this);
-		
-		return(BVUtils.doDelete("DELETE FROM "+tablename+" WHERE "
-				+ col_pk + " = " + buid )!=0);
-		}
 	
 	/**
 	 *  Implementation
@@ -314,6 +319,13 @@ public class BVBookUse{
 		this.subject=subject;
 		
 	}
+	boolean delUse(){
+		new BVD(debug,"deleting"+this);
+			
+			return(BVUtils.doDelete("DELETE FROM "+tablename+" WHERE "
+					+ col_pk + " = " + buid )!=0);
+			}
+
 	private static Vector<BVBookUse> getBVOf(Ean ISBN){
 		Vector<BVBookUse> ret = new Vector<BVBookUse>();
 		ResultSet rs;
@@ -413,14 +425,7 @@ public class BVBookUse{
 				+ col_grades + " = " +null + ","
 				+ col_subname + " = " + null )!=0);
 		}
-	private boolean setBookUseClass(){
-		
-		return(BVUtils.doUpdate("UPDATE "+tablename + " SET " 
-				+ col_bc + " = " + bcid + ","
-				+ col_subname + " = " + null + ","
-				+ col_grades + " = " + null  
-				+ " WHERE " + col_pk + " = " + buid)!=0);
-		}
+
 	
 
 	

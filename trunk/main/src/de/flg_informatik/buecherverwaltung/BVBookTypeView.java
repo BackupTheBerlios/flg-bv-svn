@@ -14,15 +14,17 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ListSelectionEvent;
 
 import de.flg_informatik.Etikett.EtikettDruck;
+import de.flg_informatik.buecherverwaltung.BVBookUsePanel.WaitingForAequi;
 import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 
-public class BVBookTypeView extends BVView implements ActionListener {
+public class BVBookTypeView extends BVTableView implements ActionListener {
 	/**
 	 * 
 	 */
@@ -35,7 +37,7 @@ public class BVBookTypeView extends BVView implements ActionListener {
 	private int lastselected=1;
 	private BVChooser bvchooser;
 	private Vector<String> booktyp=null;
-	private BookTypeSouthPanel booktypepanel = null;
+	private BTSouthPanel booktypepanel = null;
 	private BVJPanel bvjp;
 	enum State{
 		info,
@@ -48,22 +50,16 @@ public class BVBookTypeView extends BVView implements ActionListener {
 	
 	public BVBookTypeView(){
 		me = this;
-		ConsumedEvents.addElement(BVSelectedEvent.SelectedEventType.ISBNSelected);
-		ConsumedEvents.addElement(BVSelectedEvent.SelectedEventType.ISBNUnknownSelected);
-		ConsumedEvents.addElement(BVSelectedEvent.SelectedEventType.ISBNBuySelected);
-		ConsumedEvents.addElement(BVSelectedEvent.SelectedEventType.BTedit);
-		ConsumedEvents.addElement(BVSelectedEvent.SelectedEventType.BTinfo);
-		ConsumedEvents.addElement(BVSelectedEvent.SelectedEventType.BTnew);
 		mymodell=new BVBookTypeDatamodell(this);
 		this.bvjp=new BVJPanel(me,mymodell);
-		this.booktypepanel=new BookTypeSouthPanel(state,this);
+		this.booktypepanel=new BTSouthPanel(state,this);
 		setLayout(new BorderLayout());
 		add(bvjp,BorderLayout.CENTER);
 		add(makeChooser(this),BorderLayout.WEST);
 		add(booktypepanel,BorderLayout.SOUTH); 
-		BVSelectedEvent.addBVSelectedEventListener(this);
 		validate();
 	}
+	
 	
 	@Override
 	public Dimension getPreferredSize() {
@@ -95,6 +91,15 @@ public class BVBookTypeView extends BVView implements ActionListener {
 			booktyp=mymodell.getBookType(e.getEan());
 			
 			break;
+		case BookUnknownSelected:
+			if (state!=State.register){
+				stateChanged(State.register);
+				BVSelectedEvent.addBVSelectedEventListener(new WaitingForBT(new BVBook(e.getEan())));
+				invalidate();
+				me.validate();
+			}else{
+				new BVBook(e.getEan()).setBookType(new Ean(booktyp.firstElement()));
+			}
 		default:	
 					
 		}
@@ -152,12 +157,15 @@ public class BVBookTypeView extends BVView implements ActionListener {
 	if (state==State.neu){
 		state=State.info;
 	}
+	if (state==State.register){ //we need another (UnknownBook)-Selection, must not make new event!
+		return;
+	}
 	stateChanged(state);
 
 	}
 		
 
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) { //BVChooser
 		state=State.values()[Integer.parseInt(e.getActionCommand())];
 		switch (state){
 		case info:
@@ -170,8 +178,8 @@ public class BVBookTypeView extends BVView implements ActionListener {
 			BVSelectedEvent.makeEvent(this, SelectedEventType.ISBNBuySelected, new Ean(((BVBookTypeDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
 			break;
 		case register:
-			
-			BVSelectedEvent.makeEvent(this, SelectedEventType.ISBNSelected, new Ean(((BVBookTypeDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
+			booktyp=null;
+			new BVW("Bitte den Buchtyp für die zu \n registrierenden Bücher wählen!");
 			break;
 		case neu:
 			if(booktyp==null){ // new selected manually
@@ -194,6 +202,21 @@ public class BVBookTypeView extends BVView implements ActionListener {
 	BVBookTypeDatamodell getModell(){
 		return mymodell;
 	}
+	class WaitingForBT implements BVSelectedEventListener{
+		final BVBook book;
+		public WaitingForBT(BVBook book) {
+			this.book=book;
+		}
+		public void thingSelected(BVSelectedEvent e) {
+			if (e.getId()==BVSelectedEvent.SelectedEventType.ISBNSelected){
+				book.setBookType(e.getEan());
+				BVSelectedEvent.removeBVSelectedEventListener(this);
+			}else{
+				BVSelectedEvent.removeBVSelectedEventListener(this);
+			}
+			
+		}
+	}
 	void selectLastBookType(){
 		lastselected = mymodell.getRowCount()-1;
 	}
@@ -201,8 +224,8 @@ public class BVBookTypeView extends BVView implements ActionListener {
 		this.booktyp = booktyp;
 	}
 	
-	@Override
-	void toBackground() {
+
+	public void toBackground() {
 		new BVD(debug,"retireing");
 		
 		
@@ -211,6 +234,28 @@ public class BVBookTypeView extends BVView implements ActionListener {
 		super.validate();
 		bvjp.repaint();
 		
+		
+	}
+
+	public void toClose() {
+		// TODO Auto-generated method stub
+		
+	}
+	public Vector<SelectedEventType> getConsumedEvents() {
+		return (new Vector<BVSelectedEvent.SelectedEventType>(){{
+			add(BVSelectedEvent.SelectedEventType.ISBNSelected);
+			add(BVSelectedEvent.SelectedEventType.ISBNUnknownSelected);
+			add(BVSelectedEvent.SelectedEventType.ISBNBuySelected);
+			add(BVSelectedEvent.SelectedEventType.BookUnknownSelected);
+			add(BVSelectedEvent.SelectedEventType.BTedit);
+			add(BVSelectedEvent.SelectedEventType.BTinfo);
+			add(BVSelectedEvent.SelectedEventType.BTnew);
+	}});
+	}
+
+
+	public void toFront() {
+		// TODO Auto-generated method stub
 		
 	}
 	

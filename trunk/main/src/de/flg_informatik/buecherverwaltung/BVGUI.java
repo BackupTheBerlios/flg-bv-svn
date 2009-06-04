@@ -2,17 +2,21 @@ package de.flg_informatik.buecherverwaltung;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.FocusEvent;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 
 import de.flg_informatik.utils.FLGFrame;
 import de.flg_informatik.utils.FireButton;
@@ -27,11 +31,13 @@ public class BVGUI extends FLGFrame {
 	
 	private static final long serialVersionUID = 1L;
 	private static BVGUI thegui;
-	private static boolean debug=false;
-	public FireButton cancelbutton = new FireButton("Abbrechen");
-	public FireButton closebutton = new FireButton("Beenden");
+	private static boolean debug=true;
+	// public static Hashtable<BVView, BVUsecases> usecases =new Hashtable<BVView, BVUsecases>();
+	public JButton cancelbutton = new JButton("Abbrechen");
+	public JButton closebutton = new JButton("Beenden");
 	BVControl control;
 	JTabbedPane centerpane;
+	LogPane lp;
 	public BVGUI(BVControl control){
 		new BVD(debug,"setting Variables");
 		this.setVisible(false);
@@ -59,14 +65,15 @@ public class BVGUI extends FLGFrame {
 		if (view==null){
 			return false;
 		}
-		new BVD(debug,"isSelectedView() from: "+view.getName());
+		new BVD(debug,"isSelectedView() from: "+((JPanel)view).getName());
 		if(thegui.centerpane.getSelectedComponent()==null){
 			return false;
 		}else{
-			return (view.getName().equals(thegui.centerpane.getSelectedComponent().getName()));
+			return ((JPanel)view).getName().equals(thegui.centerpane.getSelectedComponent().getName());
 		}
 		
 	}
+
 	public static BVView getSelectedView(){
 		if(thegui.centerpane.getSelectedComponent()==null){
 			return null;
@@ -80,7 +87,8 @@ public class BVGUI extends FLGFrame {
 		centerpane=new JTabbedPane();
 		for (BVUsecases usecase:BVUsecases.values()){
 			new BVD(debug,"centerpane: "+ usecase.view.getName());
-			centerpane.addTab(usecase.view.getName(),usecase.view);
+			centerpane.addTab(((JPanel)(usecase.view)).getName(),((JPanel)(usecase.view)));
+			BVSelectedEvent.addBVSelectedEventListener(usecase.view);
 		}
 		centerpane.addChangeListener(BVControl.getControl());
 		
@@ -94,26 +102,57 @@ public class BVGUI extends FLGFrame {
 	
 	
 	private JPanel makeButtonfield(){
-		JPanel retpan=new JPanel(new GridLayout(1,0));
-		retpan.add(new JPanel(){
-			{add(new JLabel("Buchverwaltung Version: "+control.version+", (C) C.HOFF&NURH (@flg-informatik.de)"));
-			}});
-			
-		retpan.add(new JPanel(new FlowLayout()){{
-			add(new JPanel());
-			add(new JPanel());
-			add(new JPanel());
-			add(new JPanel(new FlowLayout()){{
+		JPanel retpan=new JPanel();
+		retpan.add(lp=new LogPane());
+		retpan.add(new JPanel(new GridLayout(0,1)){
+			{
+				add(new JLabel("Buchverwaltung Version: "+control.version));
+				add(new JLabel("(C) C.HOFF&NURH (@flg-informatik.de)"));
+				add(new JPanel(new FlowLayout()){{
 				this.add(cancelbutton);
 				cancelbutton.addActionListener(control);
 				this.add(closebutton);
 				closebutton.addActionListener(control);
+				
 			}});
 		}});
+		invalidate();
 		return retpan;
 	}
+	class LogPane extends java.awt.TextArea{
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+			
+		
+		LogPane(){
+			this.setEditable(false);
+		}
+		public java.awt.Dimension getPreferredSize(){
+			if (BVControl.getControl().gui==null){
+				return(new java.awt.Dimension(600,100));
+			}
+			return (new java.awt.Dimension(BVControl.getControl().gui.getSize().width/3*2,BVControl.getControl().gui.getSize().height/4));
+			
+		}
+		public java.awt.Dimension getMinimumSize(){
+			
+				return(new java.awt.Dimension(600,100));
+			
+		}
+		synchronized public void append(String string){
+			super.append(string);
+			invalidate();
+			getParent().validate();
+			
+			
+		}
+	}
+
 	public void toClose(){
-		closebutton.fire();
+		closebutton.doClick();
 	}
 	
 	public static void selectView(BVUsecases usecase){

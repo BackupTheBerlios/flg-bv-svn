@@ -1,6 +1,7 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -20,28 +21,42 @@ public class BVJPanel extends JPanel {
 	BTVTable table;
 	BVJPanel me; 
 	AbstractTableModel memodell;
-	BVView meparent;
+	BVTableView meparent;
 	
-	public BVJPanel(BVView myparent,AbstractTableModel mymodell){
+	public BVJPanel(BVTableView myparent,AbstractTableModel mymodell){
 		this.me=this;
 		this.memodell=mymodell;
 		this.meparent=myparent;
 		this.table=new BTVTable();
 		this.add(new JScrollPane(this.table 
 				,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS){
-			/**
-					 * 
-					 */
-					private static final long serialVersionUID = 1L;
-
+			
+				public Dimension getPreferredSize() {
+					return new Dimension(me.getSize().width-me.getInsets()
+						.left-me.getInsets().right-10,me.getSize().height-me.getInsets()
+						.top-me.getInsets().bottom-10);
+				}
+				
+				/**new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS){{
+			setViewportView(new JPanel(new FlowLayout()){{
+				add(table);
+			}});
+			
+							private static final long serialVersionUID = 1L;
+	this.table 
+				,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS)
 			public Dimension getPreferredSize() {
 				return new Dimension(me.getSize().width-me.getInsets()
 					.left-me.getInsets().right-10,me.getSize().height-me.getInsets()
 					.top-me.getInsets().bottom-10);
-			}
+			} * 
+					 */
+			
 			
 		}
 		);
+		invalidate();
+		table.invalidate();
 		
 	}
 	

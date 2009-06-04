@@ -99,7 +99,12 @@ public class BVScanAdapter implements ScanAdapter, Runnable{
 				
 				
 			}else{
-				new BVD(debug,"unclear ean");// Ean.checkEan(new Ean(eanstring));
+				if (BVClass.isClassEan(ean)){
+					
+				}else{
+					new BVD(debug,"unclear ean");// Ean.checkEan(new Ean(eanstring));
+				}
+				
 			}
 		}
 	}

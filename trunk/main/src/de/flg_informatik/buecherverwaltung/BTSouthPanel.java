@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import de.flg_informatik.Etikett.EtikettDruck;
@@ -27,13 +28,13 @@ import de.flg_informatik.buecherverwaltung.BVBookTypeView.State;
  * @author notkers
  *
  */
-class BookTypeSouthPanel extends JPanel implements ActionListener{
+class BTSouthPanel extends JPanel implements ActionListener{
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 		private static boolean debug=true;
-		BookTypeSouthPanel mebtp;
+		BTSouthPanel mebtp;
 		BVBookTypeView myview;
 		TextField[] editfields;
 		JButton save;
@@ -42,7 +43,7 @@ class BookTypeSouthPanel extends JPanel implements ActionListener{
 		JPanel up;
 		State state;
 		
-		public BookTypeSouthPanel(State state, BVBookTypeView myview) {
+		public BTSouthPanel(State state, BVBookTypeView myview) {
 			mebtp=this;
 			this.myview=myview;
 			this.state=state;
@@ -191,6 +192,12 @@ class BookTypeSouthPanel extends JPanel implements ActionListener{
 					up.add(new Minipanel(null,directprint));
 					this.add(up);
 					break;
+				case register:
+					if (booktyp!=null){
+						
+					}else{
+						add(new JLabel("Bitte zugehörigen Buchtyp anklicken/scannen!"));
+					}
 					
 					
 			}

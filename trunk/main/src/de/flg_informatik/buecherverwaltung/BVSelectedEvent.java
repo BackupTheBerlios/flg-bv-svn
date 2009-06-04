@@ -22,7 +22,8 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 		BTinfo,
 		BTnew,
 		BTedit,
-		EanUnknown;
+		EanUnknown,
+		BLClassSelected;
 	}
 	private SelectedEventType id=null;
 	private Ean ean=null;
@@ -32,14 +33,14 @@ public class BVSelectedEvent extends EventObject implements Runnable, BVSelected
 		
 	
 	public BVSelectedEvent(Object source, SelectedEventType id, Ean ean, int wildcards){
-		super(source
-				);
+		super(source);
 		this.id=id;
 		this.ean=ean;
 		this.wildcards=wildcards;
 	}
 	
 	public static void makeEvent(Object source, SelectedEventType id){
+		
 		BVSelectedEvent.makeEvent(source, id, null, 0);
 	}
 	public static void makeEvent(Object source, SelectedEventType id, Ean ean){

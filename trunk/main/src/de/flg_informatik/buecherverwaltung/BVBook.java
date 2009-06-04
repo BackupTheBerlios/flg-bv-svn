@@ -77,7 +77,10 @@ public class BVBook {
  	public static int getLocation(Ean ean){
  		return getLocation(makeBookID(ean));	
 	}
- 	
+ 	public boolean setBookType(Ean ean){
+ 		new BVNI();
+ 		return true;	
+	}
  	
  	public static synchronized int getLocation(BigInteger ID){
  		debug("getLocation "+ID);
