@@ -49,10 +49,11 @@ public class FLGProperties extends  Panel implements TextListener,FocusListener{
 		this.significantkey = significantkey;
 		if (properties==null){
 			switch(de.flg_informatik.utils.shell.OSShell.getOS()){
-				case linux:
+				case linux: // dotted file
 					this.infilename=System.getProperty("user.home")+System.getProperty("file.separator")+"."+this.infilename;
 				break;
 				default:
+					this.infilename="%appdata%"+System.getProperty("file.separator")+"de.flg-informatik"+System.getProperty("file.separator")+this.infilename;
 				break;	
 			// infilename=infilename;
 			}
