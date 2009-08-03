@@ -9,69 +9,31 @@ import javax.swing.JOptionPane;
 public class BVD extends Throwable{
 	String who="";
 	int mydebuglevel=0;
-	/*
-	 * public BVD(String text){
-		this(true,text);
-	}
-	*/
-	private BVD(boolean debug, String text){	
-		if (debug){
-			
-			
-			if (mydebuglevel>0){
-				System.out.println(getStackTrace()[0].getFileName()+"("+getStackTrace()[0].getLineNumber()+"): "+text);
-			
-				for (int i=0; i< Math.min(this.getStackTrace().length, mydebuglevel);i++){
-					who = who+"\n"+this.getStackTrace()[i].toString();
-				}
-			}
-		}
 
-	
-	}
-	private BVD(int debuglevel, String text){	
-		mydebuglevel=debuglevel;
-			if (mydebuglevel>0){
-				System.out.println(getStackTrace()[0].getFileName()+"("+getStackTrace()[0].getLineNumber()+"): "+text);
-			
-				for (int i=0; i< Math.min(this.getStackTrace().length, mydebuglevel);i++){
-					who = who+"\n"+this.getStackTrace()[i].toString();
-				}
-			}
-		
-
-	
-	}
-	/*public BVD(Object o){
-		this(o.toString());
-	
-	}
-	*/
 	public BVD(boolean debug, Object o){
 		String text;
 		if (o!=null){
 			if (debug){
 				text=o.toString();
-				
+				System.out.println(getStackTrace()[0].getFileName()+"("+getStackTrace()[0].getLineNumber()+"): "+text);
 				if (mydebuglevel>0){
-					System.out.println(getStackTrace()[0].getFileName()+"("+getStackTrace()[0].getLineNumber()+"): "+text);
-				
 					for (int i=0; i< Math.min(this.getStackTrace().length, mydebuglevel);i++){
 						who = who+"\n"+this.getStackTrace()[i].toString();
 					}
+					System.out.println(who);
 				}
 			}
 		}else{
 			if (debug){
 				text="null-Object";
-				
+				System.out.println(getStackTrace()[0].getFileName()+"("+getStackTrace()[0].getLineNumber()+"): "+text);
 				if (mydebuglevel>0){
-					System.out.println(getStackTrace()[0].getFileName()+"("+getStackTrace()[0].getLineNumber()+"): "+text);
-				
 					for (int i=0; i< Math.min(this.getStackTrace().length, mydebuglevel);i++){
 						who = who+"\n"+this.getStackTrace()[i].toString();
 					}
+					System.out.println(who);
 				}
+				
 			}
 		}
 	
@@ -82,25 +44,25 @@ public class BVD extends Throwable{
 		if (o!=null){
 		
 			text=o.toString();
-			
+			System.out.println(getStackTrace()[0].getFileName()+"("+getStackTrace()[0].getLineNumber()+"): "+text);
 			if (mydebuglevel>0){
-				System.out.println(getStackTrace()[0].getFileName()+"("+getStackTrace()[0].getLineNumber()+"): "+text);
+				
 			
 				for (int i=0; i< Math.min(this.getStackTrace().length, mydebuglevel);i++){
 					who = who+"\n"+this.getStackTrace()[i].toString();
 				}
+				System.out.println(who);
 			}
 		
 		}else{
 		
 			text="null-Object";
-			
+			System.out.println(getStackTrace()[0].getFileName()+"("+getStackTrace()[0].getLineNumber()+"): "+text);
 			if (mydebuglevel>0){
-				System.out.println(getStackTrace()[0].getFileName()+"("+getStackTrace()[0].getLineNumber()+"): "+text);
-			
 				for (int i=0; i< Math.min(this.getStackTrace().length, mydebuglevel);i++){
 					who = who+"\n"+this.getStackTrace()[i].toString();
 				}
+				System.out.println(who);
 			}
 			
 		}

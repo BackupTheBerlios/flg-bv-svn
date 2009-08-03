@@ -3,11 +3,13 @@ package de.flg_informatik.buecherverwaltung;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
 
 import de.flg_informatik.buecherverwaltung.BVUtils.todo;
 import de.flg_informatik.ean13.Ean;
 
 public class BVBook {
+	public static final boolean debug=true;
 	public static final BigInteger Book12=new BigInteger("200000000000");
 	public BigInteger ID;
 	public String Purchased;
@@ -180,4 +182,5 @@ public class BVBook {
 		// System.out.println(BVBook.class+": "+ obj);
 	}
 
+	
 }

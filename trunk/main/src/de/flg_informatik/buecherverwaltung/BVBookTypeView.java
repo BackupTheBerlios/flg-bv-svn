@@ -20,7 +20,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ListSelectionEvent;
 
 import de.flg_informatik.Etikett.EtikettDruck;
-import de.flg_informatik.buecherverwaltung.BVBookUsePanel.WaitingForAequi;
 import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 
@@ -39,6 +38,9 @@ public class BVBookTypeView extends BVTableView implements ActionListener {
 	private Vector<String> booktyp=null;
 	private BTSouthPanel booktypepanel = null;
 	private BVJPanel bvjp;
+	private long pretime=0;
+	private long echotime=10;
+	private int preselected;
 	enum State{
 		info,
 		edit,
@@ -100,6 +102,13 @@ public class BVBookTypeView extends BVTableView implements ActionListener {
 			}else{
 				new BVBook(e.getEan()).setBookType(new Ean(booktyp.firstElement()));
 			}
+		case BookTypOnTop:
+			if (state!=State.info){
+				stateChanged(State.info);
+			}
+			invalidate();
+			me.validate();
+			break;
 		default:	
 					
 		}
@@ -151,7 +160,13 @@ public class BVBookTypeView extends BVTableView implements ActionListener {
 			// read the manual ListSelectionEvent
 			if (((javax.swing.DefaultListSelectionModel)(e.getSource())).isSelectedIndex(i)){
 				lastselected=i;
-				
+			}
+		 
+			
+		}
+		if (preselected==(preselected=lastselected)){ // catch echos
+			if (pretime-(pretime=System.currentTimeMillis())<echotime){
+				return; //was a Echo
 			}
 		}
 	if (state==State.neu){
@@ -250,6 +265,7 @@ public class BVBookTypeView extends BVTableView implements ActionListener {
 			add(BVSelectedEvent.SelectedEventType.BTedit);
 			add(BVSelectedEvent.SelectedEventType.BTinfo);
 			add(BVSelectedEvent.SelectedEventType.BTnew);
+			add(BVSelectedEvent.SelectedEventType.BookTypOnTop);
 	}});
 	}
 

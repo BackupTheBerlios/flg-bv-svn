@@ -7,12 +7,16 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class BVE extends Throwable{
+	private final static boolean debug=false;
 	String who="";
 	int debuglevel=1;
 	BVE(){
+		if (debug){
+			this.printStackTrace();
+		}
 	
 		if (debuglevel>0){
-		who="Stacktrace:";	
+		who="\nStacktrace:";	
 		
 			for (int i=0; i< Math.min(this.getStackTrace().length, debuglevel);i++){
 				who = who+"\n"+this.getStackTrace()[i].toString();
@@ -21,6 +25,9 @@ public class BVE extends Throwable{
 		new Error("Interner Fehler",who);
 	}
 	BVE(String text){
+		if (debug){
+			this.printStackTrace();
+		}
 		
 		if (debuglevel>0){
 		who="Stacktrace:";	

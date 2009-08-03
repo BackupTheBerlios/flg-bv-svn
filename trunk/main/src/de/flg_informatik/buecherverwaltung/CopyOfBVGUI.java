@@ -11,7 +11,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -22,7 +21,7 @@ import javax.swing.event.ChangeListener;
 import de.flg_informatik.utils.FLGFrame;
 import de.flg_informatik.utils.FireButton;
 
-public class BVGUI extends JFrame {
+public class CopyOfBVGUI extends FLGFrame {
 
 	/*
 	 * Hauptklasse, jeder usecase bekommt ein Panel im JTabbedPane
@@ -31,7 +30,7 @@ public class BVGUI extends JFrame {
 	 */
 	
 	private static final long serialVersionUID = 1L;
-	private static BVGUI thegui;
+	private static CopyOfBVGUI thegui;
 	private static boolean debug=true;
 	// public static Hashtable<BVView, BVUsecases> usecases =new Hashtable<BVView, BVUsecases>();
 	public JButton cancelbutton = new JButton("Abbrechen");
@@ -39,14 +38,14 @@ public class BVGUI extends JFrame {
 	BVControl control;
 	JTabbedPane centerpane;
 	LogPane lp;
-	public BVGUI(BVControl control){
+	public CopyOfBVGUI(BVControl control){
 		new BVD(debug,"setting Variables");
 		this.setVisible(false);
 		thegui=this;
 		this.control=control;
 		new BVD(debug,"configuring FLGFrame");
-		//this.setQuitsystem(false);
-		//this.setClosewindow(false);
+		this.setQuitsystem(false);
+		this.setClosewindow(false);
 		new BVD(debug,"setting Layout");
 		this.setLayout(new BorderLayout());
 		new BVD(debug,"making Buttonfield");
@@ -92,7 +91,6 @@ public class BVGUI extends JFrame {
 			BVSelectedEvent.addBVSelectedEventListener(usecase.view);
 		}
 		centerpane.addChangeListener(BVControl.getControl());
-		
 		
 		
 		

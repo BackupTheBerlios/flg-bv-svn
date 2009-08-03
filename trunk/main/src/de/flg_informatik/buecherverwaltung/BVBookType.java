@@ -1,6 +1,7 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.math.BigInteger;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import de.flg_informatik.buecherverwaltung.BVUtils.todo;
@@ -34,8 +35,7 @@ public class BVBookType {
  			
 			return BVUtils.doQuery("SELECT Title FROM Booktypes WHERE ISBN="+ISBN).getString(1);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			new BVE("Kein Titel fur ISBN "+ISBN+" gefunden!");
 			return null;
 		}
 		

@@ -241,7 +241,7 @@ public class BVBookUse{
 				new BVW("Keine vollständige Zuweisung; \n Anweisung ignoriert!");
 				return;
 			}
-			new BVD(debug,"testig");
+			new BVD(5,grade); new BVD(debug,subject);
 			if (!isExisting(isbn,grade,subject)){
 				new BVBookUse(isbn,grade,subject).addUse();
 			}else{
@@ -249,6 +249,7 @@ public class BVBookUse{
 			}
 		}else{ //equivalence
 			makeBookUse(getBCIDOf(isbn), grade, subject);
+			
 		}
 		
 	}
@@ -425,6 +426,44 @@ public class BVBookUse{
 				+ col_grades + " = " +null + ","
 				+ col_subname + " = " + null )!=0);
 		}
+
+	public static Vector<Ean>  getISBN(String subject, String grade) {
+		Vector<Ean> ret= new Vector<Ean>();
+		Vector<Integer> equi = new Vector<Integer>();
+		ResultSet rs;
+		try {
+			rs=BVUtils.doQuery("SELECT  ISBN, BCID FROM "+tablename+" WHERE " +
+			 		" ( " + col_grades + " = '" + grade + "') AND ("
+			 		+ col_subname + " = '" + subject +"')");
+			rs.beforeFirst();
+			while (rs.next()){
+				if (rs.getString(1)!=null){
+					ret.add(new Ean(rs.getString(1)));
+				}else{
+					if (rs.getString(2)!=null){
+						equi.add(rs.getInt(2));
+					}
+				}
+			}
+			
+				
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (equi.size()>0){ // there are Equivalences
+			for (int bcid:equi){
+				for (BVBookUse bvbu:BVBookUse.getBVOf(bcid, false)){
+					ret.add(bvbu.isbn);
+				}
+			}
+		}
+		
+		
+		
+		return ret;
+	}
 
 	
 

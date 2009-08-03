@@ -9,7 +9,9 @@ import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import de.flg_informatik.buecherverwaltung.BVChooser.Orientation;
@@ -22,8 +24,8 @@ public class BVBookUsePanel extends JPanel  implements ActionListener {
 	private static boolean debug=false;
 	private Ean isbn=null;
 	private BVBookUsePanel me;
-	private FireButton add = new FireButton("hinzufügen");
-	private FireButton cancel = new FireButton("abbrechen");
+	private JButton add = new JButton("hinzufügen");
+	private JButton cancel = new JButton("abbrechen");
 	private int mw=0;
 	private int mh=0;
 	
@@ -81,7 +83,7 @@ public class BVBookUsePanel extends JPanel  implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			
 			BVBookUse.makeBookUse(isbn,gc.getSelected(),sc.getSelected());
-			add.fire();
+			add.doClick();
 			
 		}
 	}
@@ -106,7 +108,7 @@ public class BVBookUsePanel extends JPanel  implements ActionListener {
 		}
 		public void actionPerformed(ActionEvent e) {
 			(BVBookUse.getUsesOf(isbn).get(bu.getSelectedIndex())).delUse();
-			cancel.fire();
+			cancel.doClick();
 			remove.removeActionListener(this);
 		}
 	}
@@ -114,7 +116,9 @@ public class BVBookUsePanel extends JPanel  implements ActionListener {
 	class aequiPanel extends JPanel implements ActionListener{
 		private FireButton remove = new FireButton("löschen");
 		private FireButton add = new FireButton("setzen");
+		
 		BVChooser bvc;
+		public JDialog jd;
 		aequiPanel(){
 			
 			setLayout(new FlowLayout());
@@ -138,10 +142,12 @@ public class BVBookUsePanel extends JPanel  implements ActionListener {
 			if(e.getSource().equals(add)){
 				remove(add);
 				add(cancel);
-				add(new JLabel("Bitte äquivalente ISBN anklicken/scannen!"));
 				invalidate();
 				me.validate();
 				BVSelectedEvent.addBVSelectedEventListener(new WaitingForAequi());
+				jd = new JOptionPane("Bitte äquivalente ISBN anklicken/scannen!",JOptionPane.INFORMATION_MESSAGE).createDialog("Auswählen");
+				jd.setModal(false);
+				jd.setVisible(true);
 			}
 			if(e.getSource().equals(remove)){
 				new BVD(debug,bvc.getSelectedIndex());
@@ -151,25 +157,31 @@ public class BVBookUsePanel extends JPanel  implements ActionListener {
 				}else{
 					new BVW("Keine Äquivalenz gewählt!\n Ignoriere Anweisung.");
 				}
-				cancel.fire();
+				cancel.doClick();
 			}
 		
 			
 		}
-	}
-
-	class WaitingForAequi extends JPanel implements BVSelectedEventListener{
-		public void thingSelected(BVSelectedEvent e) {
-			if (e.getId()==BVSelectedEvent.SelectedEventType.ISBNSelected){
-				BVBookUse.makeEqui(isbn,e.getEan());
+		class WaitingForAequi extends JPanel implements BVSelectedEventListener{
+			public void thingSelected(BVSelectedEvent e) {
+				if (jd!=null){
+					jd.dispose();
+					jd=null;
+				}
+				
+				if (e.getId()==BVSelectedEvent.SelectedEventType.ISBNSelected){
+					BVBookUse.makeEqui(isbn,e.getEan());
+					BVSelectedEvent.removeBVSelectedEventListener(this);
+					new BVM(isbn+" & "+e.getEan() );
+					BVSelectedEvent.makeEvent(this,BVSelectedEvent.SelectedEventType.ISBNSelected,isbn);
+				}
 				BVSelectedEvent.removeBVSelectedEventListener(this);
-				new BVM(isbn+" & "+e.getEan() );
-				BVSelectedEvent.makeEvent(this,BVSelectedEvent.SelectedEventType.ISBNSelected,isbn);
+				cancel.doClick();
 			}
-			BVSelectedEvent.removeBVSelectedEventListener(this);
-			cancel.fire();
 		}
 	}
+
+	
 }
 	
 

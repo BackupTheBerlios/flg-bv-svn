@@ -200,12 +200,12 @@ public class BVChooser extends JPanel implements ActionListener{
 		}
 		validate();
 	}
-	class MP extends JPanel{
-		MP(){
-			
-			
-		}
-		
+	public Vector<String> getNames (){
+		Vector<String> ret = new Vector<String>();
+			for (JRadioButton rb:radiobutton){
+				ret.add(rb.getText());
+			}
+		return ret;
 	}
 	public void removeActionListener(ActionListener al) {
 		for(JRadioButton rb:radiobutton){
@@ -213,6 +213,13 @@ public class BVChooser extends JPanel implements ActionListener{
 		}
 	}
 	
+	public void removeAllActionListener() {
+		for(JRadioButton rb:radiobutton){
+			for (ActionListener al:rb.getActionListeners()){
+				rb.removeActionListener(al);
+			}
+		}
+	}
 	
 
 }

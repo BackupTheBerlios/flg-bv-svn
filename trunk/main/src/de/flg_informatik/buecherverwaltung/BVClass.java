@@ -77,6 +77,36 @@ public class BVClass {
 		
 		
 	}
+	public static void saveSubjects(String KID, Vector<String> subjects) {
+		StringBuffer buf=new StringBuffer();
+		for (String s:subjects){
+			buf.append(s+",");
+		}
+		String res=buf.substring(0, buf.length()-1);//must trunc
+		new BVD(debug,res);
+		if (BVUtils.doUpdate("UPDATE "+tablename+" SET Subjects = '" + res +
+				"' WHERE KID = "+ KID )==1){
+			BVControl.log("Klasse "+ getBVClass(Integer.valueOf(KID)).Name +" setze Stundentafel " + subjects);
+		}
+	}
+	public static Vector<String> getSubjects(String KID) {
+		Vector<String> result=new Vector<String>();
+		String[] res;
+		try{
+			ResultSet rs=BVUtils.doQuery("SELECT Subjects FROM " + tablename + " WHERE KID = " + KID );
+			rs.first();
+			res=rs.getString(1).split(new String(","));
+			
+			for (int i=0; i< res.length;i++){ // this is strange! it starts with a ""
+					result.add(res[i]);
+					new BVD(debug,res[i]);
+			}	
+		}catch(SQLException sqle){
+			sqle.printStackTrace();
+			
+		}
+		return result;
+	}
 	public static Vector <BVClass> getClasses(String year){
 		Vector<BVClass> result=new Vector<BVClass>();
 		try{

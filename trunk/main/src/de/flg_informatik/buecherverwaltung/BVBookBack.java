@@ -32,7 +32,7 @@ public class BVBookBack extends JPanel implements BVView {
 	 */
 	
 	private static final long serialVersionUID = 1L;
-	private static boolean debug=true;
+	private static boolean debug=false;
 	private Integer condition=0;
 	private BVBook book=null;
 	private TextField idf = new TextField("",13);
@@ -65,7 +65,6 @@ public class BVBookBack extends JPanel implements BVView {
 	}
 	
 	public synchronized void thingSelected(BVSelectedEvent e) {
-		new BVD(debug,e.getEan());
 		switch (e.getId()){
 		
 			case BookLeasedSelected:// we stay on top

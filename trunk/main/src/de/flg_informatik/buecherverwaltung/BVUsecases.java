@@ -11,7 +11,8 @@ public enum BVUsecases {
 	Buchtypen (new BVBookTypeView()),
 	Datenimport (new BVCSVImporter()),
 	// Einstellungen (new BVPropertyView()),
-	Ausleihe (new BVLeaseView());
+	Ausleihe (new BVLeaseView()),
+	Vorbereitung(new BVLeasePreView());
 	;
 	final private static boolean debug=true;
 	private static Hashtable<BVView, BVUsecases> reverse;// is initialized in static void waitForReverse()
@@ -55,10 +56,12 @@ public enum BVUsecases {
 				case BTedit:
 				case BTinfo:
 				case BTnew:
+				case BookTypOnTop:	
 					put(Buchtypen);
 					break;
 				
 				case BookFreeSelected:
+				case BLISBNSelected:	
 					put(Ausleihe);
 					break;
 				case PersonSelected:

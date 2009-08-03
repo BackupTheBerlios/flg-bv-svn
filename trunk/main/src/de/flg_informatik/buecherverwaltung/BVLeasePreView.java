@@ -3,6 +3,7 @@ package de.flg_informatik.buecherverwaltung;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,24 +17,28 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
+
 
 
 import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 
-public class BVLeaseView extends JPanel implements BVView , ActionListener{
+public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 	private static boolean debug=true;
 	private Vector<BVClass> classesvect = null;  
 	private BVChooser years=new BVChooser();
 	private BVChooser classes=new BVChooser();
 	private NorthPanel np;
 	private CenterPanel cp;
+	private JPanel sp;
 	private JDialog jd=null;
-	public BVLeaseView() {
+	public BVLeasePreView() {
 		setLayout(new BorderLayout());
 		add(np=new NorthPanel(),BorderLayout.NORTH);
 		add(cp=new CenterPanelPre(), BorderLayout.CENTER);
+		add(sp=new HFill(), BorderLayout.SOUTH);
 		setVisible(true);
 	}
 	private class NorthPanel extends JPanel implements ActionListener{
@@ -75,36 +80,71 @@ public class BVLeaseView extends JPanel implements BVView , ActionListener{
 		Vector<BookTypLine> lines=new Vector<BookTypLine>();
 		JButton save = new JButton("Stundentafel speichern");
 		BVSelector bvs;
+		JScrollPane sp=new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED){
+		};
+		JScrollPane sp1=new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JPanel container=new JPanel(new GridLayout(1,2)){
+		/*	public Dimension getPreferredSize() {
+				Container me=this.getParent();
+				if (me==null){
+					return new Dimension(10,10);
+				}
+				return new Dimension(me.getSize().width-me.getInsets()
+					.left-me.getInsets().right-10,me.getSize().height-me.getInsets()
+					.top-me.getInsets().bottom-10);
+			}*/
+		};
+		
 		Subpanel sub;
+		Subpanel sub1;
 		CenterPanelPre(){
 			save.addActionListener(this);
 		}
 		public void makeVisible(){
 			removeAll();
 			add(bvs=new BVSelector(this,subjects,BVSelector.Orientation.HORZONTAL));
-			new BVD(debug,bvs.getNames());
-			
 			add(new HFill());
 			add(new HFill());
 			add(save);
 			add(new HFill());
-			add(sub=new Subpanel());
+			sp.setViewportView(sub=new Subpanel());
+			sp1.setViewportView(sub1=new Subpanel());
 			for(String s:BVClass.getSubjects((BVClass.getClasses(years.getSelected()).get(classes.getSelectedIndex()).KID))){
 				new BVD(debug,s);
 				bvs.clickOn(bvs.getNames().indexOf(s));
 			}
+			container.add(sp);
+			container.add(sp1);
+			add(container);
+			container.invalidate();
 			invalidate();
 			BVGUI.val();
+			
+			
+			
 		}
 		class Subpanel extends JPanel{
 			public Subpanel() {
-				setLayout(new GridLayout(0,2,20,5));
-				removeAll();
+				//setLayout(new GridLayout(0,1,20,5));
+				//removeAll();
 				lines.removeAllElements();
 				for (String subject:bvs.getSelected()){
-					addItem(subject);
+					addItem(subject); add(new HFill());
 				}
+				setLayout(new GridLayout(bvs.getSelected().size(),1,20,5));
+				invalidate();
+				cp.invalidate();
+				BVLeasePreView.this.revalidate();
 			}
+			/* public Dimension getPreferredSize() {
+				Container me=this.getParent();
+				if (me==null){
+					return new Dimension(10,10);
+				}
+				return new Dimension(me.getSize().width-me.getInsets()
+					.left-me.getInsets().right-10,me.getSize().height-me.getInsets()
+					.top-me.getInsets().bottom-10);
+			}*/
 			void removeItem(String subject){
 				for (Component c:getComponents()){
 					new BVD(debug,c.getName());
@@ -126,8 +166,9 @@ public class BVLeaseView extends JPanel implements BVView , ActionListener{
 						return; // already here
 					}
 				}
-				lines.add(new BookTypLine(subject));
-				add(lines.lastElement(),subject);
+				BookTypLine btl=new BookTypLine(subject);
+				lines.add(btl);
+				add(btl,subject);
 				getComponent(getComponentCount()-1).setName(subject);
 				return; 
 			}	
@@ -162,8 +203,6 @@ public class BVLeaseView extends JPanel implements BVView , ActionListener{
 				add(new BTSelector(subject,getBTVector(subject)));
 				
 			}
-
-			
 		}
 		void getBooks(){
 			
