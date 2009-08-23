@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 public class BVE extends Throwable{
 	private final static boolean debug=false;
 	String who="";
-	int debuglevel=1;
+	int debuglevel=17;
 	BVE(){
 		if (debug){
 			this.printStackTrace();

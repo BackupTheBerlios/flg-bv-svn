@@ -10,7 +10,7 @@ public enum BVUsecases {
 	StapelRückgabe (new BVBookBack()),
 	Buchtypen (new BVBookTypeView()),
 	Datenimport (new BVCSVImporter()),
-	// Einstellungen (new BVPropertyView()),
+	Einstellungen (new BVPropertyView()),
 	Ausleihe (new BVLeaseView()),
 	Vorbereitung(new BVLeasePreView());
 	;

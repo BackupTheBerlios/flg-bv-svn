@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 
 public class BVD extends Throwable{
 	String who="";
-	int mydebuglevel=0;
+	int mydebuglevel=1;
 
 	public BVD(boolean debug, Object o){
 		String text;

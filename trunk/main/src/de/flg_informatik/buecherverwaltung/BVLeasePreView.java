@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 
 import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
+import de.flg_informatik.utils.FLGJScrollPane;
 
 public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 	private static boolean debug=true;
@@ -80,19 +81,11 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 		Vector<BookTypLine> lines=new Vector<BookTypLine>();
 		JButton save = new JButton("Stundentafel speichern");
 		BVSelector bvs;
-		JScrollPane sp=new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED){
+		FLGJScrollPane sp=new FLGJScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED){
 		};
-		JScrollPane sp1=new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		FLGJScrollPane sp1=new FLGJScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		JPanel container=new JPanel(new GridLayout(1,2)){
-		/*	public Dimension getPreferredSize() {
-				Container me=this.getParent();
-				if (me==null){
-					return new Dimension(10,10);
-				}
-				return new Dimension(me.getSize().width-me.getInsets()
-					.left-me.getInsets().right-10,me.getSize().height-me.getInsets()
-					.top-me.getInsets().bottom-10);
-			}*/
+		
 		};
 		
 		Subpanel sub;

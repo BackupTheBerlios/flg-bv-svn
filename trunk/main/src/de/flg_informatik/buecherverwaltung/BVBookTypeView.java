@@ -1,25 +1,16 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.Label;
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.event.ListSelectionEvent;
 
-import de.flg_informatik.Etikett.EtikettDruck;
 import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 
@@ -33,7 +24,7 @@ public class BVBookTypeView extends BVTableView implements ActionListener {
 	boolean[] columnresizable={false,true,true,true}; 
 	private BVBookTypeDatamodell mymodell;
 	private BVBookTypeView me;
-	private int lastselected=1;
+	private int lastselected=-1;
 	private BVChooser bvchooser;
 	private Vector<String> booktyp=null;
 	private BTSouthPanel booktypepanel = null;
@@ -58,16 +49,17 @@ public class BVBookTypeView extends BVTableView implements ActionListener {
 		setLayout(new BorderLayout());
 		add(bvjp,BorderLayout.CENTER);
 		add(makeChooser(this),BorderLayout.WEST);
-		add(booktypepanel,BorderLayout.SOUTH); 
+		add(booktypepanel,BorderLayout.SOUTH);
 		validate();
 	}
 	
 	
 	@Override
-	public Dimension getPreferredSize() {
+	/*public Dimension getPreferredSize() {
 		// TODO Auto-generated method stub
 		return new Dimension(1280,1024);
 	}
+	*/
 	
 	public void thingSelected(BVSelectedEvent e) {
 		switch (e.getId()){
@@ -161,9 +153,11 @@ public class BVBookTypeView extends BVTableView implements ActionListener {
 			if (((javax.swing.DefaultListSelectionModel)(e.getSource())).isSelectedIndex(i)){
 				lastselected=i;
 			}
+			
 		 
 			
 		}
+	
 		if (preselected==(preselected=lastselected)){ // catch echos
 			if (pretime-(pretime=System.currentTimeMillis())<echotime){
 				return; //was a Echo
@@ -175,8 +169,9 @@ public class BVBookTypeView extends BVTableView implements ActionListener {
 	if (state==State.register){ //we need another (UnknownBook)-Selection, must not make new event!
 		return;
 	}
+	
 	stateChanged(state);
-
+	
 	}
 		
 
@@ -271,8 +266,15 @@ public class BVBookTypeView extends BVTableView implements ActionListener {
 
 
 	public void toFront() {
-		// TODO Auto-generated method stub
+		if (lastselected==-1){ // no Selection yet
+			bvjp.getTable().changeSelection(0, -1, false, false);
+			bvjp.getTable().changeSelection(0, -1, true, false);
+		}
 		
+		bvjp.getTable().invalidate();
+		bvjp.validate();
+		
+				
 	}
 	
 	

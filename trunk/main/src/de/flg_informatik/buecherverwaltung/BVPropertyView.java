@@ -16,25 +16,16 @@ import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 import de.flg_informatik.utils.FLGProperties;
 import de.flg_informatik.utils.FireButton;
 
-public class BVPropertyView extends JPanel implements BVView, ActionListener {
+public class BVPropertyView extends JPanel implements BVView{
 	FireButton save = new FireButton("save properties to file");
-	FLGProperties props;
 	BVPropertyView(){
-		setLayout(new FlowLayout());
-		add(new Panel(){{
-			setLayout(new GridLayout(0,1));
-			add(props=new FLGProperties(BVControl.getControl().app_settings,BVControl.getControl().propertyfilename,new File(BVControl.getControl().defaultfilename),BVControl.getControl().significantstring));
-			add(new Panel(){{
-				//setLayout(new GridLayout(0,3)); 
-				//add(new Panel()); 
-				//add(new Panel());
-				//add(new Panel(){{
-				//	setLayout(new FlowLayout());
-					add(save);
-				//}});
-			}});
-		}});
-		save.addActionListener(this);
+		//setLayout(new FlowLayout());
+		//add(new Panel(){{
+			setLayout(new GridLayout(1,1));
+			add(BVControl.getControl().app_settings_pane);
+			
+		//}});
+		
 	}
 
 
@@ -49,18 +40,10 @@ public class BVPropertyView extends JPanel implements BVView, ActionListener {
 
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(save)){
-			props.saveProperties();
-			
-		}
-		// TODO Does'nt work yet
-		
-	}
-
-
 	public void toBackground() {
-		if (javax.swing.JOptionPane.showConfirmDialog(BVControl.getControl().gui,
+		BVControl.getControl().app_settings_pane.focusLost(null);
+		
+		/*if (javax.swing.JOptionPane.showConfirmDialog(BVControl.getControl().gui,
 				"Sollen die Einstellungen übernommen werden?",
 				"Einstellungen",
 				javax.swing.JOptionPane.YES_NO_OPTION
@@ -68,6 +51,7 @@ public class BVPropertyView extends JPanel implements BVView, ActionListener {
 			props.saveProperties();
 			
 		}
+		*/
 		// TODO Does'nt work yet
 		
 	}

@@ -1,14 +1,20 @@
 package de.flg_informatik.buecherverwaltung;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
+
+import de.flg_informatik.utils.FLGJScrollPane;
+import de.flg_informatik.utils.FLGScrollPaneLayout;
 
 public class BVJPanel extends JPanel {
 	
@@ -22,41 +28,20 @@ public class BVJPanel extends JPanel {
 	BVJPanel me; 
 	AbstractTableModel memodell;
 	BVTableView meparent;
-	
+		
 	public BVJPanel(BVTableView myparent,AbstractTableModel mymodell){
 		this.me=this;
 		this.memodell=mymodell;
 		this.meparent=myparent;
 		this.table=new BTVTable();
-		this.add(new JScrollPane(this.table 
-				,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS){
-			
-				public Dimension getPreferredSize() {
-					return new Dimension(me.getSize().width-me.getInsets()
-						.left-me.getInsets().right-10,me.getSize().height-me.getInsets()
-						.top-me.getInsets().bottom-10);
-				}
-				
-				/**new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS){{
-			setViewportView(new JPanel(new FlowLayout()){{
-				add(table);
-			}});
-			
-							private static final long serialVersionUID = 1L;
-	this.table 
-				,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS)
-			public Dimension getPreferredSize() {
-				return new Dimension(me.getSize().width-me.getInsets()
-					.left-me.getInsets().right-10,me.getSize().height-me.getInsets()
-					.top-me.getInsets().bottom-10);
-			} * 
-					 */
-			
-			
-		}
-		);
-		invalidate();
-		table.invalidate();
+		JPanel inner =new JPanel(new GridLayout(0,1));
+		JPanel outer=new JPanel();
+		inner.add(table);
+		setLayout(new BorderLayout());
+		outer.add(inner);
+		this.add(new JScrollPane(outer),BorderLayout.CENTER);
+		
+		
 		
 	}
 	
@@ -80,6 +65,7 @@ public class BVJPanel extends JPanel {
 		}
 		
 		public synchronized void validate(){
+			
 			//Es könnte mehr Colums als Parameter in myparent.columnwidth bzw .columnresizable geben
 			try{
 				int maxtchar=this.getGraphics().getFontMetrics().charWidth('m');
@@ -95,9 +81,10 @@ public class BVJPanel extends JPanel {
 				
 				e.printStackTrace();
 				
-				javax.swing.JOptionPane.showMessageDialog (null, "Interner Fehler aufgetreten. Für weitere Information sehen Sie bitte den Konsolenoutput ein.");
+				new BVE("Interner Fehler aufgetreten. \n Für weitere Information sehen Sie bitte den Konsolenoutput ein.");
 				
 			}
+			super.validateTree();
 			
 		}
 		/*public Dimension getPreferredScrollableViewportSize(){
@@ -109,6 +96,7 @@ public class BVJPanel extends JPanel {
 			// read the manual ListSelectionEvent
 			meparent.itemSelected(e);
 			this.validate();
+			
 		}
 	}
 

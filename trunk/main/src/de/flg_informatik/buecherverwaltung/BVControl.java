@@ -30,8 +30,9 @@ public class BVControl implements Runnable,ActionListener,ChangeListener {
 	final private static boolean debug=true;
 	private static BVControl thecontrol;
 	private BVView viewontop=null;
+	FLGProperties app_settings_pane;
 	Properties app_settings;
-	Version version=new Version(new int[]{0,5},"09-06-02");
+	Version version=new Version(new int[]{0,6},"09-08-12");
 	BVUsecases.Selected2Usecases  switchusecases;
 	BVGUI gui;
 	BVStorage bvs;
@@ -39,7 +40,8 @@ public class BVControl implements Runnable,ActionListener,ChangeListener {
 	BVScanAdapter scanner;
 	
 	public BVControl(){
-		app_settings=new FLGProperties(app_settings,propertyfilename, new File(defaultfilename), significantstring).getProperties();
+		app_settings_pane=new FLGProperties(app_settings,propertyfilename, new File(defaultfilename), significantstring);
+		app_settings=app_settings_pane.getProperties();
 		new BVD(debug,"fetched properties");
 		if (!BVDataBase.getDataBankDrivers(app_settings))
 			javax.swing.JOptionPane.showMessageDialog(null, "'sun.jdbc.odbc.JdbcOdbcDriver' or 'com.mysql.jdbc.Driver' nicht gefunden.\nDas Programm wird jetzt beendet");
