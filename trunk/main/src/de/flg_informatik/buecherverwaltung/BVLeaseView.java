@@ -3,6 +3,7 @@ package de.flg_informatik.buecherverwaltung;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 
 
@@ -76,25 +78,39 @@ public class BVLeaseView extends JPanel implements BVView , ActionListener{
 		JButton save = new JButton("Stundentafel speichern");
 		BVSelector bvs;
 		Subpanel sub;
+		JPanel inner =new JPanel(new GridLayout(0,1));
+		JPanel outer=new JPanel();
+		
+		
+		
 		CenterPanelPre(){
 			save.addActionListener(this);
+			setLayout(new BorderLayout());
+			
+		
 		}
 		public void makeVisible(){
 			removeAll();
-			add(bvs=new BVSelector(this,subjects,BVSelector.Orientation.HORZONTAL));
-			new BVD(debug,bvs.getNames());
-			
-			add(new HFill());
-			add(new HFill());
-			add(save);
-			add(new HFill());
-			add(sub=new Subpanel());
+			bvs=new BVSelector(this,subjects,BVSelector.Orientation.HORZONTAL);
+			add(new JPanel(new FlowLayout()){{
+				add(bvs);
+				add(save);
+				//revalidate();
+				}},BorderLayout.NORTH);
+			JPanel inner =new JPanel(new GridLayout(0,1));
+			JPanel outer=new JPanel();
+			inner.add(sub=new Subpanel());
+			JPanel scrollpanel=new JPanel();
+			scrollpanel.setLayout(new BorderLayout());
+			outer.add(inner);
+			scrollpanel.add(new JScrollPane(outer),BorderLayout.CENTER);
+			add(scrollpanel,BorderLayout.CENTER);
 			for(String s:BVClass.getSubjects((BVClass.getClasses(years.getSelected()).get(classes.getSelectedIndex()).KID))){
 				new BVD(debug,s);
 				bvs.clickOn(bvs.getNames().indexOf(s));
 			}
-			invalidate();
-			BVGUI.val();
+			//invalidate();
+			//BVGUI.val();
 		}
 		class Subpanel extends JPanel{
 			public Subpanel() {

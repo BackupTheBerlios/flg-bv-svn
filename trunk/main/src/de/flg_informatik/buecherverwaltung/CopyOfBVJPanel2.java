@@ -1,16 +1,22 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 
-public class BVJPanel extends JPanel {
+import de.flg_informatik.utils.FLGJScrollPane;
+import de.flg_informatik.utils.FLGScrollPaneLayout;
+
+public class CopyOfBVJPanel2 extends JPanel {
 	
 
 	/**
@@ -19,22 +25,17 @@ public class BVJPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	BTVTable table;
-	BVJPanel me; 
+	CopyOfBVJPanel2 me; 
 	AbstractTableModel memodell;
 	BVTableView meparent;
 		
-	public BVJPanel(BVTableView myparent,AbstractTableModel mymodell){
+	public CopyOfBVJPanel2(BVTableView myparent,AbstractTableModel mymodell){
 		this.me=this;
 		this.memodell=mymodell;
 		this.meparent=myparent;
 		this.table=new BTVTable();
-		JPanel inner =new JPanel(new GridLayout(0,1));
-		JPanel outer=new JPanel();
-		inner.add(table);
-		setLayout(new BorderLayout());
-		outer.add(inner);
-		this.add(new JScrollPane(outer),BorderLayout.CENTER);
-		
+		this.add(new FLGJScrollPane(table));
+		invalidate();
 		
 		
 	}
@@ -59,7 +60,6 @@ public class BVJPanel extends JPanel {
 		}
 		
 		public synchronized void validate(){
-			
 			//Es könnte mehr Colums als Parameter in myparent.columnwidth bzw .columnresizable geben
 			try{
 				int maxtchar=this.getGraphics().getFontMetrics().charWidth('m');
@@ -78,7 +78,6 @@ public class BVJPanel extends JPanel {
 				new BVE("Interner Fehler aufgetreten. \n Für weitere Information sehen Sie bitte den Konsolenoutput ein.");
 				
 			}
-			super.validateTree();
 			
 		}
 		/*public Dimension getPreferredScrollableViewportSize(){
@@ -90,7 +89,6 @@ public class BVJPanel extends JPanel {
 			// read the manual ListSelectionEvent
 			meparent.itemSelected(e);
 			this.validate();
-			
 		}
 	}
 

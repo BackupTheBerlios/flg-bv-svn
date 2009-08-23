@@ -3,13 +3,11 @@ package de.flg_informatik.buecherverwaltung;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
-import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -20,11 +18,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 
-
-
 import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
-import de.flg_informatik.utils.FLGJScrollPane;
 
 public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 	private static boolean debug=true;
@@ -81,9 +76,8 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 		Vector<BookTypLine> lines=new Vector<BookTypLine>();
 		JButton save = new JButton("Stundentafel speichern");
 		BVSelector bvs;
-		FLGJScrollPane sp=new FLGJScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED){
-		};
-		FLGJScrollPane sp1=new FLGJScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JPanel inner =new JPanel(new GridLayout(0,1));
+		JPanel outer=new JPanel();
 		JPanel container=new JPanel(new GridLayout(1,2)){
 		
 		};
@@ -95,24 +89,21 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 		}
 		public void makeVisible(){
 			removeAll();
+			inner.add(sub=new Subpanel());
+			setLayout(new BorderLayout());
+			outer.add(inner);
+			this.add(new JScrollPane(outer),BorderLayout.CENTER);
 			add(bvs=new BVSelector(this,subjects,BVSelector.Orientation.HORZONTAL));
 			add(new HFill());
 			add(new HFill());
 			add(save);
 			add(new HFill());
-			sp.setViewportView(sub=new Subpanel());
-			sp1.setViewportView(sub1=new Subpanel());
+			//sp.setViewportView(sub=new Subpanel());
+			//sp1.setViewportView(sub1=new Subpanel());
 			for(String s:BVClass.getSubjects((BVClass.getClasses(years.getSelected()).get(classes.getSelectedIndex()).KID))){
 				new BVD(debug,s);
 				bvs.clickOn(bvs.getNames().indexOf(s));
 			}
-			container.add(sp);
-			container.add(sp1);
-			add(container);
-			container.invalidate();
-			invalidate();
-			BVGUI.val();
-			
 			
 			
 		}
