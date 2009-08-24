@@ -40,6 +40,7 @@ public class BVGUI extends JFrame {
 	JTabbedPane centerpane;
 	LogPane lp;
 	public BVGUI(BVControl control){
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		new BVD(debug,"setting Variables");
 		this.setVisible(false);
 		thegui=this;

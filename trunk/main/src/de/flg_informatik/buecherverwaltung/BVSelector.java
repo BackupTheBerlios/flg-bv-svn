@@ -85,7 +85,11 @@ public class BVSelector extends JPanel implements ActionListener{
 		checkbox[state.ordinal()].doClick();
 	}
 	public void clickOn(int index){
-		checkbox[index].doClick();
+		if (index < 0 ){
+			clearSelection();
+		}else{
+		 checkbox[index].doClick();
+		}
 	}
 	public void actionPerformed(ActionEvent arg0) {
 		BVSelectedEvent.makeEvent(this,events[Integer.parseInt(arg0.getActionCommand())]);

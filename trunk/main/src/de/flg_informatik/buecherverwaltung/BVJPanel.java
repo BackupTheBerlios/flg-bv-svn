@@ -10,6 +10,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 
+import de.flg_informatik.utils.FLGJScrollPane;
+
 public class BVJPanel extends JPanel {
 	
 
@@ -33,10 +35,7 @@ public class BVJPanel extends JPanel {
 		inner.add(table);
 		setLayout(new BorderLayout());
 		outer.add(inner);
-		this.add(new JScrollPane(outer),BorderLayout.CENTER);
-		
-		
-		
+		this.add(new JScrollPane(outer),BorderLayout.CENTER);		
 	}
 	
 	public BTVTable getTable(){

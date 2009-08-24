@@ -58,7 +58,7 @@ public class BVChooser extends JPanel implements ActionListener{
 		new BVD(true,names.size());
 		switch(o){
 		case VERTICAL: 
-			this.setLayout(new GridLayout(20,(names.size()/20+1)));
+			this.setLayout(new GridLayout(names.size()/(names.size()/20+1)+1,(names.size()/20+1)));
 			break;
 		case HORZONTAL:
 			this.setLayout(new GridLayout((names.size()/20+1),20));
@@ -87,7 +87,7 @@ public class BVChooser extends JPanel implements ActionListener{
 		new BVD(true,names.size());
 		switch(o){
 		case VERTICAL: 
-			this.setLayout(new GridLayout(20,(names.size()/20+1)));
+			this.setLayout(new GridLayout(names.size()/(names.size()/20+1)+1,(names.size()/20+1)));
 			break;
 		case HORZONTAL:
 			this.setLayout(new GridLayout((names.size()/20+1),20));
@@ -164,7 +164,17 @@ public class BVChooser extends JPanel implements ActionListener{
 	public void clickOn(State state){
 		radiobutton[state.ordinal()].doClick();
 	}
+	public void clickOn(String actionCommand) throws java.lang.IllegalArgumentException{
+	for (int i=0; i<radiobutton.length;i++){
+		if (radiobutton[i].getActionCommand().equals(actionCommand)){
+			clickOn(i);
+			return;
+		}
+	}
+	throw new IllegalArgumentException("No such actionCommand");
+	}
 	public void clickOn(int index){
+		new BVD(debug,index);
 		radiobutton[index].doClick();
 	}
 	public void actionPerformed(ActionEvent arg0) {
@@ -221,5 +231,4 @@ public class BVChooser extends JPanel implements ActionListener{
 		}
 	}
 	
-
 }

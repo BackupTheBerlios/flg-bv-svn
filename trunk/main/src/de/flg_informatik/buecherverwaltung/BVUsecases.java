@@ -12,7 +12,8 @@ public enum BVUsecases {
 	Datenimport (new BVCSVImporter()),
 	Einstellungen (new BVPropertyView()),
 	Ausleihe (new BVLeaseView()),
-	Vorbereitung(new BVLeasePreView());
+	Vorbereitung(new BVBookPrepareView()),
+	VorbereitungTest(new BVLeasePreView());
 	;
 	final private static boolean debug=true;
 	private static Hashtable<BVView, BVUsecases> reverse;// is initialized in static void waitForReverse()

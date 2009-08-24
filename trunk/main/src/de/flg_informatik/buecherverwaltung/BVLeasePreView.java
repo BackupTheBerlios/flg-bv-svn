@@ -3,11 +3,13 @@ package de.flg_informatik.buecherverwaltung;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
+import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -16,119 +18,110 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.event.ListSelectionEvent;
+
 
 import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
+import de.flg_informatik.utils.FLGJScrollPane;
 
 public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 	private static boolean debug=true;
-	private Vector<BVClass> classesvect = null;  
-	private BVChooser years=new BVChooser();
-	private BVChooser classes=new BVChooser();
-	private NorthPanel np;
-	private CenterPanel cp;
-	private JPanel sp;
+	private BVWestClass wp;
+	private CenterPanel dp;
+	private CenterPanel ep;
+	private DualPanel cp;
+	private BVSelector bvs;
 	private JDialog jd=null;
+	
+	
 	public BVLeasePreView() {
-		setLayout(new BorderLayout());
-		add(np=new NorthPanel(),BorderLayout.NORTH);
-		add(cp=new CenterPanelPre(), BorderLayout.CENTER);
-		add(sp=new HFill(), BorderLayout.SOUTH);
-		setVisible(true);
+		super(new BorderLayout());
+		add(wp=new BVWestClass(),BorderLayout.WEST);
+		add(cp=new DualPanel(),BorderLayout.CENTER);
+		add(new NorthPanel(),BorderLayout.NORTH);
 	}
 	private class NorthPanel extends JPanel implements ActionListener{
-		
-		JPanel sub=new JPanel();
+		JButton save = new JButton("Stundentafel speichern");
 		NorthPanel(){
-			add(years);
-			add(classes);
+			super(new FlowLayout());
+			bvs=new BVSelector((ActionListener)cp,BVBookUse.getSubjects(),BVSelector.Orientation.HORZONTAL);
+			add(bvs);
+			add(save);
+			save.addActionListener(this);
 			
-			validate();
+		}
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource().equals(save)){
+				new BVD(debug,bvs.getSelected());
+				BVClass.saveSubjects(wp.getSelectedClass().KID,bvs.getSelected());
+				return;
+			}
+			
+		}
+	}
+	private class DualPanel extends JSplitPane implements ActionListener{
+		int dividerat=0;
+		public DualPanel() {
+			super(JSplitPane.HORIZONTAL_SPLIT,dp=new CenterPanel(),ep=new CenterPanel());
+					
+		}
+
+		public void makeVisible() {
+			if (dividerat==0){ // start in the middle
+				setDividerLocation(0.5);
+			}
+			dividerat=getDividerLocation();
+			
+			dp.makeVisible();
+			ep.makeVisible();
+			setDividerLocation(dividerat);
+			revalidate();
+			
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			new BVD(debug,e);
-			
-			if (((Container)(e.getSource())).getParent().equals(years)){
-				classesvect=BVClass.getClasses(((JRadioButton)(e.getSource())).getText());
-				np.remove(classes);
-				np.add(classes=new BVChooser(this,BVClass.getClassNames(classesvect),BVChooser.Orientation.HORZONTAL));
-				np.invalidate();
-				
-			}
-			if (((Container)(e.getSource())).getParent().equals(classes)){
-				new BVD(true,classesvect.get(classes.getSelectedIndex()));
-				BVSelectedEvent.makeEvent(classesvect.get(classes.getSelectedIndex()),BVSelectedEvent.SelectedEventType.BLClassSelected);
-				cp.makeVisible();
-				cp.invalidate();
-				BVGUI.val();
-			}
+			dp.actionPerformed(e);
+			ep.actionPerformed(e);
 			
 		}
-		
 	}
-	private class CenterPanel extends JPanel{
-		void makeVisible(){};
-	}
-	private class CenterPanelPre extends CenterPanel implements ActionListener{
-		Vector<String> subjects=BVBookUse.getSubjects();
+	
+	private class CenterPanel extends JPanel implements ActionListener{
 		Vector<BookTypLine> lines=new Vector<BookTypLine>();
-		JButton save = new JButton("Stundentafel speichern");
-		BVSelector bvs;
-		JPanel inner =new JPanel(new GridLayout(0,1));
-		JPanel outer=new JPanel();
-		JPanel container=new JPanel(new GridLayout(1,2)){
-		
-		};
-		
 		Subpanel sub;
-		Subpanel sub1;
-		CenterPanelPre(){
-			save.addActionListener(this);
+
+		CenterPanel(){
+			super(new BorderLayout());
 		}
+		
 		public void makeVisible(){
 			removeAll();
-			inner.add(sub=new Subpanel());
-			setLayout(new BorderLayout());
-			outer.add(inner);
-			this.add(new JScrollPane(outer),BorderLayout.CENTER);
-			add(bvs=new BVSelector(this,subjects,BVSelector.Orientation.HORZONTAL));
-			add(new HFill());
-			add(new HFill());
-			add(save);
-			add(new HFill());
-			//sp.setViewportView(sub=new Subpanel());
-			//sp1.setViewportView(sub1=new Subpanel());
-			for(String s:BVClass.getSubjects((BVClass.getClasses(years.getSelected()).get(classes.getSelectedIndex()).KID))){
-				new BVD(debug,s);
-				bvs.clickOn(bvs.getNames().indexOf(s));
+			bvs.clearSelection();
+			add(new FLGJScrollPane(sub=new Subpanel()),BorderLayout.CENTER);
+			try {
+				new BVD(debug,wp.getSelectedClass());
+				for(String s:BVClass.getSubjects((wp.getSelectedClass().KID))){
+					bvs.clickOn(bvs.getNames().indexOf(s));
+				}
+			} catch (NullPointerException e) {
+				new BVD(debug,e);
+				// no Class selected
 			}
 			
 			
 		}
+	
 		class Subpanel extends JPanel{
 			public Subpanel() {
-				//setLayout(new GridLayout(0,1,20,5));
+				setLayout(new GridLayout(0,1,1,0));
 				//removeAll();
 				lines.removeAllElements();
 				for (String subject:bvs.getSelected()){
-					addItem(subject); add(new HFill());
+					addItem(subject);
 				}
-				setLayout(new GridLayout(bvs.getSelected().size(),1,20,5));
-				invalidate();
-				cp.invalidate();
-				BVLeasePreView.this.revalidate();
 			}
-			/* public Dimension getPreferredSize() {
-				Container me=this.getParent();
-				if (me==null){
-					return new Dimension(10,10);
-				}
-				return new Dimension(me.getSize().width-me.getInsets()
-					.left-me.getInsets().right-10,me.getSize().height-me.getInsets()
-					.top-me.getInsets().bottom-10);
-			}*/
 			void removeItem(String subject){
 				for (Component c:getComponents()){
 					new BVD(debug,c.getName());
@@ -150,26 +143,19 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 						return; // already here
 					}
 				}
-				BookTypLine btl=new BookTypLine(subject);
-				lines.add(btl);
-				add(btl,subject);
+				lines.add(new BookTypLine(subject));
+				add(lines.lastElement(),subject);
 				getComponent(getComponentCount()-1).setName(subject);
 				return; 
 			}	
 		}
 		public void actionPerformed(ActionEvent e) {
-			if (e.getSource().equals(save)){
-				new BVD(debug,bvs.getSelected());
-				BVClass.saveSubjects(BVClass.getClasses(years.getSelected()).get(classes.getSelectedIndex()).KID,bvs.getSelected());
-				return;
-			}
 			if (((JCheckBox)(e.getSource())).isSelected()){
 				sub.addItem((((JCheckBox)(e.getSource())).getText()));
 			}else{
 				sub.removeItem((((JCheckBox)(e.getSource())).getText()));
 			}
 			sub.invalidate();
-			validate();
 		}		
 			
 		
@@ -187,6 +173,8 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 				add(new BTSelector(subject,getBTVector(subject)));
 				
 			}
+
+			
 		}
 		void getBooks(){
 			
@@ -217,14 +205,13 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 			class WaitingForBT implements BVSelectedEventListener{
 				String subject;
 				String grade;
-				int classindex;
-				int yearindex;
+				
 				
 				public WaitingForBT(String subject, String grade) {
 					this.subject=subject;
 					this.grade=grade;
-					this.classindex=classes.getSelectedIndex(); // must save for changing to BT
-					this.yearindex=years.getSelectedIndex();
+					//this.classindex=wp.classes.getSelectedIndex(); // must save for changing to BT
+					//this.yearindex=wp.years.getSelectedIndex();
 				}
 				public void thingSelected(BVSelectedEvent e) {
 					if (jd2!=null){
@@ -239,8 +226,8 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 					}
 					BVSelectedEvent.removeBVSelectedEventListener(this);
 					// while((years.getSelectedIndex()==-1)); // waiting for foreground TODO may be a hanger
-					years.clickOn(yearindex);
-					classes.clickOn(classindex);
+					wp.makeVisible();
+					//wp.classes.clickOn(classindex);
 					invalidate();
 					BVGUI.val();
 					
@@ -281,7 +268,7 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 	
 	public String getGrade() {
 			String ret=null;
-			String cl=classesvect.get(classes.getSelectedIndex()).Name;
+			String cl=wp.getSelectedClass().Name;
 			new BVD(debug,cl);
 			if ((cl.equalsIgnoreCase("J1")) | cl.equals("12")) return "J1"; 
 			if ((cl.equalsIgnoreCase("J2")) | cl.equals("13")) return "J2"; 
@@ -298,7 +285,7 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 
 
 	public void toBackground() {
-		classes.clearSelection();
+		
 		if (jd!=null){
 			jd.dispose();
 			jd=null;
@@ -309,16 +296,19 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 	public void thingSelected(BVSelectedEvent e) {
 		if (e.getId().equals(BVSelectedEvent.SelectedEventType.BookFreeSelected)){
 			
-			if (classes.getSelectedIndex()==-1){
+			if (wp.getSelectedClass()==null){
 				BVSelectedEvent.addBVSelectedEventListener(new WaitingForBL(new BVBook(e.getEan())));
 				jd = new JOptionPane("Bitte eine Klasse wählen (Jahrgang beachten)",JOptionPane.INFORMATION_MESSAGE).createDialog("Auswählen");
 				jd.setModal(false);
 				jd.setVisible(true);
 			}else{
-				makeLease(new BVBook(e.getEan()),classesvect.get((classes.getSelectedIndex())));
+				makeLease(new BVBook(e.getEan()),wp.getSelectedClass());
 				
 			}
 		}else{
+			if (e.getId().equals(BVSelectedEvent.SelectedEventType.BLClassSelected)){
+				cp.makeVisible();
+			}
 			
 		}
 
@@ -373,18 +363,11 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 
 
 	public void toFront() {
-		new BVD(debug,"Hallo");
-		new BVD(debug,years);
-		cp.removeAll();
-		np.removeAll();
-		np.add(years = new BVChooser(np,BVClass.getYears(),BVChooser.Orientation.HORZONTAL));
-		new BVD(debug,years);
-		years.clickOn(0);
-		years.invalidate();
-		np.invalidate();
-		invalidate();
-		BVControl.getControl().gui.validate();
-		// TODO Auto-generated method stub
+			cp.makeVisible();
+			
+		
+		
+		
 		
 	}
 

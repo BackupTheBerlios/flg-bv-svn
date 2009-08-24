@@ -25,14 +25,14 @@ import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 import de.flg_informatik.utils.FLGJScrollPane;
 
-public class BVLeaseView extends JPanel implements BVView , ActionListener{
+public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListener{
 	private static boolean debug=true;
 	private BVWestClass wp;
 	private CenterPanel cp;
 	private BVSelector bvs;
 	private JDialog jd=null;
 	
-	public BVLeaseView() {
+	public BVLeaseViewDropDown() {
 		super(new BorderLayout());
 		add(wp=new BVWestClass(),BorderLayout.WEST);
 		add(cp=new CenterPanel(), BorderLayout.CENTER);
