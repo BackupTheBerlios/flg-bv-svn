@@ -3,12 +3,15 @@ package de.flg_informatik.buecherverwaltung;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
+import javax.management.MXBean;
+import javax.security.auth.Subject;
 import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -26,18 +29,24 @@ import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 import de.flg_informatik.utils.FLGJScrollPane;
 
-public class BVLeasePreView extends JPanel implements BVView , ActionListener{
+public class BVLeasePreView extends BVTableView implements BVView , ActionListener{
 	private static boolean debug=true;
 	private BVWestClass wp;
-	private CenterPanel dp;
-	private CenterPanel ep;
+	private UsableBookPanel dp;
+	private UsableBookPanel ep;
+	private BVJPanel bvjp; 
 	private DualPanel cp;
 	private BVSelector bvs;
 	private JDialog jd=null;
+	private BVLeasePreView me;
+	private int lastselected;
+	private BVBookTypeDatamodell mymodell;
 	
 	
 	public BVLeasePreView() {
-		super(new BorderLayout());
+		setLayout(new BorderLayout());
+		me = this;
+		mymodell=new BVBookTypeDatamodell(null);//BVPrepareDatamodell(null);
 		add(wp=new BVWestClass(),BorderLayout.WEST);
 		add(cp=new DualPanel(),BorderLayout.CENTER);
 		add(new NorthPanel(),BorderLayout.NORTH);
@@ -64,7 +73,7 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 	private class DualPanel extends JSplitPane implements ActionListener{
 		int dividerat=0;
 		public DualPanel() {
-			super(JSplitPane.HORIZONTAL_SPLIT,dp=new CenterPanel(),ep=new CenterPanel());
+			super(JSplitPane.HORIZONTAL_SPLIT,dp=new UsableBookPanel(),bvjp=new BVJPanel(me,mymodell));
 					
 		}
 
@@ -75,7 +84,9 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 			dividerat=getDividerLocation();
 			
 			dp.makeVisible();
-			ep.makeVisible();
+			//mymodell.remake(wp.getSelectedClass());
+			bvjp.revalidate();
+			
 			setDividerLocation(dividerat);
 			revalidate();
 			
@@ -83,16 +94,16 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 
 		public void actionPerformed(ActionEvent e) {
 			dp.actionPerformed(e);
-			ep.actionPerformed(e);
+			//ep.actionPerformed(e);
 			
 		}
 	}
 	
-	private class CenterPanel extends JPanel implements ActionListener{
+	private class UsableBookPanel extends JPanel implements ActionListener{
 		Vector<BookTypLine> lines=new Vector<BookTypLine>();
 		Subpanel sub;
 
-		CenterPanel(){
+		UsableBookPanel(){
 			super(new BorderLayout());
 		}
 		
@@ -102,6 +113,7 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 			add(new FLGJScrollPane(sub=new Subpanel()),BorderLayout.CENTER);
 			try {
 				new BVD(debug,wp.getSelectedClass());
+				
 				for(String s:BVClass.getSubjects((wp.getSelectedClass().KID))){
 					bvs.clickOn(bvs.getNames().indexOf(s));
 				}
@@ -162,16 +174,27 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 	
 		
 	}
+	private int maxwidth=10; // max width of BookTypLine._JLabel
 	private class BookTypLine extends JPanel {
 		private JDialog jd2=null;
 		private Vector <BTColumn> btfields;
 		BTColumn chooseline = new BTColumn((Ean) null, "Ein anderes Buch!");
+		private class _JLabel extends JLabel { // to set kind of tabular
+			public _JLabel(String subject){
+				super (subject);
+			}
+			public Dimension getPreferredSize(){
+				return new Dimension(maxwidth,getGraphics().getFontMetrics().getHeight());
+			}
+			
+		}
 		public BookTypLine(String subject) {
-			super();
+			super(new FlowLayout(FlowLayout.LEFT));
 			if (BVBookUse.getSubjects().contains(subject)){
-				add(new JLabel(subject));
+				_JLabel jlabel=new _JLabel(subject);
+				add(jlabel);
 				add(new BTSelector(subject,getBTVector(subject)));
-				
+				maxwidth=Math.max(maxwidth, getParent().getGraphics().getFontMetrics().stringWidth(subject));
 			}
 
 			
@@ -363,13 +386,15 @@ public class BVLeasePreView extends JPanel implements BVView , ActionListener{
 
 
 	public void toFront() {
-			cp.makeVisible();
-			
+		if (lastselected==-1){ // no Selection yet
+			bvjp.getTable().changeSelection(0, -1, false, false);
+			bvjp.getTable().changeSelection(0, -1, true, false);
+		}
 		
+		bvjp.getTable().invalidate();
+		bvjp.validate();
 		
-		
-		
+				
 	}
-
 
 }

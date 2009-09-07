@@ -18,25 +18,34 @@ public class BVPrepareDatamodell extends javax.swing.table.AbstractTableModel{
 			"Fach",
 			"Titel",
 			"ISBN",
-			"soll",
+	}	;/*"soll",
 			"ist",
 			"indiv",
 			"Lager"
 			};
+			*/
 	
-	BVBookPrepareView myview;
+	
 	Vector<Vector<Object>> tablecells=new Vector<Vector<Object>>(); 
 	int numofcolumns;
-	public BVPrepareDatamodell(BVBookPrepareView myview, BVClass bvclass) {
-		this.myview=myview;
+	private BVClass bvclass;
+	public BVPrepareDatamodell(BVClass bvclass) {
 		this.numofcolumns=headers.length;
+		
 		if (bvclass!=null){ //not 1st stage of initialization, no class, no table, no function
 			this.fillTable();
+			this.bvclass=bvclass;
 		}
 		
 	}
 	
-	
+	public void remake(BVClass bvclass){
+		this.bvclass=bvclass;
+		if (bvclass!=null){ //not 1st stage of initialization, no class, no table, no function
+			fillTable();
+		}
+		
+	}
 	
 	
 	
@@ -52,8 +61,9 @@ public class BVPrepareDatamodell extends javax.swing.table.AbstractTableModel{
 		Vector<Object> tablerow;
 		boolean result = true;
 		try{
+			new BVD(true,"filling: "+getColumnCount()+", "+getRowCount());
 			tablecells.clear();
-			ResultSet rs=BVUtils.doQuery("SELECT * FROM Booktypes");
+			ResultSet rs=BVUtils.doQuery("SELECT * FROM "+tablename);
 			rs.beforeFirst();
 			while(rs.next()){	
 				tablerow=new Vector<Object>(numofcolumns);
@@ -62,6 +72,7 @@ public class BVPrepareDatamodell extends javax.swing.table.AbstractTableModel{
 					}
 				tablecells.add(tablerow);
 			}
+			new BVD(true,"filled: "+getColumnCount()+", "+getRowCount());
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
 			result = false;
@@ -97,7 +108,8 @@ public class BVPrepareDatamodell extends javax.swing.table.AbstractTableModel{
 	}
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		return tablecells.get(rowIndex).get(columnIndex);
+		return "AAA";
+		//return tablecells.get(rowIndex).get(columnIndex);
 	}
 	public String getColumnName(int column){
 		return headers[column];

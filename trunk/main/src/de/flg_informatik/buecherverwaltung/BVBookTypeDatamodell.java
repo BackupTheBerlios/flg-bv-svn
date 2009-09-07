@@ -21,11 +21,9 @@ public class BVBookTypeDatamodell extends javax.swing.table.AbstractTableModel{
 	}
 	
 	Vector<String> headers;
-	BVBookTypeView myview;
 	Vector<Vector<Object>> tablecells=new Vector<Vector<Object>>(); 
 	int numofcolumns;
 	public BVBookTypeDatamodell(BVBookTypeView myview) {
-		this.myview=myview;
 		this.headers=BVUtils.getColumnHeaders(tablename);
 		this.numofcolumns=BVUtils.getNumOfDBColumns(tablename);
 		this.fillTable();
@@ -42,7 +40,7 @@ public class BVBookTypeDatamodell extends javax.swing.table.AbstractTableModel{
 		boolean result = true;
 		try{
 			tablecells.clear();
-			ResultSet rs=BVUtils.doQuery("SELECT * FROM Booktypes");
+			ResultSet rs=BVUtils.doQuery("SELECT * FROM "+tablename);
 			rs.beforeFirst();
 			while(rs.next()){	
 				tablerow=new Vector<Object>(numofcolumns);

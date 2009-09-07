@@ -73,7 +73,7 @@ public class BVLeaseView extends JPanel implements BVView , ActionListener{
 			bvs.clearSelection();
 			add(new FLGJScrollPane(sub=new Subpanel()),BorderLayout.CENTER);
 			try {
-				new BVD(debug,wp.getSelectedClass());
+				//new BVD(debug,wp.getSelectedClass());
 				for(String s:BVClass.getSubjects((wp.getSelectedClass().KID))){
 					bvs.clickOn(bvs.getNames().indexOf(s));
 				}

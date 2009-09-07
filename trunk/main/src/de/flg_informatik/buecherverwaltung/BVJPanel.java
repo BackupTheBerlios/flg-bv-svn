@@ -1,8 +1,10 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -24,6 +26,7 @@ public class BVJPanel extends JPanel {
 	BVJPanel me; 
 	AbstractTableModel memodell;
 	BVTableView meparent;
+	int prefwidth=0;
 		
 	public BVJPanel(BVTableView myparent,AbstractTableModel mymodell){
 		this.me=this;
@@ -39,8 +42,10 @@ public class BVJPanel extends JPanel {
 	}
 	
 	public BTVTable getTable(){
-		return table;
+	
+	 return table;
 	}
+	
 		
 	class BTVTable extends JTable {
 		/**
@@ -61,9 +66,12 @@ public class BVJPanel extends JPanel {
 			
 			//Es könnte mehr Colums als Parameter in myparent.columnwidth bzw .columnresizable geben
 			try{
+				prefwidth=0;
 				int maxtchar=this.getGraphics().getFontMetrics().charWidth('m');
 				for (int i=0; i<this.getColumnCount();i++){
-					this.getColumn(memodell.getColumnName(i)).setPreferredWidth(meparent.getColumnwidth(i)*maxtchar); 
+					this.getColumn(memodell.getColumnName(i)).setPreferredWidth(meparent.getColumnwidth(i)*maxtchar);
+					prefwidth+=meparent.getColumnwidth(i)*maxtchar;
+					
 					if (!(meparent).getColumnresizable(i)){
 						this.getColumn(memodell.getColumnName(i)).setMinWidth(meparent.getColumnwidth(i)*maxtchar);
 						this.getColumn(memodell.getColumnName(i)).setResizable(false);
@@ -77,13 +85,17 @@ public class BVJPanel extends JPanel {
 				new BVE("Interner Fehler aufgetreten. \n Für weitere Information sehen Sie bitte den Konsolenoutput ein.");
 				
 			}
+			table.setSize(prefwidth, 100);
 			super.validateTree();
 			
 		}
-		/*public Dimension getPreferredScrollableViewportSize(){
-			return new Dimension(1024,500);
+		public Dimension getPreferredScrollableViewportSize(){
+			return new Dimension(prefwidth,0);
 		}
-		*/	
+		public Dimension getSize(){
+			return new Dimension(prefwidth,0);
+		}
+		
 		public void valueChanged(ListSelectionEvent e){
 			super.valueChanged(e);
 			// read the manual ListSelectionEvent

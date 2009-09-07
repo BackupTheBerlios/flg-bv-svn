@@ -33,7 +33,7 @@ public class BVBookPrepareView extends BVTableView implements ActionListener {
 	
 	public BVBookPrepareView(){
 		me = this;
-		mymodell=new BVPrepareDatamodell(me, null);
+		mymodell=new BVPrepareDatamodell(null);
 		bvjp=new BVJPanel(me,mymodell);
 		setLayout(new BorderLayout());
 		add(wp=new BVWestClass(),BorderLayout.WEST);
