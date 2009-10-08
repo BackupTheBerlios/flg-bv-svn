@@ -16,7 +16,7 @@ public class BVWarning extends Throwable  {
 	}
 	class Warning extends JDialog{
 		Warning(String text){
-			JOptionPane.showMessageDialog(BVControl.getControl().gui,text,BVControl.getControl().version.toString(),JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(Control.getControl().gui,text,Control.getControl().version.toString(),JOptionPane.WARNING_MESSAGE);
 			
 		}
 		

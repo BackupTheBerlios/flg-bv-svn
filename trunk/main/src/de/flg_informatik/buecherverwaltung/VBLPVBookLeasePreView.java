@@ -3,12 +3,15 @@ package de.flg_informatik.buecherverwaltung;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
+import javax.management.MXBean;
+import javax.security.auth.Subject;
 import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -18,31 +21,41 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.event.ListSelectionEvent;
 
 
-import de.flg_informatik.buecherverwaltung.BVSelectedEvent.SelectedEventType;
+import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 import de.flg_informatik.utils.FLGJScrollPane;
 
-public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListener{
+public class VBLPVBookLeasePreView extends ATableView implements UCCase , ActionListener{
 	private static boolean debug=true;
-	private BVWestClass wp;
-	private CenterPanel cp;
-	private BVSelector bvs;
+	private JPVYearChooser wp;
+	private UsableBookPanel dp;
+	private UsableBookPanel ep;
+	private JPSrcollTable bvjp; 
+	private DualPanel cp;
+	private JPSelector bvs;
 	private JDialog jd=null;
+	private VBLPVBookLeasePreView me;
+	private int lastselected;
+	private VBTVDatamodell mymodell;
 	
-	public BVLeaseViewDropDown() {
-		super(new BorderLayout());
-		add(wp=new BVWestClass(),BorderLayout.WEST);
-		add(cp=new CenterPanel(), BorderLayout.CENTER);
+	
+	public VBLPVBookLeasePreView() {
+		setLayout(new BorderLayout());
+		me = this;
+		mymodell=new VBTVDatamodell(null);//VBPVDatamodell(null);
+		add(wp=new JPVYearChooser(),BorderLayout.WEST);
+		add(cp=new DualPanel(),BorderLayout.CENTER);
 		add(new NorthPanel(),BorderLayout.NORTH);
 	}
 	private class NorthPanel extends JPanel implements ActionListener{
 		JButton save = new JButton("Stundentafel speichern");
 		NorthPanel(){
 			super(new FlowLayout());
-			bvs=new BVSelector((ActionListener)cp,BVBookUse.getSubjects(),BVSelector.Orientation.HORZONTAL);
+			bvs=new JPSelector((ActionListener)cp,OBUBookUse.getSubjects(),JPSelector.Orientation.HORZONTAL);
 			add(bvs);
 			add(save);
 			save.addActionListener(this);
@@ -50,21 +63,47 @@ public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListen
 		}
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(save)){
-				new BVD(debug,bvs.getSelected());
-				BVClass.saveSubjects(wp.getSelectedClass().KID,bvs.getSelected());
+				new Deb(debug,bvs.getSelected());
+				OClass.saveSubjects(wp.getSelectedClass().KID,bvs.getSelected());
 				return;
 			}
 			
 		}
 	}
+	private class DualPanel extends JSplitPane implements ActionListener{
+		int dividerat=0;
+		public DualPanel() {
+			super(JSplitPane.HORIZONTAL_SPLIT,dp=new UsableBookPanel(),bvjp=new JPSrcollTable(me,mymodell));
+					
+		}
 
-	private class CenterPanel extends JPanel implements ActionListener{
+		public void makeVisible() {
+			if (dividerat==0){ // start in the middle
+				setDividerLocation(0.5);
+			}
+			dividerat=getDividerLocation();
+			
+			dp.makeVisible();
+			//mymodell.remake(wp.getSelectedClass());
+			bvjp.revalidate();
+			
+			setDividerLocation(dividerat);
+			revalidate();
+			
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			dp.actionPerformed(e);
+			//ep.actionPerformed(e);
+			
+		}
+	}
+	
+	private class UsableBookPanel extends JPanel implements ActionListener{
 		Vector<BookTypLine> lines=new Vector<BookTypLine>();
 		Subpanel sub;
-		JPanel inner =new JPanel(new GridLayout(0,1));
-		JPanel outer=new JPanel();
 
-		CenterPanel(){
+		UsableBookPanel(){
 			super(new BorderLayout());
 		}
 		
@@ -73,12 +112,13 @@ public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListen
 			bvs.clearSelection();
 			add(new FLGJScrollPane(sub=new Subpanel()),BorderLayout.CENTER);
 			try {
-				new BVD(debug,wp.getSelectedClass());
-				for(String s:BVClass.getSubjects((wp.getSelectedClass().KID))){
+				new Deb(debug,wp.getSelectedClass());
+				
+				for(String s:OClass.getSubjects((wp.getSelectedClass().KID))){
 					bvs.clickOn(bvs.getNames().indexOf(s));
 				}
 			} catch (NullPointerException e) {
-				new BVD(debug,e);
+				new Deb(debug,e);
 				// no Class selected
 			}
 			
@@ -87,7 +127,7 @@ public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListen
 	
 		class Subpanel extends JPanel{
 			public Subpanel() {
-				setLayout(new GridLayout(0,2,20,5));
+				setLayout(new GridLayout(0,1,1,0));
 				//removeAll();
 				lines.removeAllElements();
 				for (String subject:bvs.getSelected()){
@@ -96,7 +136,7 @@ public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListen
 			}
 			void removeItem(String subject){
 				for (Component c:getComponents()){
-					new BVD(debug,c.getName());
+					new Deb(debug,c.getName());
 					if (c.getName().equals(subject)){
 						lines.remove(c);
 						remove(c);
@@ -110,7 +150,7 @@ public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListen
 			}
 			void addItem(String subject){
 				for (Component c:getComponents()){
-					new BVD(debug,c);
+					new Deb(debug,c);
 					if (c.getName().equals(subject)){
 						return; // already here
 					}
@@ -128,23 +168,33 @@ public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListen
 				sub.removeItem((((JCheckBox)(e.getSource())).getText()));
 			}
 			sub.invalidate();
-			revalidate();
 		}		
 			
 		
 	
 		
 	}
+	private int maxwidth=10; // max width of BookTypLine._JLabel
 	private class BookTypLine extends JPanel {
 		private JDialog jd2=null;
 		private Vector <BTColumn> btfields;
 		BTColumn chooseline = new BTColumn((Ean) null, "Ein anderes Buch!");
+		private class _JLabel extends JLabel { // to set kind of tabular
+			public _JLabel(String subject){
+				super (subject);
+			}
+			public Dimension getPreferredSize(){
+				return new Dimension(maxwidth,getGraphics().getFontMetrics().getHeight());
+			}
+			
+		}
 		public BookTypLine(String subject) {
-			super();
-			if (BVBookUse.getSubjects().contains(subject)){
-				add(new JLabel(subject));
+			super(new FlowLayout(FlowLayout.LEFT));
+			if (OBUBookUse.getSubjects().contains(subject)){
+				_JLabel jlabel=new _JLabel(subject);
+				add(jlabel);
 				add(new BTSelector(subject,getBTVector(subject)));
-				
+				maxwidth=Math.max(maxwidth, getParent().getGraphics().getFontMetrics().stringWidth(subject));
 			}
 
 			
@@ -166,16 +216,16 @@ public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListen
 				
 				// super.actionPerformed(e);
 				if (((BTSelector)(e.getSource())).getSelectedItem().equals(chooseline)){
-					Control.getControl().newEvent(this, BVSelectedEvent.SelectedEventType.BookTypOnTop);
+					Control.getControl().newEvent(this, SelectedEvent.SelectedEventType.BookTypOnTop);
 					jd2 = new JOptionPane("Bitte einen BuchTyp wählen!",JOptionPane.INFORMATION_MESSAGE).createDialog("Auswählen");
 					jd2.setModal(false);
 					jd2.setVisible(true);
-					BVSelectedEvent.addBVSelectedEventListener(new WaitingForBT(subject, getGrade()));
+					SelectedEvent.addBVSelectedEventListener(new WaitingForBT(subject, getGrade()));
 					
 					
 				}
 			}
-			class WaitingForBT implements BVSelectedEventListener{
+			class WaitingForBT implements SelectedEventListener{
 				String subject;
 				String grade;
 				
@@ -186,23 +236,23 @@ public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListen
 					//this.classindex=wp.classes.getSelectedIndex(); // must save for changing to BT
 					//this.yearindex=wp.years.getSelectedIndex();
 				}
-				public void thingSelected(BVSelectedEvent e) {
+				public void thingSelected(SelectedEvent e) {
 					if (jd2!=null){
 						jd2.dispose();
 						jd2=null;
 					}
 					
-					if (e.getId()==BVSelectedEvent.SelectedEventType.ISBNSelected){
-						BVBookUse.makeBookUse(e.getEan(),grade,subject);
-						Control.getControl().newEvent(this, BVSelectedEvent.SelectedEventType.BLISBNSelected);
+					if (e.getId()==SelectedEvent.SelectedEventType.ISBNSelected){
+						OBUBookUse.makeBookUse(e.getEan(),grade,subject);
+						Control.getControl().newEvent(this, SelectedEvent.SelectedEventType.BLISBNSelected);
 						return;
 					}
-					BVSelectedEvent.removeBVSelectedEventListener(this);
+					SelectedEvent.removeBVSelectedEventListener(this);
 					// while((years.getSelectedIndex()==-1)); // waiting for foreground TODO may be a hanger
 					wp.makeVisible();
 					//wp.classes.clickOn(classindex);
 					invalidate();
-					GUI.val();
+					MainGUI.val();
 					
 					
 				}
@@ -212,10 +262,10 @@ public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListen
 		private Vector <BTColumn> getBTVector(String subject){
 			Vector <BTColumn> ret = new Vector <BTColumn>();
 			Vector <Ean> eans = new Vector <Ean>();
-			eans=BVBookUse.getISBN(subject, getGrade());
+			eans=OBUBookUse.getISBN(subject, getGrade());
 			
 			for (Ean ean:eans){
-				ret.add(new BTColumn(ean,BVBookType.getTitle(ean)));
+				ret.add(new BTColumn(ean,OBTBookType.getTitle(ean)));
 			}
 			ret.add(chooseline);
 			return ret;
@@ -242,7 +292,7 @@ public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListen
 	public String getGrade() {
 			String ret=null;
 			String cl=wp.getSelectedClass().Name;
-			new BVD(debug,cl);
+			new Deb(debug,cl);
 			if ((cl.equalsIgnoreCase("J1")) | cl.equals("12")) return "J1"; 
 			if ((cl.equalsIgnoreCase("J2")) | cl.equals("13")) return "J2"; 
 			if (cl.substring(0, 2).equalsIgnoreCase("11")) return "10";
@@ -252,7 +302,7 @@ public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListen
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
-			new BVD(debug,ret);
+			new Deb(debug,ret);
 		return ret;
 	}
 
@@ -262,47 +312,47 @@ public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListen
 		if (jd!=null){
 			jd.dispose();
 			jd=null;
-			new BVW("Ausleihe abgebrochen");
+			new Warn("Ausleihe abgebrochen");
 		}
 	}
 
-	public void thingSelected(BVSelectedEvent e) {
-		if (e.getId().equals(BVSelectedEvent.SelectedEventType.BookFreeSelected)){
-			
-			if (wp.getSelectedClass()==null){
-				BVSelectedEvent.addBVSelectedEventListener(new WaitingForBL(new BVBook(e.getEan())));
-				jd = new JOptionPane("Bitte eine Klasse wählen (Jahrgang beachten)",JOptionPane.INFORMATION_MESSAGE).createDialog("Auswählen");
-				jd.setModal(false);
-				jd.setVisible(true);
-			}else{
-				makeLease(new BVBook(e.getEan()),wp.getSelectedClass());
-				
+	public void thingSelected(SelectedEvent e) {
+		if (e.getId().equals(SelectedEvent.SelectedEventType.BookFreeSelected)){
+			if (MainGUI.isSelectedView(this)){ // only active when on top
+				if (wp.getSelectedClass()==null){
+					SelectedEvent.addBVSelectedEventListener(new WaitingForBL(new OBook(e.getEan())));
+					jd = new JOptionPane("Bitte eine Klasse wählen (Jahrgang beachten)",JOptionPane.INFORMATION_MESSAGE).createDialog("Auswählen");
+					jd.setModal(false);
+					jd.setVisible(true);
+				}else{
+					makeLease(new OBook(e.getEan()),wp.getSelectedClass());
+					
+				}
 			}
 		}else{
-			if (e.getId().equals(BVSelectedEvent.SelectedEventType.BLClassSelected)){
-				
+			if (e.getId().equals(SelectedEvent.SelectedEventType.BLClassSelected)){
 				cp.makeVisible();
 			}
 			
 		}
 
 	}
-	class WaitingForBL implements BVSelectedEventListener{
-		final BVBook book;
-		public WaitingForBL(BVBook book) {
+	class WaitingForBL implements SelectedEventListener{
+		final OBook book;
+		public WaitingForBL(OBook book) {
 			this.book=book;
 		}
-		public void thingSelected(BVSelectedEvent e) {
+		public void thingSelected(SelectedEvent e) {
 			if (jd!=null){
 				jd.dispose();
 				jd=null;
 			}
-			if (e.getId()==BVSelectedEvent.SelectedEventType.BLClassSelected){
-				makeLease(book,((BVClass)(e.getSource())));
-				BVSelectedEvent.removeBVSelectedEventListener(this);
+			if (e.getId()==SelectedEvent.SelectedEventType.BLClassSelected){
+				makeLease(book,((OClass)(e.getSource())));
+				SelectedEvent.removeBVSelectedEventListener(this);
 			}else{
-				BVSelectedEvent.removeBVSelectedEventListener(this);
-				new BVW("Ausleihe abgebrochen");
+				SelectedEvent.removeBVSelectedEventListener(this);
+				new Warn("Ausleihe abgebrochen");
 				
 			}
 			
@@ -315,17 +365,17 @@ public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListen
 	}
 
 
-	public void makeLease(BVBook book, BVClass class1) {
-		new BVBookLease(book,class1);
+	public void makeLease(OBook book, OClass class1) {
+		new OBLBookLease(book,class1);
 		
 	}
 
 
 	public Vector<SelectedEventType> getConsumedEvents() {
-		return (new Vector<BVSelectedEvent.SelectedEventType>(){{
-			add(BVSelectedEvent.SelectedEventType.BookFreeSelected);
-			add(BVSelectedEvent.SelectedEventType.BLClassSelected);
-			add(BVSelectedEvent.SelectedEventType.BLISBNSelected);
+		return (new Vector<SelectedEvent.SelectedEventType>(){{
+			add(SelectedEvent.SelectedEventType.BookFreeSelected);
+			add(SelectedEvent.SelectedEventType.BLClassSelected);
+			add(SelectedEvent.SelectedEventType.BLISBNSelected);
 		}});
 	}
 
@@ -337,12 +387,15 @@ public class BVLeaseViewDropDown extends JPanel implements BVView , ActionListen
 
 
 	public void toFront() {
-			cp.makeVisible();
+		if (lastselected==-1){ // no Selection yet
+			bvjp.getTable().changeSelection(0, -1, false, false);
+			bvjp.getTable().changeSelection(0, -1, true, false);
+		}
 		
+		bvjp.getTable().invalidate();
+		bvjp.validate();
 		
-		
-		
+				
 	}
-
 
 }

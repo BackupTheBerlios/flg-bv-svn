@@ -2,27 +2,27 @@ package de.flg_informatik.scanner;
 import java.io.File;
 import java.io.FileReader;
 
-import de.flg_informatik.buecherverwaltung.BVD;
-import de.flg_informatik.buecherverwaltung.BVScanAdapter;
+import de.flg_informatik.buecherverwaltung.Deb;
+import de.flg_informatik.buecherverwaltung.ScanAdapter;
 
 
 public class ScanFile extends Scanner implements Runnable{
 	private static boolean debug=false;
 	public FileReader rf=null;
-	BVScanAdapter adapter;
+	ScanAdapter adapter;
 	static ScanFile scanFile=null; 
 	
-	private ScanFile (BVScanAdapter adapter, File file){
+	private ScanFile (ScanAdapter adapter, File file){
 		this.adapter=adapter;
 		scanFile=this;
-		new BVD(debug,"new");
+		new Deb(debug,"new");
 		try{
 			rf= new FileReader(file);
 		
 		Thread thread=new Thread(this);
 		thread.start();
 		}catch(Exception e){
-			new BVD(debug,"No File: "+file);
+			new Deb(debug,"No File: "+file);
 			scanFile=null;
 			//e.printStackTrace();
 		}
@@ -62,11 +62,11 @@ public class ScanFile extends Scanner implements Runnable{
 		}
 	}
 	void sendString(String io){
-		// new BVD(debug,io);
+		// new Deb(debug,io);
 		if (adapter != null) {
 			adapter.eanScanned(io);
 		}else{
-			new BVD(debug,io);
+			new Deb(debug,io);
 		}
 		
 		
@@ -79,11 +79,11 @@ public class ScanFile extends Scanner implements Runnable{
 		//getScan1(null, new File("C:\\temp\\temp.ll") );
 	getScanner(null, new File("/dev/ttyUSB0"));
 	}
-	public static Scanner getScanner(BVScanAdapter adapter, Object file) {
-		new BVD(debug,"try");
+	public static Scanner getScanner(ScanAdapter adapter, Object file) {
+		new Deb(debug,"try");
 		if (scanFile==null){
 			new ScanFile(adapter, (File)file);
-			new BVD(debug,scanFile);
+			new Deb(debug,scanFile);
 		}	
 		return scanFile;
 		

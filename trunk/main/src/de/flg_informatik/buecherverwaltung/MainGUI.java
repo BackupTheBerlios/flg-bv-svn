@@ -11,6 +11,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -21,51 +22,52 @@ import javax.swing.event.ChangeListener;
 import de.flg_informatik.utils.FLGFrame;
 import de.flg_informatik.utils.FireButton;
 
-public class CopyOfBVGUI extends FLGFrame {
+public class MainGUI extends JFrame {
 
 	/*
 	 * Hauptklasse, jeder usecase bekommt ein Panel im JTabbedPane
-	 * definiert in BVUsecases
+	 * definiert in UCUseCases
 	 * 
 	 */
 	
 	private static final long serialVersionUID = 1L;
-	private static CopyOfBVGUI thegui;
+	private static MainGUI thegui;
 	private static boolean debug=true;
-	// public static Hashtable<BVView, BVUsecases> usecases =new Hashtable<BVView, BVUsecases>();
+	// public static Hashtable<UCCase, UCUseCases> usecases =new Hashtable<UCCase, UCUseCases>();
 	public JButton cancelbutton = new JButton("Abbrechen");
 	public JButton closebutton = new JButton("Beenden");
 	Control control;
 	JTabbedPane centerpane;
 	LogPane lp;
-	public CopyOfBVGUI(Control control){
-		new BVD(debug,"setting Variables");
+	public MainGUI(Control control){
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		new Deb(debug,"setting Variables");
 		this.setVisible(false);
 		thegui=this;
 		this.control=control;
-		new BVD(debug,"configuring FLGFrame");
-		this.setQuitsystem(false);
-		this.setClosewindow(false);
-		new BVD(debug,"setting Layout");
+		new Deb(debug,"configuring FLGFrame");
+		//this.setQuitsystem(false);
+		//this.setClosewindow(false);
+		new Deb(debug,"setting Layout");
 		this.setLayout(new BorderLayout());
-		new BVD(debug,"making Buttonfield");
+		new Deb(debug,"making Buttonfield");
 		this.add(makeButtonfield(),BorderLayout.SOUTH);
-		new BVD(debug,"making CardField");
+		new Deb(debug,"making CardField");
 		this.add(makeCardField(),BorderLayout.CENTER);
-		new BVD(debug,"finishing");
+		new Deb(debug,"finishing");
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.pack();
 		this.setVisible(true);
-		new BVD(debug,"finished");
+		new Deb(debug,"finished");
 		
 		
 	}
 	
-	public static boolean isSelectedView(BVView view){
+	public static boolean isSelectedView(UCCase view){
 		if (view==null){
 			return false;
 		}
-		new BVD(debug,"isSelectedView() from: "+((JPanel)view).getName());
+		new Deb(debug,"isSelectedView() from: "+((JPanel)view).getName());
 		if(thegui.centerpane.getSelectedComponent()==null){
 			return false;
 		}else{
@@ -74,23 +76,24 @@ public class CopyOfBVGUI extends FLGFrame {
 		
 	}
 
-	public static BVView getSelectedView(){
+	public static UCCase getSelectedView(){
 		if(thegui.centerpane.getSelectedComponent()==null){
 			return null;
 		}else{
-			return (BVView) thegui.centerpane.getSelectedComponent();
+			return (UCCase) thegui.centerpane.getSelectedComponent();
 		}
 		
 	}
 	
 	private JTabbedPane makeCardField(){
 		centerpane=new JTabbedPane();
-		for (BVUsecases usecase:BVUsecases.values()){
-			new BVD(debug,"centerpane: "+ usecase.view.getName());
+		for (UCUseCases usecase:UCUseCases.values()){
+			new Deb(debug,"centerpane: "+ usecase.view.getName());
 			centerpane.addTab(((JPanel)(usecase.view)).getName(),((JPanel)(usecase.view)));
-			BVSelectedEvent.addBVSelectedEventListener(usecase.view);
+			SelectedEvent.addBVSelectedEventListener(usecase.view);
 		}
 		centerpane.addChangeListener(Control.getControl());
+		
 		
 		
 		
@@ -131,10 +134,10 @@ public class CopyOfBVGUI extends FLGFrame {
 			this.setEditable(false);
 		}
 		public java.awt.Dimension getPreferredSize(){
-			if (Control.getControl().gui==null){
+			if (Control.getControl().mainGUI==null){
 				return(new java.awt.Dimension(600,100));
 			}
-			return (new java.awt.Dimension(Control.getControl().gui.getSize().width/3*2,Control.getControl().gui.getSize().height/4));
+			return (new java.awt.Dimension(Control.getControl().mainGUI.getSize().width/3*2,Control.getControl().mainGUI.getSize().height/4));
 			
 		}
 		public java.awt.Dimension getMinimumSize(){
@@ -155,8 +158,8 @@ public class CopyOfBVGUI extends FLGFrame {
 		closebutton.doClick();
 	}
 	
-	public static void selectView(BVUsecases usecase){
-		new BVD(debug,"selectView: "+ usecase);
+	public static void selectView(UCUseCases usecase){
+		new Deb(debug,"selectView: "+ usecase);
 		thegui.centerpane.setSelectedIndex(usecase.ordinal());
 		thegui.centerpane.invalidate();
 		thegui.validate();

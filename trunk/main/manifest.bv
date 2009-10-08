@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Main-Class: de.flg_informatik.buecherverwaltung.BVGUI
-Class-Path: mysql-connector-java-5.1.7-bin.jar ean13.jar flgutils.jar 
+Main-Class: de.flg_informatik.buecherverwaltung.MainGUI
+Class-Path: mysql-connector-java-5.1.7-bin.jar ./buchverwaltung.jar
 
