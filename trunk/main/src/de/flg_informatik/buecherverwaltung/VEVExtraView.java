@@ -17,18 +17,25 @@ import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
 import de.flg_informatik.utils.FLGProperties;
 import de.flg_informatik.utils.FireButton;
 
-public class VPVPropertyView extends JPanel implements UCCase, ActionListener{
-	JButton save = new JButton("Einstellungen speichern");
-	VPVPropertyView(){
+public class VEVExtraView extends JPanel implements UCCase, ActionListener{
+	JButton save = new JButton("Extras speichern");
+	JPanel settings=new VPVPropertyView();
+	
+	enum extras{
+		Programm_Einstellungen,
+		Etikett_Einstellungen,
+		Etikett_Druck;
+	}
+	JPChooser extrachoose=new JPChooser(this,new Vector<String>(){{
+		for (extras s:extras.values()){
+			add(s.toString());
+		}
+	}},JPChooser.Orientation.VERTICAL);
+	VEVExtraView(){
 		setLayout(new BorderLayout());
-		add(new JPanel(){{
+		add(extrachoose,BorderLayout.NORTH);
 		
-			setLayout(new GridLayout(1,1));
-			add(Control.getControl().app_settings_pane,BorderLayout.CENTER);
 			
-		}});
-		add(new JPanel(){{add(save);}},BorderLayout.SOUTH);
-		save.addActionListener(this);
 		
 	}
 
@@ -46,17 +53,7 @@ public class VPVPropertyView extends JPanel implements UCCase, ActionListener{
 
 	public void toBackground() {
 		Control.getControl().app_settings_pane.focusLost(null);
-		
-		/*if (javax.swing.JOptionPane.showConfirmDialog(Control.getControl().gui,
-				"Sollen die Extras übernommen werden?",
-				"Extras",
-				javax.swing.JOptionPane.YES_NO_OPTION
-				)==javax.swing.JOptionPane.YES_OPTION){
-			props.saveProperties();
-			
-		}
-		*/
-		// TODO Does'nt work yet
+	
 		
 	}
 
@@ -67,7 +64,7 @@ public class VPVPropertyView extends JPanel implements UCCase, ActionListener{
 
 
 	public Vector<SelectedEventType> getConsumedEvents() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -80,9 +77,25 @@ public class VPVPropertyView extends JPanel implements UCCase, ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Control.getControl().app_settings_pane.setProperties();
-		Control.getControl().app_settings_pane.saveProperties();
 		
-	}
+		switch (Integer.valueOf(e.getActionCommand())){
+			case 0: 
+				add(settings,BorderLayout.CENTER);
+				revalidate();
+				break;
+			case 1: 
+				add(new VEVJPSticker(),BorderLayout.CENTER);
+				revalidate();
+				break;	
+			case 2: 
+				add(new VEVJPStickerPrint(),BorderLayout.CENTER);
+				revalidate();
+				break;	
+		
+		}
+		extrachoose.clearSelection();
 
+	}
+	
+	
 }

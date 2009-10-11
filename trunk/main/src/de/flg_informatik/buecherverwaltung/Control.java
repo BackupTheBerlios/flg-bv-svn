@@ -9,6 +9,7 @@ import java.util.Properties;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import de.flg_informatik.Etikett.EtikettDruck;
 import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 import de.flg_informatik.utils.FLGProperties;
@@ -27,6 +28,9 @@ public class Control implements Runnable,ActionListener,ChangeListener {
 	final String defaultfilename="main/buchverwaltung.default.xml";
 	final String propertyfilename="buchverwaltung.xml";
 	final String significantstring=".BuchverwaltungV01";
+	final String defaultfilenameett="main/buchverwaltungetikett.default.xml";
+	final String propertyfilenameett="buchverwaltungetikett.xml";
+	final String significantstringett=".BuchverwaltungEtikettV01";
 	final private static boolean debug=true;
 	private static Control thecontrol;
 	private UCCase viewontop=null;
@@ -50,7 +54,7 @@ public class Control implements Runnable,ActionListener,ChangeListener {
 			
 			connection=UDataBaseConnect.getConnection(app_settings);
 			if (connection == null) {
-				javax.swing.JOptionPane.showMessageDialog(null, "Konnte nicht mit Datenbank verbinden, bitte Einstellungen überprüfen!");
+				javax.swing.JOptionPane.showMessageDialog(null, "Konnte nicht mit Datenbank verbinden, bitte Extras überprüfen!");
 				VPVDialog.showSettingsDialog(app_settings_pane);
 			}
 		new Deb(debug,"connecting");	
@@ -62,6 +66,9 @@ public class Control implements Runnable,ActionListener,ChangeListener {
 		bvs=new UStorage(this,connection);
 		new Deb(debug,"initialized bvs");
 		OBUBookUse.init();
+		new Deb(debug,"initialized OBUBuukUse");
+		EtikettDruck.setPropertyFileStrings(propertyfilenameett, defaultfilenameett, significantstringett);
+		new Deb(debug,"set EtikettDruck.setPropertyFileStrings");
 		mainGUI=new MainGUI(this);
 		new Deb(debug,"initialized mainGUI");
 		((VBVCSVImporterView)(UCUseCases.Datenimport.view)).init(mainGUI);

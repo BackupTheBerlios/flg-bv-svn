@@ -66,7 +66,9 @@ public class ScanAdapter implements IScanAdapter, Runnable{
 
 
 	public void run() {
-		if (OBTBookType.isISBN(ean)){ // Ean-Bookland -> ISBN
+		// TODO may be tested against getSubTypes
+		switch (EEANType.getType(ean)){
+		case ISBN: // Ean-Bookland -> ISBN
 			
 			if ( OBTBookType.isKnownISBN(ean)){
 				new Deb(debug,"isKownISBN()");
@@ -75,9 +77,8 @@ public class ScanAdapter implements IScanAdapter, Runnable{
 				new Deb(debug,"isUnknownISBN()");
 				control.newEvent(this, SelectedEvent.SelectedEventType.ISBNUnknownSelected, ean);
 			}
-			
-		}else{
-			if (OBook.isBookEan(ean)){
+			break;
+		case Book:
 				new Deb(debug,"isBookEan()");
 				OBook book = new OBook(ean);
 				new Deb(debug,"wasBookEan()");
@@ -96,18 +97,13 @@ public class ScanAdapter implements IScanAdapter, Runnable{
 							
 						}
 					}
-				
-				
-				
-			}else{
-				if (OClass.isClassEan(ean)){
-					
-				}else{
-					new Deb(debug,"unclear ean");// Ean.checkEan(new Ean(eanstring));
-				}
-				
-			}
-		}
+				break;
+		case BVClass:
+			// TODO
+			break;
+		
+		}	
+		
 	}
 	
 }

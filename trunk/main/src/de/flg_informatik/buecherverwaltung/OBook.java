@@ -119,7 +119,7 @@ public class OBook {
  	}
  	
  	public synchronized static BigInteger makeBookID(Ean ean){
- 		if (isBookEan(ean)){
+ 		if (EEANType.getType(ean).equals(EEANType.Book)){
  			return ((ean.getEan().divide(BigInteger.TEN)).subtract(Book12));
  		}else{
  			debug("no bookean");
@@ -127,7 +127,7 @@ public class OBook {
  		}
  	}
  	
- 	public synchronized static boolean isBookEan(Ean ean){
+ 	/*public synchronized static boolean isBookEan(Ean ean){
  		if(Ean.checkEan(ean)[0]==Ean.Result.ok){
  			if (ean.toString().startsWith("20")){
  				return true;
@@ -136,6 +136,7 @@ public class OBook {
  	return false;
  		
  	}
+ 	*/
 
 
 

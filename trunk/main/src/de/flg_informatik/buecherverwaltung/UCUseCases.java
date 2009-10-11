@@ -11,7 +11,7 @@ public enum UCUseCases {
 	Rückgabe (new VBBVBookBackView()),
 	Ausleihe (new VBLVBookLeaseView()),
 	Buchtypen (new VBTVBookTypeView()),
-	Einstellungen (new VPVPropertyView()),
+	Extras (new VEVExtraView()),
 	Datenimport (new VBVCSVImporterView()),
 	// Vorbereitung(new VBPVBookPrepareView()),
 	// VorbereitungTest(new VBLPVBookLeasePreView());

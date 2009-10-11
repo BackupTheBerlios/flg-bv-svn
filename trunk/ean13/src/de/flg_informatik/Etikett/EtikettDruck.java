@@ -31,9 +31,9 @@ public class EtikettDruck implements Printable {
 	 * bedrucken angefangener Bögen
 	 */
 	
-	private final String infilename="etiketten.xml";
-	private final String defaultfilename="etiketten.default.xml";
-	private final String significantstring=".EtikettenV1";
+	private static String infilename="etiketten.xml"; //should be overridden
+	private static String defaultfilename="etiketten.default.xml"; //should be overridden
+	private static String significantstring=".EtikettenV1"; //should be overridden
 	private MediaSizeName mediaSizeName = MediaSizeName.ISO_A4; // this would be a tricky typecast
 	
 	
@@ -63,7 +63,11 @@ public class EtikettDruck implements Printable {
 /** 
  * Interface-Teil
  */	
-	
+	public static void setPropertyFileStrings (String infilename, String defaultfilename, String significantstring){
+		EtikettDruck.infilename=infilename;
+		EtikettDruck.defaultfilename=defaultfilename;
+		EtikettDruck.significantstring=significantstring;
+	}
 	public static int etikettenDruck(PrintableEtikett[] etiketten, int spaltenprozeile, int zeilenproblatt, float lrmm, float ormm, float rrmm, float urmm, MediaSizeName msn){
 		return etikettenDruck(etiketten, spaltenprozeile, zeilenproblatt, lrmm, ormm, rrmm, urmm, msn, 0);
 	}

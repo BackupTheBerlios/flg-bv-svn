@@ -141,11 +141,11 @@ public class FLGProperties extends  JPanel implements FocusListener{
 				props.loadFromXML(fis);
 			}catch(java.io.FileNotFoundException e){
 				switch (javax.swing.JOptionPane.showOptionDialog(null, "Eine gültige Einstellungsdatei wurde nicht in \nden Anwendungseinstellungen/ihrem Benutzerverzeichnis gefunden.\n Sollen die Standardeinstellungen geladen werden?",
-                       "Einstellungen laden",
+                       "Extras laden",
                         javax.swing.JOptionPane.YES_NO_CANCEL_OPTION,
                         javax.swing.JOptionPane.QUESTION_MESSAGE,
                         null,
-                        new String[]{"Ja","Einstellungen suchen", "Programm abbrechen"},
+                        new String[]{"Ja","Extras suchen", "Programm abbrechen"},
                         null)){
                     case javax.swing.JOptionPane.YES_OPTION:
                     	getfile=defaultfile;
@@ -252,7 +252,7 @@ public class FLGProperties extends  JPanel implements FocusListener{
 			}
 			changed=true;
 			changelist.clear();
-			javax.swing.JOptionPane.showMessageDialog(null, "Änderungen übernommen!", "Einstellungen",javax.swing.JOptionPane.INFORMATION_MESSAGE);
+			javax.swing.JOptionPane.showMessageDialog(null, "Änderungen übernommen!", "Extras",javax.swing.JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 

@@ -39,14 +39,9 @@ public class OBTBookType {
 		}
 		
  	}
- 	public static boolean isISBN(Ean ean){
- 		if (Ean.checkEan(ean)[0]==Ean.Result.ok){
- 			if (ean.toString().startsWith("978")||ean.toString().startsWith("979")){
- 				return true;
- 			}
- 		}
- 		return false;
- 	}
+ 	/*public static boolean isISBN(Ean ean){
+ 		
+ 	}*/
  	public static boolean isKnownISBN(Ean ISBN){
  		
  		 if (USQLQuery.doCount("SELECT COUNT(ISBN) FROM Booktypes WHERE ISBN="+ISBN)==0){

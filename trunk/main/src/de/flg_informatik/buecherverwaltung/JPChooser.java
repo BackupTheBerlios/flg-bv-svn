@@ -7,6 +7,7 @@ import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -48,6 +49,27 @@ public class JPChooser extends JPanel implements ActionListener{
 		for (int i=0; i< names.size(); i++){
 			radiobutton[i]=new JRadioButton(names.get(i));
 			radiobutton[i].setActionCommand(Integer.toString(i));
+			bgr.add(radiobutton[i]);
+			add(radiobutton[i]);
+			radiobutton[i].addActionListener(listener);
+		}
+		invalidate();
+	}
+	public JPChooser(ActionListener listener, Object[] enu, Orientation o) {
+		switch(o){
+		case VERTICAL: 
+			setLayout(new GridLayout(enu.length,1));
+			break;
+		case HORZONTAL:
+			setLayout(new GridLayout(1,enu.length));
+			break;
+		}
+		
+		radiobutton=new JRadioButton[enu.length];
+		
+		for (int i=0; i< enu.length; i++){
+			radiobutton[i]=new JRadioButton(enu[i].toString());
+			radiobutton[i].setActionCommand(enu[i].toString());
 			bgr.add(radiobutton[i]);
 			add(radiobutton[i]);
 			radiobutton[i].addActionListener(listener);
