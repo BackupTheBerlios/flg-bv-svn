@@ -63,7 +63,7 @@ public class OClass {
 				}
 			}
 			ret=new String[i];
-			rs.first();
+			rs.beforeFirst();
 			for (i=ret.length-1; i>=0;i--){
 				rs.next();
 				ret[i]=rs.getString("Year");

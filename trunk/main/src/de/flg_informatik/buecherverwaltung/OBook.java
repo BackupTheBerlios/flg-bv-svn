@@ -1,5 +1,7 @@
 package de.flg_informatik.buecherverwaltung;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,8 +9,9 @@ import java.util.Vector;
 
 import de.flg_informatik.buecherverwaltung.USQLQuery.todo;
 import de.flg_informatik.ean13.Ean;
+import de.flg_informatik.ean13.EanCanvas;
 
-public class OBook {
+public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
 	public static final boolean debug=true;
 	public static final BigInteger Book12=new BigInteger("200000000000");
 	public BigInteger ID;
@@ -127,27 +130,20 @@ public class OBook {
  		}
  	}
  	
- 	/*public synchronized static boolean isBookEan(Ean ean){
- 		if(Ean.checkEan(ean)[0]==Ean.Result.ok){
- 			if (ean.toString().startsWith("20")){
- 				return true;
- 			}
- 		}
- 	return false;
- 		
+ 	public Ean getEan(){
+ 		return makeBookEan(ID);
  	}
- 	*/
 
 
 
  	
  	
- 	public static synchronized Ean[] makeNewBooks(int howmany, String ISBN){
+ 	public static synchronized OBook[] makeNewBooks(int howmany, String ISBN){
  		// make temporay ISBN
  		final BigInteger subtract13=new BigInteger("13000000000000");
  		// subtract from Bookworld ISBN 379X 378X to private EAN 249X 248X, does'nt change control digit
  		ISBN=new BigInteger(ISBN).subtract(subtract13).toString();
- 		Ean[] ret;
+ 		OBook[] ret;
  		String emptyline="(null,null,1,1,"+ISBN+")";
  		StringBuffer strbuf=new StringBuffer();
 		strbuf.append(emptyline);
@@ -159,13 +155,13 @@ public class OBook {
  		if ((howmany=USQLQuery.doInsert("INSERT INTO Books VALUES "+strbuf))==0){ // something went wrong
  			return null;
  		}
- 		ret=new Ean[howmany];
+ 		ret=new OBook[howmany];
  		try {
  			ResultSet result=USQLQuery.doQuery("SELECT * FROM Books WHERE ISBN="+ISBN);
  			for (int i=0;i<howmany;i++){
  				result.absolute(i+1);
  	 			USQLQuery.doUpdate("UPDATE Books SET ISBN=" +new BigInteger(ISBN).add(subtract13).toString() + " WHERE ID="+result.getString("ID"));
- 	 			ret[i]=new Ean(new BigInteger(result.getString("ID")).add(Book12));
+ 	 			ret[i]=new OBook(new BigInteger(result.getString("ID")));
  	 		}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -181,6 +177,11 @@ public class OBook {
  	}
  	static private void debug(Object obj){
 		// System.out.println(OBook.class+": "+ obj);
+	}
+
+	@Override
+	public int printAt(Graphics g, Dimension position, Dimension boxgroesse) {
+		return (new EanCanvas(getEan(),OBTBookType.getTitle(new Ean(this.ISBN))).printAt(g, position, boxgroesse));
 	}
 
 	

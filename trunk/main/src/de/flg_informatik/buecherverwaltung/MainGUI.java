@@ -57,6 +57,8 @@ public class MainGUI extends JFrame {
 		new Deb(debug,"finishing");
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.pack();
+		this.setExtendedState(MAXIMIZED_BOTH);
+		
 		this.setVisible(true);
 		new Deb(debug,"finished");
 		

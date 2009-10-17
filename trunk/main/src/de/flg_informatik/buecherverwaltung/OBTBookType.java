@@ -34,7 +34,7 @@ public class OBTBookType {
  			
 			return USQLQuery.doQuery("SELECT Title FROM Booktypes WHERE ISBN="+ISBN).getString(1);
 		} catch (SQLException e) {
-			new Err("Kein Titel fur ISBN "+ISBN+" gefunden!");
+			//new Err("Kein Titel fur ISBN "+ISBN+" gefunden!");
 			return null;
 		}
 		
