@@ -3,10 +3,8 @@ package de.flg_informatik.ean13;
 import java.awt.*;
 import java.math.BigInteger;
 
-import de.flg_informatik.ean13.Ean;
 
-
-public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etikett.PrintableEtikett {
+public class EanTextCanvas extends Canvas implements Ean13, de.flg_informatik.Etikett.PrintableEtikett {
 	
 	/**
 	 * 
@@ -34,83 +32,83 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 	private Ean ean;
 	private Dimension startl = new Dimension(0,0);
 	
-	private EanCanvas(){
+	private EanTextCanvas(){
 		this.setBackground(Color.WHITE);
 		//label.width=codewidth*line.width;
 		//setDimensions();
 	}
-	public EanCanvas(Ean ean){
+	public EanTextCanvas(Ean ean){
 		this();
 		this.ean=ean;
 	}
-	public EanCanvas(Ean ean, Dimension box){
+	public EanTextCanvas(Ean ean, Dimension box){
 		this();
 		setDimensions(box);
 		this.ean=ean;
 	}
-	public EanCanvas(String string, Dimension box){
+	public EanTextCanvas(String string, Dimension box){
 		this();
 		setDimensions(box);
 		this.ean=new Ean(string);
 	}
-	public EanCanvas(Ean ean, Dimension pos, Dimension box){
+	public EanTextCanvas(Ean ean, Dimension pos, Dimension box){
 		this();
 		this.here=pos;
 		setDimensions(box);
 		this.ean=ean;
 	}
-	public EanCanvas(String string, Dimension pos, Dimension box){
+	public EanTextCanvas(String string, Dimension pos, Dimension box){
 		this();
 		this.here=pos;
 		setDimensions(box);
 		this.ean=new Ean(string);
 	}
-	public EanCanvas(BigInteger bigint){
+	public EanTextCanvas(BigInteger bigint){
 		this();
 		this.ean=new Ean(bigint);
 	}
-	public EanCanvas(BigInteger bigint, Dimension box){
+	public EanTextCanvas(BigInteger bigint, Dimension box){
 		this();
 		setDimensions(box);
 		this.ean=new Ean(bigint);
 	}
-	public EanCanvas(Ean ean, String text){
+	public EanTextCanvas(Ean ean, String text){
 		this();
 		this.text=text;
 		this.ean=ean;
 	}
-	public EanCanvas(Ean ean, Dimension box, String text){
+	public EanTextCanvas(Ean ean, Dimension box, String text){
 		this();
 		this.text=text;
 		setDimensions(box);
 		this.ean=ean;
 	}
-	public EanCanvas(String string, Dimension box, String text){
+	public EanTextCanvas(String string, Dimension box, String text){
 		this();
 		this.text=text;
 		setDimensions(box);
 		this.ean=new Ean(string);
 	}
-	public EanCanvas(Ean ean, Dimension pos, Dimension box, String text){
+	public EanTextCanvas(Ean ean, Dimension pos, Dimension box, String text){
 		this();
 		this.text=text;
 		this.here=pos;
 		setDimensions(box);
 		this.ean=ean;
 	}
-	public EanCanvas(String string, Dimension pos, Dimension box, String text){
+	public EanTextCanvas(String string, Dimension pos, Dimension box, String text){
 		this();
 		this.text=text;
 		this.here=pos;
 		setDimensions(box);
 		this.ean=new Ean(string);
 	}
-	public EanCanvas(BigInteger bigint, String text){
+	public EanTextCanvas(BigInteger bigint, String text){
 		this();
 		this.text=text;
 		this.ean=new Ean(bigint);
 	}
-	public EanCanvas(BigInteger bigint, Dimension box, String text){
+	public EanTextCanvas(BigInteger bigint, Dimension box, String text){
 		this();
 		this.text=text;
 		setDimensions(box);
@@ -144,13 +142,13 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 		return setDimensions(label);
 	}
 	public static void main(String[] args) { //testing only
-		EanCanvas eac = new EanCanvas("400246403540",new Dimension(150,200));
+		EanTextCanvas eac = new EanTextCanvas("400246403540",new Dimension(150,200));
 		Frame fra = new de.flg_informatik.utils.FLGFrame(){{
 			setLayout(new GridLayout(1,2));
 		}};
 		fra.setTitle("EAN:"+eac.toString());
 		fra.add(eac);
-		EanCanvas eac2 = new EanCanvas("400246403000",new Dimension(150,200),"text");
+		EanTextCanvas eac2 = new EanTextCanvas("400246403000",new Dimension(150,200),"text");
 		fra.add(eac2);
 		fra.setVisible(true);
 		fra.pack();
@@ -165,7 +163,7 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 	}
 	public void paint(Graphics g){
 		startl.setSize(start);
-		g.setFont(new Font("SansSerif", Font.BOLD, getTextHeight()));
+		g.setFont(new Font("SansSerif", Font.BOLD, line8));
 		g.setColor(Color.BLACK);
 		g.drawChars(ean.getEanChars(), 0, 1, startl.width-line8, startl.height+line.height+line7);
 		startl.width+=2*line1;
@@ -179,9 +177,7 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 		g.setColor(Color.BLACK);
 		paintZiffer(g,'@',0,startl);
 		if (text!=null){
-			text=text.substring(0, Math.min(30,text.length()-1));
-			int len=g.getFontMetrics().stringWidth(text);
-			g.drawString(text, offset.width+Math.max(0, (label.width-len)/2), start.height+line.height+line7+getTextHeight());
+			g.drawString(text, 1, label.height-randvert);
 		}
 		
 	}
@@ -224,7 +220,7 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 		
 	}
 	private int getTextHeight(){
-		return line8;
+		return 8;
 	}
 	private int setDimensions(Dimension label){
 		this.label=label;
@@ -244,5 +240,4 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 		return line.width;
 	}
 		
-	
 }
