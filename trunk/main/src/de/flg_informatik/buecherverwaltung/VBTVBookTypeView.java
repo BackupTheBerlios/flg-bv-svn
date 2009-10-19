@@ -53,7 +53,7 @@ public class VBTVBookTypeView extends ATableView implements ActionListener {
 	}
 	
 	
-	@Override
+	//@Override
 	/*public Dimension getPreferredSize() {
 		// TODO Auto-generated method stub
 		return new Dimension(1280,1024);
@@ -188,7 +188,7 @@ public class VBTVBookTypeView extends ATableView implements ActionListener {
 			break;
 		case register:
 			booktyp=null;
-			new Warn("Bitte den Buchtyp für die zu \n registrierenden Bücher wählen!");
+			new Warn("Bitte den Buchtyp fï¿½r die zu \n registrierenden Bï¿½cher wï¿½hlen!");
 			break;
 		case neu:
 			if(booktyp==null){ // new selected manually

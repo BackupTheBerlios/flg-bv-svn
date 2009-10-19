@@ -78,7 +78,7 @@ public class USQLQuery implements Runnable{
 			}
 			
 		}catch(SQLException sqle){
-			new Err();
+			new Err(sqle.getMessage());
 			
 		}
 		

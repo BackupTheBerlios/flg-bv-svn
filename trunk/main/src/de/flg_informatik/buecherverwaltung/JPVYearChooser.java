@@ -24,11 +24,14 @@ public class JPVYearChooser extends JPanel implements ActionListener{
 			years=new JPChooser(np,OClass.getYears(),JPChooser.Orientation.VERTICAL);
 			add(years);
 			try {
-				years.clickOn(Control.getControl().app_settings.getProperty("aktuellesSchuljahr", "2009"));
-				makeVisible();
+				years.clickOn(Control.getControl().app_settings.getProperty("aktuellesSchuljahr", "2010"));
+				
 			} catch (IllegalArgumentException iae) {
-				// nothing to do 
+				new Warn("keine Schuljahre verfügbar, sind die Klassendaten importiert?");
+			}catch (NullPointerException e){
+				// years not created yet
 			}
+			makeVisible();
 			
 			
 		}

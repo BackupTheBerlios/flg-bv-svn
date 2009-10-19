@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 
 public enum UCUseCases {
 	
-	Rückgabe (new VBBVBookBackView()),
+	Rueckgabe (new VBBVBookBackView()),
 	Ausleihe (new VBLVBookLeaseView()),
 	Buchtypen (new VBTVBookTypeView()),
 	Extras (new VEVExtraView()),
@@ -51,7 +51,7 @@ public enum UCUseCases {
 			for (SelectedEvent.SelectedEventType selev:SelectedEvent.SelectedEventType.values()){
 				switch (selected=selev){
 				case BookLeasedSelected:
-					put(Rückgabe);
+					put(Rueckgabe);
 					break;
 				case BookUnknownSelected:
 					put(Buchtypen);

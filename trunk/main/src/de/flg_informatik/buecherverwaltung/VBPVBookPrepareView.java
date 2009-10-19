@@ -41,7 +41,7 @@ public class VBPVBookPrepareView extends ATableView implements ActionListener {
 	}
 	
 	
-	@Override
+	//@Override
 	/*public Dimension getPreferredSize() {
 		// TODO Auto-generated method stub
 		return new Dimension(1280,1024);

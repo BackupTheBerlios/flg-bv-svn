@@ -48,7 +48,7 @@ public class VPVPropertyView extends JPanel implements UCCase, ActionListener{
 		Control.getControl().app_settings_pane.focusLost(null);
 		
 		/*if (javax.swing.JOptionPane.showConfirmDialog(Control.getControl().gui,
-				"Sollen die Extras übernommen werden?",
+				"Sollen die Extras ï¿½bernommen werden?",
 				"Extras",
 				javax.swing.JOptionPane.YES_NO_OPTION
 				)==javax.swing.JOptionPane.YES_OPTION){
@@ -78,7 +78,7 @@ public class VPVPropertyView extends JPanel implements UCCase, ActionListener{
 	}
 
 
-	@Override
+	//@Override
 	public void actionPerformed(ActionEvent e) {
 		Control.getControl().app_settings_pane.setProperties();
 		Control.getControl().app_settings_pane.saveProperties();

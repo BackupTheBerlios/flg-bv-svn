@@ -69,8 +69,7 @@ public class OClass {
 				ret[i]=rs.getString("Year");
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			new Err(e.getMessage());
 			ret=null;
 		}
 		return ret;

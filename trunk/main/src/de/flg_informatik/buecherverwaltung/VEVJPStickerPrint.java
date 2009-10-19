@@ -57,13 +57,13 @@ public class VEVJPStickerPrint extends JPanel implements ActionListener{
 	}
 
 	
-	@Override
+	//@Override
 	public void actionPerformed(ActionEvent e) {
 		Ean ean=null;
 		int howmany;
 		if (editfields[0].getText().length()<12){
 			if (type.getSelected().equals(EEANType.ISBN.name())){
-				new Warn("Dies ist zu kurz für eine ISBN!");
+				new Warn("Dies ist zu kurz fï¿½r eine ISBN!");
 			}
 			if (type.getSelected().equals(EEANType.Book.name())){
 				ean=OBook.makeBookEan(new BigInteger(editfields[0].getText()));

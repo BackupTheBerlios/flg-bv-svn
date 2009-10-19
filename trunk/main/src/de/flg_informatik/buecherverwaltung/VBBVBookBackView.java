@@ -25,11 +25,11 @@ public class VBBVBookBackView extends JPanel implements UCCase {
 	
 
 	/**
-	 * Zunächst nur Rückgabe des Buches,
-	 * Rückmeldung über Zustand,
-	 * <auf Knopfdruck Abfrage wieviele Bücher dieses Booktypes 
+	 * Zunï¿½chst nur Rï¿½ckgabe des Buches,
+	 * Rï¿½ckmeldung ï¿½ber Zustand,
+	 * <auf Knopfdruck Abfrage wieviele Bï¿½cher dieses Booktypes 
 	 * aus dieser Location noch fehlen>
-	 * Schülerkonto auf separatem Tab ...  
+	 * Schï¿½lerkonto auf separatem Tab ...  
 	 * 
 	 * 
 	 * 
@@ -72,7 +72,7 @@ public class VBBVBookBackView extends JPanel implements UCCase {
 			add(titlef);
 			add(conditionf);
 			add(condswitch=new ConditionSwitcher());
-			add(end=new JButton("Abschließen"){{
+			add(end=new JButton("Abschlieï¿½en"){{
 				addActionListener(VBBVBookBackView.NorthPanel.this);
 			}});
 		}
@@ -90,7 +90,7 @@ public class VBBVBookBackView extends JPanel implements UCCase {
 			}
 		}
 
-		@Override
+		// @Override
 		public void actionPerformed(ActionEvent e) {
 			new Deb(e.getActionCommand());
 			if (lastbook!=null){
@@ -145,7 +145,7 @@ public class VBBVBookBackView extends JPanel implements UCCase {
 		if (USQLQuery.doUpdate("UPDATE Books SET Location=1, " +
 				"Scoring_of_Condition="+book.Scoring_of_condition+" WHERE ID="+book.ID)==1){
 				
-			Control.log("Rückgabe von Buch: " + book.ID + " " + OBTBookType.getTitle(new Ean(book.ISBN))+" Zustand: "+book.Scoring_of_condition );
+			Control.log("Rï¿½ckgabe von Buch: " + book.ID + " " + OBTBookType.getTitle(new Ean(book.ISBN))+" Zustand: "+book.Scoring_of_condition );
 		}
 	
 	}

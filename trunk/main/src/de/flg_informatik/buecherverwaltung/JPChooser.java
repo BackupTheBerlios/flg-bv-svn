@@ -186,14 +186,19 @@ public class JPChooser extends JPanel implements ActionListener{
 	public void clickOn(State state){
 		radiobutton[state.ordinal()].doClick();
 	}
-	public void clickOn(String actionCommand) throws java.lang.IllegalArgumentException{
+	public void clickOn(String actionCommand) throws java.lang.IllegalArgumentException, NullPointerException{
+		new Deb(radiobutton.length);
+		new Deb(radiobutton[0].getText()+"="+actionCommand);
 	for (int i=0; i<radiobutton.length;i++){
-		if (radiobutton[i].getActionCommand().equals(actionCommand)){
+		if (radiobutton[i].getText().equals(actionCommand)){
+			
 			clickOn(i);
 			return;
 		}
 	}
-	throw new IllegalArgumentException("No such actionCommand");
+	if (radiobutton.length>0){
+			throw new IllegalArgumentException("No such actionCommand");
+		}
 	}
 	public void clickOn(int index){
 		new Deb(debug,index);

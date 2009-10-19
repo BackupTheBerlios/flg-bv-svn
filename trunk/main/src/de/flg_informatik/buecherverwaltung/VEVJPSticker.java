@@ -34,7 +34,7 @@ public class VEVJPSticker extends JPanel implements ActionListener{
 
 
 	
-	@Override
+	//@Override
 	public void actionPerformed(ActionEvent e) {
 		props.setProperties();
 		props.saveProperties();

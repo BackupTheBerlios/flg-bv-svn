@@ -75,7 +75,7 @@ public class VEVExtraView extends JPanel implements UCCase, ActionListener{
 	}
 
 
-	@Override
+	//@Override
 	public void actionPerformed(ActionEvent e) {
 		
 		switch (Integer.valueOf(e.getActionCommand())){
