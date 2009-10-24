@@ -180,7 +180,7 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
 	}
 
 	public int printAt(Graphics g, Dimension position, Dimension boxgroesse) {
-		return (new EanCanvas(getEan(),OBTBookType.getTitle(new Ean(this.ISBN))).printAt(g, position, boxgroesse));
+		return (new EanCanvas(getEan(),OBTBookType.getTitle(new Ean(this.ISBN)),0.6).printAt(g, position, boxgroesse));
 	}
 
 	
