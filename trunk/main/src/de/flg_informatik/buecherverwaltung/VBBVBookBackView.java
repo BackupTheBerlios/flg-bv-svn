@@ -8,6 +8,8 @@ import java.awt.GridLayout;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -25,11 +27,11 @@ public class VBBVBookBackView extends JPanel implements UCCase {
 	
 
 	/**
-	 * Zunï¿½chst nur Rï¿½ckgabe des Buches,
-	 * Rï¿½ckmeldung ï¿½ber Zustand,
-	 * <auf Knopfdruck Abfrage wieviele Bï¿½cher dieses Booktypes 
+	 * Zunï¿½chst nur Rückgabe des Buches,
+	 * Rückmeldung üer Zustand,
+	 * <auf Knopfdruck Abfrage wieviele Bücher dieses Booktypes 
 	 * aus dieser Location noch fehlen>
-	 * Schï¿½lerkonto auf separatem Tab ...  
+	 * Schülerkonto auf separatem Tab ...  
 	 * 
 	 * 
 	 * 
@@ -46,6 +48,7 @@ public class VBBVBookBackView extends JPanel implements UCCase {
 	private OBook lastbook=null;
 	private NorthPanel np;
 	private JButton end;
+	private JButton cancel;
 	private NorthPanel.ConditionSwitcher condswitch;
 	public VBBVBookBackView(){
 		this.setLayout(new BorderLayout());
@@ -53,26 +56,24 @@ public class VBBVBookBackView extends JPanel implements UCCase {
 		
 		this.setVisible(true);
 	}
-	private class NorthPanel extends JPanel implements ActionListener {
+	private class NorthPanel extends JPanel implements ActionListener, MouseListener {
 		JButton[] condbut=new JButton[6];
 		
 		
 		
 		NorthPanel(){
-			
-			
-			
-			for (int i=0; i < 6; i++){
-				
-			}
 			idf.setEditable(false);
 			titlef.setEditable(false);
 			conditionf.setFont(new Font(null,	Font.BOLD, 96 ));
 			add(idf);
+			idf.addMouseListener(VBBVBookBackView.NorthPanel.this);
 			add(titlef);
 			add(conditionf);
 			add(condswitch=new ConditionSwitcher());
-			add(end=new JButton("Abschlieï¿½en"){{
+			add(end=new JButton("Abschließen"){{
+				addActionListener(VBBVBookBackView.NorthPanel.this);
+			}});
+			add(cancel=new JButton("Abbrechen"){{
 				addActionListener(VBBVBookBackView.NorthPanel.this);
 			}});
 		}
@@ -93,6 +94,7 @@ public class VBBVBookBackView extends JPanel implements UCCase {
 		// @Override
 		public void actionPerformed(ActionEvent e) {
 			new Deb(e.getActionCommand());
+			
 			if (lastbook!=null){
 				for (int i=0; i<6; i++ ){
 					if(e.getActionCommand().equals((i+1)+"")){
@@ -106,6 +108,42 @@ public class VBBVBookBackView extends JPanel implements UCCase {
 					toBackground(); 
 					publish(lastbook);
 			}
+			if (e.getSource().equals(cancel)){
+				Control.log("ABBRUCH der Rückgabe: (" + lastbook.ID + ", " + OBTBookType.getTitle(new Ean(lastbook.ISBN))+", "+lastbook.Scoring_of_condition+")" );
+				lastbook=null;
+				publish(lastbook);
+			}
+			
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (lastbook==null){
+				new Warn("Bitte ID eingeben,\n ohne 20...");
+			}
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
 			
 		}
 	}
@@ -145,7 +183,7 @@ public class VBBVBookBackView extends JPanel implements UCCase {
 		if (USQLQuery.doUpdate("UPDATE Books SET Location=1, " +
 				"Scoring_of_Condition="+book.Scoring_of_condition+" WHERE ID="+book.ID)==1){
 				
-			Control.log("Rï¿½ckgabe von Buch: " + book.ID + " " + OBTBookType.getTitle(new Ean(book.ISBN))+" Zustand: "+book.Scoring_of_condition );
+			Control.log("Rückgabe von Buch: " + book.ID + " " + OBTBookType.getTitle(new Ean(book.ISBN))+" Zustand: "+book.Scoring_of_condition );
 		}
 	
 	}

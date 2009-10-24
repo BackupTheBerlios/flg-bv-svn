@@ -117,11 +117,11 @@ public class VBLVBookLeaseView extends JPanel implements UCCase , ActionListener
 			if (MainGUI.isSelectedView(this)){ // only active when on top
 				if ( jd !=null){
 			
-					new Warn("Vorige Ausleihe abgebrochen\n keine Klasse gewï¿½hlt!");
+					new Warn("Vorige Ausleihe abgebrochen\n keine Klasse gewählt!");
 					jd=null;				
 				}
 				if (wp.getSelectedClass()==null){
-					jd = new JOptionPane("Bitte eine Klasse wï¿½hlen (Jahrgang beachten)",JOptionPane.INFORMATION_MESSAGE).createDialog("Auswï¿½hlen");
+					jd = new JOptionPane("Bitte eine Klasse wählen (Jahrgang beachten)",JOptionPane.INFORMATION_MESSAGE).createDialog("Auswählen");
 					jd.setModal(false);
 					jd.setVisible(true);
 					SelectedEvent.addBVSelectedEventListener(new WaitingForBL(new OBook(e.getEan())));
