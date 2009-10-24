@@ -1,4 +1,5 @@
 package de.flg_informatik.Etikett;
+import de.flg_informatik.buecherverwaltung.Deb;
 import de.flg_informatik.ean13.*; //needed for testing only
 import de.flg_informatik.utils.FLGProperties;
 
@@ -32,7 +33,7 @@ public class EtikettDruck implements Printable {
 	 */
 	
 	private static String infilename="etiketten.xml"; //should be overridden
-	private static String defaultfilename="etiketten.default.xml"; //should be overridden
+	private static String defaultfilename="ean13/src/de/flg_informatik/Etikett/etiketten.default.xml"; //should be overridden
 	private static String significantstring=".EtikettenV1"; //should be overridden
 	private MediaSizeName mediaSizeName = MediaSizeName.ISO_A4; // this would be a tricky typecast
 	
@@ -47,7 +48,7 @@ public class EtikettDruck implements Printable {
 	private float mediaSizeYmm;
 	
 	private int etikettoffset=0;
-	private	double scale=1;
+	private	double scale=.24;
 	private int proseite;
 	private int seitenzahl;
 	private double originx;
@@ -325,11 +326,10 @@ public class EtikettDruck implements Printable {
 		if (pageindex>=seitenzahl){
 			return Printable.NO_SUCH_PAGE;
 		}
-		debug("print");
 		
 		Graphics2D g2    = (Graphics2D)g;
-		// debug only g2.fillOval(100,100,100,100); 
-		g2.scale(scale,scale);
+		// Here we (try to) change to pysical resolution
+		g2.scale(1/g2.getTransform().getScaleX(),1/g2.getTransform().getScaleY());
 	    for (int zeile=0;zeile<zeilenproseite;zeile++){
 		    for (int spalte=0;spalte<spaltenprozeile;spalte++){
 		    	if (!(pageindex*proseite+zeile*spaltenprozeile+spalte<etikettoffset)){

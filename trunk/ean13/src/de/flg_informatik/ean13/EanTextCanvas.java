@@ -3,6 +3,8 @@ package de.flg_informatik.ean13;
 import java.awt.*;
 import java.math.BigInteger;
 
+import de.flg_informatik.buecherverwaltung.Deb;
+
 
 public class EanTextCanvas extends Canvas implements Ean13, de.flg_informatik.Etikett.PrintableEtikett {
 	
@@ -157,15 +159,17 @@ public class EanTextCanvas extends Canvas implements Ean13, de.flg_informatik.Et
 	public int printAt(Graphics g, Dimension pos, Dimension box){
 		offset=pos.getSize();
 		int ret=setDimensions(box);
-		paint(g);
+		this.paint(g);
 		offset.setSize(here);
 		return ret;
 	}
 	public void paint(Graphics g){
 		startl.setSize(start);
-		g.setFont(new Font("SansSerif", Font.BOLD, line8));
+		System.out.println("Hallo");
+		g.setFont(new Font(Font.SERIF, Font.BOLD, 20));
+		new Deb(g.getFont());
 		g.setColor(Color.BLACK);
-		g.drawChars(ean.getEanChars(), 0, 1, startl.width-line8, startl.height+line.height+line7);
+		g.drawChars(ean.getEanChars(), 0, 1, startl.width-line6, startl.height+line.height+line7);
 		startl.width+=2*line1;
 		paintZiffer(g,'@',0,startl);
 		for (int i=1; i<digits; i++){
@@ -177,6 +181,7 @@ public class EanTextCanvas extends Canvas implements Ean13, de.flg_informatik.Et
 		g.setColor(Color.BLACK);
 		paintZiffer(g,'@',0,startl);
 		if (text!=null){
+			g.setFont(new Font("Serif", Font.PLAIN, 2));
 			g.drawString(text, 1, label.height-randvert);
 		}
 		
@@ -220,7 +225,7 @@ public class EanTextCanvas extends Canvas implements Ean13, de.flg_informatik.Et
 		
 	}
 	private int getTextHeight(){
-		return 8;
+		return 6;
 	}
 	private int setDimensions(Dimension label){
 		this.label=label;

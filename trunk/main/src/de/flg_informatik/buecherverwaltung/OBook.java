@@ -179,7 +179,6 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
 		// System.out.println(OBook.class+": "+ obj);
 	}
 
-	@Override
 	public int printAt(Graphics g, Dimension position, Dimension boxgroesse) {
 		return (new EanCanvas(getEan(),OBTBookType.getTitle(new Ean(this.ISBN))).printAt(g, position, boxgroesse));
 	}
