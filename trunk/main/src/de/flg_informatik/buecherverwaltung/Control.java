@@ -36,7 +36,7 @@ public class Control implements Runnable,ActionListener,ChangeListener {
 	private UCCase viewontop=null;
 	FLGProperties app_settings_pane;
 	Properties app_settings;
-	Version version=new Version(new int[]{0,9},"09-10-08");
+	Version version=new Version(new int[]{0,95},"09-10-25");
 	UCUseCases.Selected2Usecases  switchusecases;
 	MainGUI mainGUI;
 	UStorage bvs;
