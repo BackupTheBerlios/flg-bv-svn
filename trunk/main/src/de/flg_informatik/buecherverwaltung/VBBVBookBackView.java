@@ -3,6 +3,7 @@ package de.flg_informatik.buecherverwaltung;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigInteger;
 import java.util.Vector;
 
 import javax.swing.JPanel;
@@ -28,6 +29,7 @@ public class VBBVBookBackView extends JPanel implements UCCase, ActionListener {
 	private static final long serialVersionUID = 1L;
 	private static boolean debug=true;
 	private OBook lastbook=null;
+	private OBook book=null;
 	private JPBookPresenter np;
 	public VBBVBookBackView(){
 		this.setLayout(new BorderLayout());
@@ -36,8 +38,7 @@ public class VBBVBookBackView extends JPanel implements UCCase, ActionListener {
 	}
 	
 		public void actionPerformed(ActionEvent e) {
-			new Deb(e.getActionCommand());
-			
+	
 			if (lastbook!=null){
 				for (int i=0; i<6; i++ ){
 					if(e.getActionCommand().equals((i+1)+"")){
@@ -52,7 +53,7 @@ public class VBBVBookBackView extends JPanel implements UCCase, ActionListener {
 					np.publish(lastbook);
 			}
 			if (e.getActionCommand().equals("cancel")){
-				Control.log("ABBRUCH der Rückgabe: (" + lastbook.ID + ", " + OBTBookType.getTitle(new Ean(lastbook.ISBN))+", "+lastbook.Scoring_of_condition+")" );
+				Control.logln("ABBRUCH der Rückgabe: (" + lastbook.ID + ", " + OBTBookType.getTitle(new Ean(lastbook.ISBN))+", "+lastbook.Scoring_of_condition+")" );
 				lastbook=null;
 				np.publish(lastbook);
 			}
@@ -68,22 +69,26 @@ public class VBBVBookBackView extends JPanel implements UCCase, ActionListener {
 	}
 	
 	public synchronized void thingSelected(SelectedEvent e) {
+		
 		switch (e.getId()){
 		
 			case BookLeasedSelected:// we stay on top
-				if (lastbook != null){
-					if (OBook.makeBookID(e.getEan()).equals(lastbook.ID)){
-						lastbook.incCondition();
+				if (MainGUI.isSelectedView(this)){
+					book=new OBook(e.getEan());
+					if (lastbook != null){
+						if (book.equals(lastbook)){
+							lastbook.incCondition();
+						}else{
+							commit(lastbook);
+							lastbook = book;
+						}	
 					}else{
-						commit(lastbook);
-						lastbook = new OBook(e.getEan());
-					}	
-				}else{
-					lastbook = new OBook(e.getEan());
-					
+						lastbook = book;
+						
+					}
+					np.publish(lastbook);
+					break;
 				}
-				np.publish(lastbook);
-				break;
 			default: // do nothing
 			}
 			
@@ -92,12 +97,20 @@ public class VBBVBookBackView extends JPanel implements UCCase, ActionListener {
 	
 	private synchronized void commit(OBook book){
 		new Deb (debug,"commit");
-		if (USQLQuery.doUpdate("UPDATE Books SET Location=1, " +
-				"Scoring_of_Condition="+book.Scoring_of_condition+" WHERE ID="+book.ID)==1){
-				
-			Control.log("Rückgabe von Buch: " + book.ID + " " + OBTBookType.getTitle(new Ean(book.ISBN))+" Zustand: "+book.Scoring_of_condition );
+		String classname;
+		int locnumber=book.Location.intValue();
+		if(OClass.getBVClass(locnumber)!=null ){
+			classname=OClass.getBVClass(locnumber).Name;
+		}else{
+			classname="000";
 		}
-	
+		Control.log("ZURÜCK: B"+book.ID + " <- K" +locnumber + " ("+ OBTBookType.getTitle(new Ean(book.ISBN))+" von " + classname +") Zustand: "+book.Scoring_of_condition );
+		book.Location=BigInteger.ONE;
+		if (book.doUpdate()){
+			Control.logln(" OK!");
+		}else{
+			Control.logln(" Fehler!");
+		}
 	}
 
 	public void toBackground() {

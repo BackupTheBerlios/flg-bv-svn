@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigInteger;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -11,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 
 import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
+import de.flg_informatik.ean13.Ean;
 
 public class VBLVBookLeaseView extends JPanel implements UCCase , ActionListener{
 	private static boolean debug=true;
@@ -91,22 +93,12 @@ public class VBLVBookLeaseView extends JPanel implements UCCase , ActionListener
 				
 				lastbook=book;
 				np.publish(lastbook);
-			}else{
-				if (e.getId().equals(SelectedEvent.SelectedEventType.BLClassSelected)){
-					
-				}
-				
 			}
 
 		}
 	}	
 	
-	private void cancelled(String text){
-		new Warn(text);
-		jd=null;
-		lastbook=null;
-	}
-
+	
 	public void toClose() {
 		
 	}
@@ -118,12 +110,25 @@ public class VBLVBookLeaseView extends JPanel implements UCCase , ActionListener
 			jd.dispose();
 		}
 		if (wp.getSelectedClass()==null){
-			cancelled("Vorige Ausleihe abgebrochen!\n keine Klasse gewählt!");
-			lastbook=null;
-			return;
+			new Warn("Vorige Ausleihe abgebrochen!\n keine Klasse gewählt!");
+			Control.logln("ABBRUCH der Ausleihe: (" + lastbook.ID + ", " + OBTBookType.getTitle(new Ean(lastbook.ISBN))+", "+lastbook.Scoring_of_condition+"): No class chosen") ;
+		}else{
+			if (book!=null){
+				book.Location=new BigInteger(wp.getSelectedClass().KID);
+				Control.log("LEIHE: B"+book.ID + " -> K" +book.Location + " ("+ OBTBookType.getTitle(new Ean(book.ISBN))+" an " + OClass.getBVClass(book.Location.intValue()).Name +") Zustand: "+book.Scoring_of_condition );
+				if(book.doUpdate()){
+					Control.logln(" OK!");
+				}else{
+					Control.logln(" Fehler!");
+					
+				}
+			}else{
+				wp.unselectClass();
+			}
 		}
-		new OBLBookLease(book,wp.getSelectedClass());
 		lastbook=null;
+		
+		
 	}
 
 
@@ -136,11 +141,26 @@ public class VBLVBookLeaseView extends JPanel implements UCCase , ActionListener
 
 
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("cancel")){
-			wp.unselectClass();
-			return;
+
+		if (lastbook!=null){
+			for (int i=0; i<6; i++ ){
+				if(e.getActionCommand().equals((i+1)+"")){
+					lastbook.Scoring_of_condition=i+1;
+					np.publish(lastbook);
+				}
+			}
 		}
-		
+		if (e.getActionCommand().equals("end")){
+				toBackground(); 
+				np.publish(lastbook);
+		}
+		if (e.getActionCommand().equals("cancel")){
+			Control.logln("ABBRUCH der Ausleihe: (" + lastbook.ID + ", " + OBTBookType.getTitle(new Ean(lastbook.ISBN))+", "+lastbook.Scoring_of_condition+"): User action") ;
+			book=null;
+			lastbook=null;
+			wp.unselectClass();
+			np.publish(book);
+		}
 	}
 
 

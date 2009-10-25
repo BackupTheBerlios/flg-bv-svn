@@ -179,6 +179,14 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  		
  		
  	}
+ 	public boolean doUpdate(){
+ 		return (USQLQuery.doUpdate("UPDATE "+"Books"+ " SET Location=" + Location  +
+ 				", Scoring_of_Condition="+ Scoring_of_condition + 
+ 				", Purchased=\""+ Purchased + "\""+ 
+				", ISBN="+ ISBN + 
+ 				" WHERE ID = "+ID)==1);
+ 	}
+ 	
  	public boolean equals(OBook o){
  		if (o==null) return false;
  		return this.ID.equals(o.ID);

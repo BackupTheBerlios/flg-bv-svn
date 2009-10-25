@@ -152,8 +152,13 @@ public class Control implements Runnable,ActionListener,ChangeListener {
 		
 		
 	}
-	public static void log(String string){
+	public static void logln(String string){
 		thecontrol.mainGUI.lp.append(string+"\n");
+		thecontrol.mainGUI.validate();
+	}
+	public static void log(String string){
+		thecontrol.mainGUI.lp.append(string);
+		thecontrol.mainGUI.validate();
 	}
 	/** 
 	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)

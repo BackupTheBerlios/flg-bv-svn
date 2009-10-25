@@ -44,6 +44,7 @@ public class OClass {
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
 			
+			
 		}
 		return result;
 	}
