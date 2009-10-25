@@ -86,6 +86,10 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  		new Notimpl();
  		return true;	
 	}
+ 	public void incCondition(){
+		Scoring_of_condition++;
+		
+	}
  	
  	public static synchronized int getLocation(BigInteger ID){
  		debug("getLocation "+ID);
@@ -173,6 +177,11 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  		return ret;
  		
  		
+ 		
+ 	}
+ 	public boolean equals(OBook o){
+ 		if (o==null) return false;
+ 		return this.ID.equals(o.ID);
  		
  	}
  	static private void debug(Object obj){
