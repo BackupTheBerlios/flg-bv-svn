@@ -57,6 +57,7 @@ public class ScanEmulator extends FLGFrame implements ActionListener{
 			selector.addItem(id);
 		}
 		selector.addActionListener(this);
+		this.setTitle("NEHEIT");
 		this.add(selector);
 		this.setVisible(true);
 		this.pack();
