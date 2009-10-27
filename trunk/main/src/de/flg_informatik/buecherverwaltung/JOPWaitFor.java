@@ -32,7 +32,7 @@ public class JOPWaitFor extends JOptionPane implements SelectedEventListener {
 		jd.setVisible(true);
 	}
 
-	@Override
+
 	public void thingSelected(SelectedEvent e) {
 		SelectedEvent.removeBVSelectedEventListener(this);
 		switch (setype){
