@@ -1,0 +1,24 @@
+binary-howto
+
+C nurh 091027
+
+Damit trotz imaging immer der aktuellste Stand der Software 
+auf dem Client ist, exportiert der Client (dh eigentlich importiert er es)  beim Start der Applikation den
+Dateibaum aus svn:
+
+#> svn --force export http://svn.berlios.de/svnroot/repos/flg-bv/stablebin ./bvbin
+
+Um ein Image hochzuladen ist folgendes wichtig:
+die Datei ~/.ssh/config muss existieren und 
+die Identität enthalten z.B.:
+
+    host svn.berlios.de
+    user nurh
+
+(die Kommandozeilenoption --USERNAME funktioniert bei svn+ssh nicht!)
+dann eingeben
+
+#> svn -m "D svn+ssh://svn.berlios.de/svnroot/repos/flg-bv/stablebin" delete svn+ssh://svn.berlios.de/svnroot/repos/flg-bv/stablebin
+#> svn -m "A ~/workspace/buchverwaltung/bin svn+ssh://svn.berlios.de/svnroot/repos/flg-bv/stablebin"  import ~/workspace/buchverwaltung/bin svn+ssh://svn.berlios.de/svnroot/repos/flg-bv/stablebin
+
+Dabei wird jeweils nach den passwort gefragt
