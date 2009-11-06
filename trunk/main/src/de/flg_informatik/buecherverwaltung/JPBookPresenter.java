@@ -2,14 +2,18 @@ package de.flg_informatik.buecherverwaltung;
 
 import java.awt.Color;
 import java.awt.TextField;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.math.BigInteger;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 
 public class JPBookPresenter extends JPanel implements MouseListener{
@@ -17,6 +21,7 @@ public class JPBookPresenter extends JPanel implements MouseListener{
 	private TextField titlef = new TextField("",40);
 	private JButton end;
 	private JButton cancel;
+	private JDManualInput mi;
 	OBook book;
 	JPConditionSwitcher switcher;
 	JPBookPresenter(OBook book,JPConditionSwitcher switcher,ActionListener listener){
@@ -37,8 +42,11 @@ public class JPBookPresenter extends JPanel implements MouseListener{
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		new Warn("Manuelle Eingabe");
-		
+			mi=new JDManualInput(Control.getControl().mainGUI);
+			mi.setLblText("Book ID: 20...");
+			mi.bclass.setEnabled(false);
+			mi.bcust.setEnabled(false);
+			mi.setVisible(true);
 	}
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -63,7 +71,7 @@ public class JPBookPresenter extends JPanel implements MouseListener{
 			titlef.setText("");
 			switcher.setCondition(0);
 			setBackground(new Color(150,150,150));
-			end.setVisible(false);
+			end.setEnabled(false);
 
 		}else{
 			idf.setText(OBook.makeBookEan(book.ID).toString());
@@ -71,7 +79,7 @@ public class JPBookPresenter extends JPanel implements MouseListener{
 			switcher.setCondition(book.Scoring_of_condition);
 			setBackground(JPConditionSwitcher.colorOfCondition(book.Scoring_of_condition));
 			switcher.setVisible(true);
-			end.setVisible(true);
+			end.setEnabled(true);
 		}
 		
 		setVisible(true);
@@ -80,6 +88,8 @@ public class JPBookPresenter extends JPanel implements MouseListener{
 		
 		
 	}
+
+	
 	
 
 }

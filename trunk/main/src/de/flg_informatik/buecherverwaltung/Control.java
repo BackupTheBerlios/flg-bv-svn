@@ -1,5 +1,7 @@
 package de.flg_informatik.buecherverwaltung;
 
+import java.awt.Component;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -175,4 +177,5 @@ public class Control implements Runnable,ActionListener,ChangeListener {
 		viewontop.toFront();
 		
 	}
+	
 }

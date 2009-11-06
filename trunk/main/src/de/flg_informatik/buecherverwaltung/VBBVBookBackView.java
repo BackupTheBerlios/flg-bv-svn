@@ -53,9 +53,11 @@ public class VBBVBookBackView extends JPanel implements UCCase, ActionListener {
 					np.publish(lastbook);
 			}
 			if (e.getActionCommand().equals("cancel")){
-				Control.logln("ABBRUCH der Rückgabe: (" + lastbook.ID + ", " + OBTBookType.getTitle(new Ean(lastbook.ISBN))+", "+lastbook.Scoring_of_condition+")" );
-				lastbook=null;
-				np.publish(lastbook);
+				if (lastbook!= null){
+					Control.logln("ABBRUCH der Rückgabe: (" + lastbook.ID + ", " + OBTBookType.getTitle(new Ean(lastbook.ISBN))+", "+lastbook.Scoring_of_condition+"), Benutzeraktion" );
+					lastbook=null;
+					np.publish(lastbook);
+				}
 			}
 			
 		}

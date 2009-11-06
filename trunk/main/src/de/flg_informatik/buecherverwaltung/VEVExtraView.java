@@ -19,12 +19,13 @@ import de.flg_informatik.utils.FireButton;
 
 public class VEVExtraView extends JPanel implements UCCase, ActionListener{
 	JButton save = new JButton("Extras speichern");
-	JPanel settings=new VPVPropertyView();
+	JPanel settings;//=new VPVPropertyView();
 	
 	enum extras{
 		Programm_Einstellungen,
 		Etikett_Einstellungen,
-		Etikett_Druck;
+		Etikett_Druck,
+		Buch_loeschen;
 	}
 	JPChooser extrachoose=new JPChooser(this,new Vector<String>(){{
 		for (extras s:extras.values()){
@@ -33,7 +34,10 @@ public class VEVExtraView extends JPanel implements UCCase, ActionListener{
 	}},JPChooser.Orientation.VERTICAL);
 	VEVExtraView(){
 		setLayout(new BorderLayout());
-		add(extrachoose,BorderLayout.NORTH);
+		add(new JPanel(){{
+			add(extrachoose);
+			}},BorderLayout.WEST);
+		
 		
 			
 		
@@ -53,6 +57,7 @@ public class VEVExtraView extends JPanel implements UCCase, ActionListener{
 
 	public void toBackground() {
 		Control.getControl().app_settings_pane.focusLost(null);
+		extrachoose.clearSelection();
 	
 		
 	}
@@ -77,23 +82,28 @@ public class VEVExtraView extends JPanel implements UCCase, ActionListener{
 
 	//@Override
 	public void actionPerformed(ActionEvent e) {
-		
+		Control.getControl().app_settings_pane.focusLost(null);
+		removeAll();
+		add(new JPanel(){{
+			add(extrachoose);
+			}},BorderLayout.WEST);
 		switch (Integer.valueOf(e.getActionCommand())){
 			case 0: 
-				add(settings,BorderLayout.CENTER);
-				revalidate();
+				add(new VPVPropertyView(),BorderLayout.CENTER);
 				break;
 			case 1: 
 				add(new VEVJPSticker(),BorderLayout.CENTER);
-				revalidate();
 				break;	
 			case 2: 
 				add(new VEVJPStickerPrint(),BorderLayout.CENTER);
-				revalidate();
+				break;	
+			case 3: 
+				add(new VEVJPBookStickerDelete(),BorderLayout.CENTER);
 				break;	
 		
 		}
-		extrachoose.clearSelection();
+		validate();
+		//extrachoose.clearSelection();
 
 	}
 	

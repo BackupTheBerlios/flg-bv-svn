@@ -34,16 +34,18 @@ public class VEVJPStickerPrint extends JPanel implements ActionListener{
 	
 	private FLGProperties props;
 	VEVJPStickerPrint(){
-		setLayout(new BorderLayout());
-		add(new JPanel(){{
-				setLayout(new GridLayout(5,1));
-				for (JPEditLine el:editfields){
-					add(el);
-				}
-				add (type);
-			
-		}},BorderLayout.CENTER);
-		add(new JPanel(){{add(save);}},BorderLayout.SOUTH);
+		add (new JPanel(){{
+			setLayout(new BorderLayout());
+			add(new JPanel(){{
+					setLayout(new GridLayout(5,1));
+					for (JPEditLine el:editfields){
+						add(el);
+					}
+					add (type);
+				
+			}},BorderLayout.CENTER);
+			add(new JPanel(){{add(save);}},BorderLayout.SOUTH);
+		}});
 		save.addActionListener(this);
 		
 	}

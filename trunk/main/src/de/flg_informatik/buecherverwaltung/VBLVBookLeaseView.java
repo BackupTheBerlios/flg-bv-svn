@@ -141,7 +141,6 @@ public class VBLVBookLeaseView extends JPanel implements UCCase , ActionListener
 
 
 	public void actionPerformed(ActionEvent e) {
-
 		if (lastbook!=null){
 			for (int i=0; i<6; i++ ){
 				if(e.getActionCommand().equals((i+1)+"")){
@@ -155,9 +154,11 @@ public class VBLVBookLeaseView extends JPanel implements UCCase , ActionListener
 				np.publish(lastbook);
 		}
 		if (e.getActionCommand().equals("cancel")){
-			Control.logln("ABBRUCH der Ausleihe: (" + lastbook.ID + ", " + OBTBookType.getTitle(new Ean(lastbook.ISBN))+", "+lastbook.Scoring_of_condition+"): User action") ;
+			if (lastbook!=null){
+				Control.logln("ABBRUCH der Ausleihe: (" + lastbook.ID + ", " + OBTBookType.getTitle(new Ean(lastbook.ISBN))+", "+lastbook.Scoring_of_condition+"): Benutzeraktion") ;
+				lastbook=null;
+			}
 			book=null;
-			lastbook=null;
 			wp.unselectClass();
 			np.publish(book);
 		}

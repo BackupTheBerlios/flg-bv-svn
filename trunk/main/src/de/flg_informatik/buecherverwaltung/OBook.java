@@ -122,6 +122,7 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  	
  	public static synchronized Ean makeBookEan(BigInteger num){
  		
+ 		
  		return new Ean(num.add(Book12));
  	}
  	
@@ -144,9 +145,11 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  	
  	public static synchronized OBook[] makeNewBooks(int howmany, String ISBN){
  		// make temporay ISBN
- 		final BigInteger subtract13=new BigInteger("13000000000000");
- 		// subtract from Bookworld ISBN 379X 378X to private EAN 249X 248X, does'nt change control digit
+ 		final BigInteger subtract13=new BigInteger("6800000000000");
+  		// subtract from Bookworld ISBN 979X 978X to private EAN 299X 298X, does'nt change control digit
+ 		new Deb(ISBN);
  		ISBN=new BigInteger(ISBN).subtract(subtract13).toString();
+ 		new Deb(ISBN);
  		OBook[] ret;
  		String emptyline="(null,null,1,1,"+ISBN+")";
  		StringBuffer strbuf=new StringBuffer();
@@ -164,7 +167,7 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  			ResultSet result=USQLQuery.doQuery("SELECT * FROM Books WHERE ISBN="+ISBN);
  			for (int i=0;i<howmany;i++){
  				result.absolute(i+1);
- 	 			USQLQuery.doUpdate("UPDATE Books SET ISBN=" +new BigInteger(ISBN).add(subtract13).toString() + " WHERE ID="+result.getString("ID"));
+ 				USQLQuery.doUpdate("UPDATE Books SET ISBN=" +new BigInteger(ISBN).add(subtract13).toString() + " WHERE ID="+result.getString("ID"));
  	 			ret[i]=new OBook(new BigInteger(result.getString("ID")));
  	 		}
 		} catch (SQLException e) {
@@ -193,11 +196,32 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  		
  	}
  	static private void debug(Object obj){
-		// System.out.println(OBook.class+": "+ obj);
+		//System.out.println(OBook.class+": "+ obj);
 	}
 
 	public int printAt(Graphics g, Dimension position, Dimension boxgroesse) {
 		return (new EanCanvas(getEan(),OBTBookType.getTitle(new Ean(this.ISBN)),0.6).printAt(g, position, boxgroesse));
+	}
+
+	public static boolean delete(BigInteger Id) {
+		OBook book=new OBook(Id);
+		if (book.Location.equals(BigInteger.ONE)){
+			// in Storage or virtual
+			if (book.Scoring_of_condition==1){
+				// looks like virtual Book i.e. bad etikett
+				USQLQuery.doDelete("DELETE FROM Books WHERE ID="+Id);
+				return (true);
+			}else{
+				// Book to be discarded
+				new Warn("Buch "+Id +" hat einen Zustand schlechter als 1 \n Lösche es nicht!");
+				new Notimpl();
+			}
+		}else{
+			new Warn("Buch "+Id +" ist ausgeliehen an: "+OClass.getBVClass(book.Location.intValue()).Name+"! \n Lösche es nicht!");
+			
+		}
+		return false;
+		
 	}
 
 	

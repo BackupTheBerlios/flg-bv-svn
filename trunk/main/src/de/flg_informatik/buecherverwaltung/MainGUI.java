@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -165,6 +166,12 @@ public class MainGUI extends JFrame {
 		thegui.centerpane.setSelectedIndex(usecase.ordinal());
 		thegui.centerpane.invalidate();
 		thegui.validate();
+	}
+	public static Point getCentering(Component comp) {
+		Point ret=new Point();
+		ret.x=thegui.getBounds().x+(thegui.getBounds().width-comp.getWidth())/2;
+		ret.y=thegui.getBounds().y+(thegui.getBounds().height-comp.getHeight())/2;
+		return ret;
 	}
 	public static void main(String[] args) {
 		Control bvc=new Control();

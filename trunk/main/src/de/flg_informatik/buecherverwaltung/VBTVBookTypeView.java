@@ -34,7 +34,7 @@ public class VBTVBookTypeView extends ATableView implements ActionListener {
 	enum State{
 		info,
 		edit,
-		druck,
+		zukauf,
 		register,
 		neu;
 	}
@@ -183,7 +183,7 @@ public class VBTVBookTypeView extends ATableView implements ActionListener {
 		case edit:
 			SelectedEvent.makeEvent(this, SelectedEvent.SelectedEventType.ISBNSelected, new Ean(((VBTVDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
 			break;
-		case druck:
+		case zukauf:
 			SelectedEvent.makeEvent(this, SelectedEvent.SelectedEventType.ISBNBuySelected, new Ean(((VBTVDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
 			break;
 		case register:

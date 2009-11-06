@@ -88,7 +88,7 @@ class VBTVSouthPanel extends JPanel implements ActionListener{
 						myview.stateChanged(State.info);
 						break;
 					
-					case druck:
+					case zukauf:
 						// TODO there should be a nice fifo for storing Etiketten to print
 						// maybe in UStorage and a nice frontend to print it
 					
@@ -179,7 +179,7 @@ class VBTVSouthPanel extends JPanel implements ActionListener{
 						
 					}
 					break;
-				case druck:
+				case zukauf:
 					if (booktyp!=null){
 						editfields = new TextField[4];
 						for (int i=0; i< 2;i++){

@@ -22,7 +22,8 @@ public class USQLQuery implements Runnable{
 	
 	private todo what; 
 	private String command;
-	private ResultSet result=null;
+	ResultSet result=null;
+	
 	private int count=0;
 	
 	static void setParams(Control control, Connection connection){
@@ -52,28 +53,19 @@ public class USQLQuery implements Runnable{
 			switch (this.what){
 			case query:
 				result = statement.executeQuery( command );
-				control.bvs.releaseStatement(statement);
 				break;
 			case insert:	
 			case update:
-				statement = control.bvs.getStatement();
 				count=statement.executeUpdate(command);
-				control.bvs.releaseStatement(statement);
 				break;
 			case remove:
-				statement = control.bvs.getStatement();
 				statement.executeUpdate(command);
-				control.bvs.releaseStatement(statement);
 				break;
 			case count:
-				statement = control.bvs.getStatement();
 				result=statement.executeQuery(command);
-				control.bvs.releaseStatement(statement);
 				break;
 			case exists:
-				statement = control.bvs.getStatement();
 				result=statement.executeQuery(command);
-				control.bvs.releaseStatement(statement);
 				break;
 			}
 			
@@ -96,9 +88,9 @@ public class USQLQuery implements Runnable{
 	}
 	
 	public static synchronized int doUpdate(String update) {
-	
-		return (new USQLQuery(todo.update, update )).count;
+				return (new USQLQuery(todo.update,update )).count;
 	}
+		
 	
 	public static synchronized int doCount(String query){
 		USQLQuery bvutils=new USQLQuery(todo.count,query);
