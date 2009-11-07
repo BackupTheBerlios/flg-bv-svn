@@ -1,12 +1,12 @@
 binary-howto
 
-C nurh 091027
+C nurh 091027/091107
 
 Damit trotz imaging immer der aktuellste Stand der Software 
-auf dem Client ist, exportiert der Client (dh eigentlich importiert er es)  beim Start der Applikation den
-Dateibaum aus svn:
+auf dem Client ist, checkt der Client (dh eigentlich importiert er es)  beim Start der Applikation den
+Dateibaum aus:
 
-#> svn --force export http://svn.berlios.de/svnroot/repos/flg-bv/stablebin ./bvbin
+#> svn co http://svn.berlios.de/svnroot/repos/flg-bv/stablebin ./bvbin             
 
 Um ein Image hochzuladen ist folgendes wichtig:
 die Datei ~/.ssh/config muss existieren und 
