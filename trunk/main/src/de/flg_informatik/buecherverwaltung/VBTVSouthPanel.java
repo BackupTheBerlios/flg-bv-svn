@@ -5,8 +5,6 @@ package de.flg_informatik.buecherverwaltung;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.TextField;
@@ -19,21 +17,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import de.flg_informatik.Etikett.EtikettDruck;
-import de.flg_informatik.ean13.*;
-
 import de.flg_informatik.buecherverwaltung.VBTVBookTypeView.State;
+import de.flg_informatik.ean13.Ean;
 
 
 /**
  * @author notkers
  *
  */
-class VBTVSouthPanel extends JPanel implements ActionListener{
+class VBTVSouthPanel extends JPanel implements ActionListener, BVConstants{
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		private static boolean debug=true;
 		VBTVSouthPanel mebtp;
 		VBTVBookTypeView myview;
 		TextField[] editfields;
@@ -112,6 +108,7 @@ class VBTVSouthPanel extends JPanel implements ActionListener{
 		synchronized void reMakePanel(State state, Vector<String> booktyp){
 			myview.remove(this);
 			this.removeAll();
+			this.state=state;
 			up.removeAll();
 			
 			switch (state){
@@ -220,21 +217,6 @@ class VBTVSouthPanel extends JPanel implements ActionListener{
 			}
 		
 		}
-		private class VerticalPanel extends JPanel{
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			VerticalPanel(){
-				setLayout(new GridLayout(0,1));
-				
-			}
-		public Dimension getSize(){
-				return getParent().getSize();
-			}
-		}
-		
 	
 	
 }

@@ -1,13 +1,11 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
-
-import de.flg_informatik.ean13.Ean;
 	
-public class VBPVDatamodell extends javax.swing.table.AbstractTableModel{
+public class VBPVDatamodell extends javax.swing.table.AbstractTableModel implements BVConstants{
 	/**
 	 * 
 	 */
@@ -60,10 +58,11 @@ public class VBPVDatamodell extends javax.swing.table.AbstractTableModel{
 	private synchronized boolean fillTable(){
 		Vector<Object> tablerow;
 		boolean result = true;
+		Statement statement = Control.getControl().bvs.getStatement();
 		try{
-			new Deb(true,"filling: "+getColumnCount()+", "+getRowCount());
+			new Deb(debug,"filling: "+getColumnCount()+", "+getRowCount());
 			tablecells.clear();
-			ResultSet rs=USQLQuery.doQuery("SELECT * FROM "+tablename);
+			ResultSet rs=USQLQuery.doQuery("SELECT * FROM "+tablename, statement);
 			rs.beforeFirst();
 			while(rs.next()){	
 				tablerow=new Vector<Object>(numofcolumns);
@@ -72,10 +71,12 @@ public class VBPVDatamodell extends javax.swing.table.AbstractTableModel{
 					}
 				tablecells.add(tablerow);
 			}
-			new Deb(true,"filled: "+getColumnCount()+", "+getRowCount());
+			new Deb(debug,"filled: "+getColumnCount()+", "+getRowCount());
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
 			result = false;
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		return result;
 

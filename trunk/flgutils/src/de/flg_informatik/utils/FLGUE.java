@@ -42,6 +42,11 @@ public class FLGUE extends Throwable{
 	}
 
 	class Error extends JDialog{
+			/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 			Error(String text,String who){
 				
 				

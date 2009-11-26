@@ -1,29 +1,24 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.awt.Button;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import de.flg_informatik.buecherverwaltung.VBTVBookTypeView.State;
 import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
+import de.flg_informatik.buecherverwaltung.VBTVBookTypeView.State;
 
-public class JPChooser extends JPanel implements ActionListener{
+public class JPChooser extends JPanel implements ActionListener,BVConstants{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static boolean debug=false;
 	public enum Orientation{
 		VERTICAL,
 		HORZONTAL;
@@ -77,7 +72,7 @@ public class JPChooser extends JPanel implements ActionListener{
 		invalidate();
 	}
 	public JPChooser(ActionListener listener, Vector<String> names, Orientation o) {
-		new Deb(true,names.size());
+		new Deb(debug,names.size());
 		switch(o){
 		case VERTICAL: 
 			this.setLayout(new GridLayout(names.size()/(names.size()/20+1)+1,(names.size()/20+1)));
@@ -106,7 +101,7 @@ public class JPChooser extends JPanel implements ActionListener{
 		
 	}
 	public JPChooser(Vector<Object> names, Orientation o, ActionListener listener) {
-		new Deb(true,names.size());
+		new Deb(debug,names.size());
 		switch(o){
 		case VERTICAL: 
 			this.setLayout(new GridLayout(names.size()/(names.size()/20+1)+1,(names.size()/20+1)));
@@ -187,8 +182,8 @@ public class JPChooser extends JPanel implements ActionListener{
 		radiobutton[state.ordinal()].doClick();
 	}
 	public void clickOn(String actionCommand) throws java.lang.IllegalArgumentException, NullPointerException{
-		new Deb(radiobutton.length);
-		new Deb(radiobutton[0].getText()+"="+actionCommand);
+		new Deb(debug,radiobutton.length);
+		new Deb(debug,radiobutton[0].getText()+"="+actionCommand);
 	for (int i=0; i<radiobutton.length;i++){
 		if (radiobutton[i].getText().equals(actionCommand)){
 			

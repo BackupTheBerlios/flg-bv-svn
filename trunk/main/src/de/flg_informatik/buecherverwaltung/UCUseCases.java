@@ -3,10 +3,8 @@ package de.flg_informatik.buecherverwaltung;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import javax.swing.JPanel;
 
-
-public enum UCUseCases {
+public enum UCUseCases implements BVConstants{
 	
 	Rueckgabe (new VBBVBookBackView()),
 	Ausleihe (new VBLVBookLeaseView()),
@@ -16,7 +14,6 @@ public enum UCUseCases {
 	// Vorbereitung(new VBPVBookPrepareView()),
 	// VorbereitungTest(new VBLPVBookLeasePreView());
 	;
-	final private static boolean debug=true;
 	private static Hashtable<UCCase, UCUseCases> reverse;// is initialized in static void waitForReverse()
 	final private static Selected2Usecases selected2usecases = new Selected2Usecases();
 	final public Vector <SelectedEvent.SelectedEventType> ConsumedEvents;//
@@ -47,7 +44,11 @@ public enum UCUseCases {
 		return selected2usecases;
 	}
 	static class Selected2Usecases extends Hashtable<SelectedEvent.SelectedEventType, UCUseCases> {
-		 Selected2Usecases() {
+		 /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		Selected2Usecases() {
 			for (SelectedEvent.SelectedEventType selev:SelectedEvent.SelectedEventType.values()){
 				switch (selected=selev){
 				case BookLeasedSelected:
@@ -100,15 +101,15 @@ public enum UCUseCases {
 		
 	}
 	final private static void doAdd(UCCase view, UCUseCases usecase){
-		new Deb(true,reverse );
+		new Deb(debug,reverse );
 		reverse.put(view, usecase);
-		new Deb(true,reverse );
+		new Deb(debug,reverse );
 		
 	}
 	final private void  waitForReverse(){
 		if(reverse==null){
 			reverse=new Hashtable<UCCase, UCUseCases>();
-			new Deb(true,reverse );
+			new Deb(debug,reverse );
 		}
 	}
 }

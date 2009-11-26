@@ -1,8 +1,5 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.awt.BorderLayout;
-
-import de.flg_informatik.buecherverwaltung.MainGUI.LogPane;
 import de.flg_informatik.ean13.Ean;
 
 public class OBLBookLease {

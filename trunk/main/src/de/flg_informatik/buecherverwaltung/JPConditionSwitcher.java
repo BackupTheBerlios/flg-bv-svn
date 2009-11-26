@@ -17,6 +17,10 @@ import javax.swing.JPanel;
  *
  */
 public class JPConditionSwitcher extends JPanel{
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 		JButton[] condbut=new JButton[6];
 		private JLabel conditionf = new JLabel("0");
 		private JPanel switcher   = new JPanel(new GridLayout(6,1));

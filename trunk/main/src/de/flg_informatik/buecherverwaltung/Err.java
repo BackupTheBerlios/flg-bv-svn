@@ -1,17 +1,18 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.awt.Frame;
-
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-public class Err extends Throwable{
-	private final static boolean debug=false;
+public class Err extends Throwable implements BVConstants{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String who="";
-	int debuglevel=17;
+	
 	Err(){
-		if (debug){
+		if (debug>0){
 			this.printStackTrace();
 		}
 	
@@ -25,7 +26,7 @@ public class Err extends Throwable{
 		new Error("Interner Fehler",who);
 	}
 	Err(String text){
-		if (debug){
+		if (debug>0){
 			this.printStackTrace();
 		}
 		
@@ -40,6 +41,11 @@ public class Err extends Throwable{
 	}
 
 	class Error extends JDialog{
+			/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 			Error(String text,String who){
 				
 				

@@ -1,5 +1,4 @@
 package de.flg_informatik.mysql;
-import java.sql.*;
 
 
 

@@ -1,30 +1,19 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.Panel;
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.math.BigInteger;
-import java.util.Properties;
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
 
 import de.flg_informatik.Etikett.EtikettDruck;
 import de.flg_informatik.Etikett.PrintableEtikett;
-import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
-import de.flg_informatik.buecherverwaltung.VBTVBookTypeView.State;
 import de.flg_informatik.ean13.Ean;
-import de.flg_informatik.utils.FLGProperties;
-import de.flg_informatik.utils.FireButton;
 
+@SuppressWarnings("serial")
 public class VEVJPStickerPrint extends JPanel implements ActionListener{
 	private JButton save = new JButton("Etiketten drucken");
 	private JPEditLine[] editfields={new JPEditLine("Start-Ean/Start-Id",13),
@@ -32,7 +21,6 @@ public class VEVJPStickerPrint extends JPanel implements ActionListener{
 			new JPEditLine("Offset",5)};
 	private JPChooser type = new JPChooser(null, EEANType.values(), JPChooser.Orientation.HORZONTAL);
 	
-	private FLGProperties props;
 	VEVJPStickerPrint(){
 		add (new JPanel(){{
 			setLayout(new BorderLayout());

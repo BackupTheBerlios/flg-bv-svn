@@ -2,28 +2,17 @@ package de.flg_informatik.buecherverwaltung;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
-import java.awt.event.FocusEvent;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
-
-import de.flg_informatik.utils.FLGFrame;
-import de.flg_informatik.utils.FireButton;
-
-public class MainGUI extends JFrame {
+public class MainGUI extends JFrame implements BVConstants {
 
 	/*
 	 * Hauptklasse, jeder usecase bekommt ein Panel im JTabbedPane
@@ -33,8 +22,7 @@ public class MainGUI extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	private static MainGUI thegui;
-	private static boolean debug=true;
-	// public static Hashtable<UCCase, UCUseCases> usecases =new Hashtable<UCCase, UCUseCases>();
+	// final private static int debug=8;
 	public JButton cancelbutton = new JButton("Abbrechen");
 	public JButton closebutton = new JButton("Beenden");
 	Control control;
@@ -107,6 +95,7 @@ public class MainGUI extends JFrame {
 	
 	
 	
+	@SuppressWarnings("serial")
 	private JPanel makeButtonfield(){
 		JPanel retpan=new JPanel();
 		retpan.add(lp=new LogPane());
@@ -162,7 +151,7 @@ public class MainGUI extends JFrame {
 	}
 	
 	public static void selectView(UCUseCases usecase){
-		new Deb(debug,"selectView: "+ usecase);
+		new Deb(0,"selectView: "+ usecase);
 		thegui.centerpane.setSelectedIndex(usecase.ordinal());
 		thegui.centerpane.invalidate();
 		thegui.validate();
@@ -174,7 +163,7 @@ public class MainGUI extends JFrame {
 		return ret;
 	}
 	public static void main(String[] args) {
-		Control bvc=new Control();
+		new Control();
 		
 	}
 	

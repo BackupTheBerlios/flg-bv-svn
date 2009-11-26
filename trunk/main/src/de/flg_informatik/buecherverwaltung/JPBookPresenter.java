@@ -2,21 +2,20 @@ package de.flg_informatik.buecherverwaltung;
 
 import java.awt.Color;
 import java.awt.TextField;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.math.BigInteger;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 
 public class JPBookPresenter extends JPanel implements MouseListener{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private TextField idf = new TextField("",14);
 	private TextField titlef = new TextField("",40);
 	private JButton end;

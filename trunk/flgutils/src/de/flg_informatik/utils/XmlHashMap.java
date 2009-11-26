@@ -104,7 +104,7 @@ public class XmlHashMap {
 		if (list.getLength()>0){
 			for (int i=0; i< list.getLength();i++){
 				//System.out.println("List: "+list.item(i).getNodeName()+": "+list.getLength()+"/"+i);
-				if (node.getNodeType()!=node.TEXT_NODE){
+				if (node.getNodeType()!=Node.TEXT_NODE){
 					recurseNode(list.item(i),pfad+"."+node.getNodeName());
 				}
 			}

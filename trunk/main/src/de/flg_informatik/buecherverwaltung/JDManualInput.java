@@ -4,7 +4,6 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
@@ -19,11 +18,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
-
-import com.sun.org.apache.xerces.internal.impl.RevalidationHandler;
-
-import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
 
 /**
  * @author notkers
@@ -32,6 +26,10 @@ import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
 public class JDManualInput extends JDialog implements ActionListener {
 	
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 
 	 */
@@ -186,6 +184,7 @@ public class JDManualInput extends JDialog implements ActionListener {
 	JButton bcust=new JButton("als Leiher");
 	JButton	cancel=new JButton("Abbrechen");
 	private JPEditLine editline = new JPEditLine("",10);
+	@SuppressWarnings("serial")
 	private void makeDialog(){
 		setLayout(new GridLayout(0,1));
 		setTitle("Manuelle Eingabe");

@@ -1,24 +1,21 @@
 package de.flg_informatik.Etikett;
-import de.flg_informatik.buecherverwaltung.Deb;
-import de.flg_informatik.ean13.*; //needed for testing only
-import de.flg_informatik.utils.FLGProperties;
-
-import java.awt.Graphics;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-
-import javax.print.PrintService;
-import javax.print.attribute.standard.MediaPrintableArea;
-import javax.print.attribute.standard.MediaSizeName;
-import javax.print.attribute.HashPrintRequestAttributeSet;
-
-
-import java.awt.Graphics2D;
 import java.io.File;
 import java.util.Properties;
+
+import javax.print.PrintService;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.standard.MediaPrintableArea;
+import javax.print.attribute.standard.MediaSizeName;
+
+import de.flg_informatik.ean13.Ean;
+import de.flg_informatik.utils.FLGProperties;
 
 public class EtikettDruck implements Printable {
 	

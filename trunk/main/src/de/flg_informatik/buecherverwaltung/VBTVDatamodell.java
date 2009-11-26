@@ -1,8 +1,8 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
 
 import de.flg_informatik.ean13.Ean;
@@ -38,9 +38,10 @@ public class VBTVDatamodell extends javax.swing.table.AbstractTableModel{
 	private synchronized boolean fillTable(){
 		Vector<Object> tablerow;
 		boolean result = true;
+		Statement statement = Control.getControl().bvs.getStatement();
 		try{
 			tablecells.clear();
-			ResultSet rs=USQLQuery.doQuery("SELECT * FROM "+tablename);
+			ResultSet rs=USQLQuery.doQuery("SELECT * FROM "+tablename + " Order by Title",statement);
 			rs.beforeFirst();
 			while(rs.next()){	
 				tablerow=new Vector<Object>(numofcolumns);
@@ -52,6 +53,8 @@ public class VBTVDatamodell extends javax.swing.table.AbstractTableModel{
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
 			result = false;
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		return result;
 
@@ -106,8 +109,12 @@ public class VBTVDatamodell extends javax.swing.table.AbstractTableModel{
 		return (USQLQuery.doCount("SELECT COUNT(ISBN) FROM Books WHERE ISBN="+ean.toString()));
 	}
 	
+	public int getLeasedBookCount(String ean){
+		return (USQLQuery.doCount("SELECT Count( LID ) FROM Leases, Books Where BackTime is null AND Leases.LObjectID = Books.ID AND Books.ISBN = " + ean.toString()));
+	}
+	
 	public int getFreeBookCount(String ean){
-		return (USQLQuery.doCount("SELECT COUNT(ISBN) FROM Books WHERE ((ISBN="+ean.toString()+ ") AND (Location = 1))"  ));
+		return (getBookCount(ean)-getLeasedBookCount(ean));
 	}
 	
 	

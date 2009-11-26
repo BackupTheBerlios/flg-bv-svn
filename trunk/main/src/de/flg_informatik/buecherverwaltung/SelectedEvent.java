@@ -1,16 +1,15 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.math.BigInteger;
 import java.util.EventObject;
 import java.util.Vector;
 
 import de.flg_informatik.ean13.Ean;
 
-public class SelectedEvent extends EventObject implements Runnable, SelectedEventListener{
+public class SelectedEvent extends EventObject implements Runnable, SelectedEventListener, BVConstants{
 	/**
 	 * 
 	 */
-	private static boolean debug=false;
+	
 	public enum SelectedEventType{
 		ISBNSelected,
 		ISBNUnknownSelected,
@@ -45,7 +44,7 @@ public class SelectedEvent extends EventObject implements Runnable, SelectedEven
 		SelectedEvent.makeEvent(source, id, null, 0);
 	}
 	public static void makeEvent(Object source, SelectedEventType id, Ean ean){
-		new Deb(20,id);
+		new Deb(debug,id);
 		SelectedEvent.makeEvent(source, id, ean, 0);
 	}
 	public static void makeEvent(Object source, SelectedEventType id, Ean ean, int wildcards){

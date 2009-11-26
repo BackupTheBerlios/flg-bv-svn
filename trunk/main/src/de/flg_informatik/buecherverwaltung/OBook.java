@@ -5,41 +5,42 @@ import java.awt.Graphics;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Vector;
+import java.sql.Statement;
 
-import de.flg_informatik.buecherverwaltung.USQLQuery.todo;
 import de.flg_informatik.ean13.Ean;
 import de.flg_informatik.ean13.EanCanvas;
 
 public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
-	public static final boolean debug=true;
+	public static final boolean debug=false;
 	public static final BigInteger Book12=new BigInteger("200000000000");
 	public BigInteger ID;
 	public String Purchased;
  	public int Scoring_of_condition;
- 	public BigInteger Location;
+ 	// public BigInteger Location;
  	public BigInteger ISBN;
 	
  	public OBook(BigInteger id, String purchased, int scoring_of_condition,
-			BigInteger location, BigInteger isbn) {
+			//BigInteger location,
+ 			BigInteger isbn) {
 		
 		ID = id;
 		Purchased = purchased;
 		Scoring_of_condition = scoring_of_condition;
-		Location = location;
+		// Location = location;
 		ISBN = isbn;
 	}
  	
  	public OBook(BigInteger id) {
-	
+ 		Statement statement = Control.getControl().bvs.getStatement();
 		debug("new book"+ id);
 		try{
-			ResultSet rs=USQLQuery.doQuery("SELECT * FROM Books WHERE ID="+id);
+			
+			ResultSet rs=USQLQuery.doQuery("SELECT * FROM Books WHERE ID="+id,statement);
 			if (rs.first()){
 				ID = new BigInteger(rs.getString("ID"));
 				Purchased = rs.getString("Purchased"); 
 				Scoring_of_condition = rs.getInt("Scoring_of_condition");
-				Location = new BigInteger(rs.getString("Location"));
+				// Location = new BigInteger(rs.getString("Location"));
 				ISBN = new BigInteger(rs.getString("ISBN"));
 			}else{
 				debug("no book");
@@ -48,6 +49,8 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
 			
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		debug("built book"+ ID);
 			
@@ -55,15 +58,15 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
 	}
  	
  	public OBook(Ean ean) {
- 		
+ 			Statement statement = Control.getControl().bvs.getStatement();
  			debug("new book"+ ean);
  			try{
- 				ResultSet rs=USQLQuery.doQuery("SELECT * FROM Books WHERE ID="+makeBookID(ean));
+ 				ResultSet rs=USQLQuery.doQuery("SELECT * FROM Books WHERE ID="+makeBookID(ean),statement);
  				if (rs.first()){
  					ID = new BigInteger(rs.getString("ID"));
  					Purchased = rs.getString("Purchased"); 
  					Scoring_of_condition = rs.getInt("Scoring_of_condition");
- 					Location = new BigInteger(rs.getString("Location"));
+ 					// Location = new BigInteger(rs.getString("Location"));
  					ISBN = new BigInteger(rs.getString("ISBN"));
  				}else{
  					debug("no book");
@@ -72,6 +75,8 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  				
  			}catch(SQLException sqle){
  				sqle.printStackTrace();
+ 			}finally{
+ 				Control.getControl().bvs.releaseStatement(statement);
  			}
  			debug("built book"+ ID);
  				
@@ -79,7 +84,7 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  		
  	}
  	
- 	public static int getLocation(Ean ean){
+ 	private static int getLocation(Ean ean){
  		return getLocation(makeBookID(ean));	
 	}
  	public boolean setBookType(Ean ean){
@@ -90,16 +95,48 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
 		Scoring_of_condition++;
 		
 	}
+ 	public boolean isInStore(){
+ 		return (getLeaser(ID)==null);
+ 	}
  	
- 	public static synchronized int getLocation(BigInteger ID){
+ 	private static synchronized int getLocation(BigInteger ID){
  		debug("getLocation "+ID);
+ 		Statement statement = Control.getControl().bvs.getStatement();
  		try {
-			return USQLQuery.doQuery("SELECT Location FROM Books WHERE ID="+ID).getInt(1);
+			return USQLQuery.doQuery("SELECT Location FROM Books WHERE ID="+ID,statement).getInt(1);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return 0;
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
+		
+ 	}
+ 	public Ean getLeaser(){
+ 		return getLeaser(ID);
+ 	}
+ 	public static synchronized Ean getLeaser(BigInteger ID){
+ 		debug("getLeaser "+ID);
+ 		Statement statement = Control.getControl().bvs.getStatement();
+		try {
+			ResultSet rs=USQLQuery.doQuery("SELECT UserID FROM Leases WHERE LObjectID="+ID + " AND BackTime is null" ,statement);
+			rs.beforeFirst();
+			if (rs.next()){ // There is a Lease
+ 				return new Ean(rs.getString(1));
+			}else{ // no open Lease
+				return null;
+			}
+ 			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
+		}
+ 		
 		
  	}
  	
@@ -110,12 +147,15 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  	
  	public static synchronized Ean getISBN(BigInteger ID){
  		debug("getIsbn "+ID);
+ 		Statement statement = Control.getControl().bvs.getStatement();
  		try {
-			return new Ean(USQLQuery.doQuery("SELECT ISBN FROM Books WHERE ID="+ID).getString(1));
+			return new Ean(USQLQuery.doQuery("SELECT ISBN FROM Books WHERE ID="+ID,statement).getString(1));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		
  	}
@@ -163,8 +203,9 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  			return null;
  		}
  		ret=new OBook[howmany];
+ 		Statement statement = Control.getControl().bvs.getStatement();
  		try {
- 			ResultSet result=USQLQuery.doQuery("SELECT * FROM Books WHERE ISBN="+ISBN);
+ 			ResultSet result=USQLQuery.doQuery("SELECT * FROM Books WHERE ISBN="+ISBN,statement);
  			for (int i=0;i<howmany;i++){
  				result.absolute(i+1);
  				USQLQuery.doUpdate("UPDATE Books SET ISBN=" +new BigInteger(ISBN).add(subtract13).toString() + " WHERE ID="+result.getString("ID"));
@@ -173,6 +214,8 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
  		
  		
@@ -182,12 +225,33 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  		
  		
  	}
- 	public boolean doUpdate(){
+  /*	public boolean doUpdate(){
  		return (USQLQuery.doUpdate("UPDATE "+"Books"+ " SET Location=" + Location  +
  				", Scoring_of_Condition="+ Scoring_of_condition + 
  				", Purchased=\""+ Purchased + "\""+ 
 				", ISBN="+ ISBN + 
  				" WHERE ID = "+ID)==1);
+ 	}
+ 	*/
+ 	public boolean makeLease(Ean letto){
+ 		if (getLeaser(ID)==null){
+ 			// nicht verliehen
+ 			return(USQLQuery.doInsert("INSERT "+"Leases"+ " SET UserID=" + letto  +
+ 	 				", LObjectID = "+ ID +
+ 	 				", OutTime = Now()"
+ 	 				)==1);
+ 			
+	}else{
+ 			
+ 			return false;
+ 		}
+ 		
+ 		
+ 	}
+ 	public boolean endLease(){
+ 			return(USQLQuery.doUpdate("Update "+"Leases"+ " SET BackTime = Now() "+
+ 					" WHERE LObjectID = "+ ID + " AND BackTime is null"
+ 	 			)==1);	
  	}
  	
  	public boolean equals(OBook o){
@@ -196,7 +260,7 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  		
  	}
  	static private void debug(Object obj){
-		//System.out.println(OBook.class+": "+ obj);
+ 		if (debug) System.out.println(OBook.class+": "+ obj);
 	}
 
 	public int printAt(Graphics g, Dimension position, Dimension boxgroesse) {
@@ -205,7 +269,7 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
 
 	public static boolean delete(BigInteger Id) {
 		OBook book=new OBook(Id);
-		if (book.Location.equals(BigInteger.ONE)){
+		if (book.isInStore()){
 			// in Storage or virtual
 			if (book.Scoring_of_condition==1){
 				// looks like virtual Book i.e. bad etikett
@@ -217,7 +281,7 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
 				new Notimpl();
 			}
 		}else{
-			new Warn("Buch "+Id +" ist ausgeliehen an: "+OClass.getBVClass(book.Location.intValue()).Name+"! \n Lösche es nicht!");
+			new Warn("Buch "+Id +" ist ausgeliehen an: "+OClass.getBVClass(book.getLeaser()).Name+"! \n Lösche es nicht!");
 			
 		}
 		return false;

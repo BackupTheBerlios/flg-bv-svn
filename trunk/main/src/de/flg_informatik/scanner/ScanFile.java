@@ -7,7 +7,7 @@ import de.flg_informatik.buecherverwaltung.ScanAdapter;
 
 
 public class ScanFile extends Scanner implements Runnable{
-	private static boolean debug=false;
+	final private static int debug=0;
 	public FileReader rf=null;
 	ScanAdapter adapter;
 	static ScanFile scanFile=null; 

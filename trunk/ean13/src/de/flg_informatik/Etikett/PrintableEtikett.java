@@ -1,7 +1,6 @@
 package de.flg_informatik.Etikett;
-import java.awt.Graphics;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 
 public interface PrintableEtikett {
 	String text=null;

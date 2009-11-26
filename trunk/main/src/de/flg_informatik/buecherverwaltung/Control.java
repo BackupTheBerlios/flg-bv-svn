@@ -1,7 +1,5 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.awt.Component;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -17,7 +15,7 @@ import de.flg_informatik.ean13.Ean;
 import de.flg_informatik.utils.FLGProperties;
 import de.flg_informatik.utils.Version;
 
-public class Control implements Runnable,ActionListener,ChangeListener {
+public class Control implements Runnable,ActionListener,ChangeListener,BVConstants {
 	/**
 	 * controller for flg-bv,
 	 * get properties, start all components in order
@@ -33,12 +31,12 @@ public class Control implements Runnable,ActionListener,ChangeListener {
 	final String defaultfilenameett="main/buchverwaltungetikett.default.xml";
 	final String propertyfilenameett="buchverwaltungetikett.xml";
 	final String significantstringett=".BuchverwaltungEtikettV01";
-	final private static boolean debug=true;
+	// final private static int debug=3;
 	private static Control thecontrol;
 	private UCCase viewontop=null;
 	FLGProperties app_settings_pane;
 	Properties app_settings;
-	Version version=new Version(new int[]{0,95},"09-10-25");
+	Version version=new Version(new int[]{0,96},"09-11-26");
 	UCUseCases.Selected2Usecases  switchusecases;
 	MainGUI mainGUI;
 	UStorage bvs;
@@ -63,8 +61,8 @@ public class Control implements Runnable,ActionListener,ChangeListener {
 		} while (connection == null);
 		new Deb(debug,"connected");
 		thecontrol=this;
-		USQLQuery.setParams(this,connection);
-		new Deb(debug,"initialized UtilsParams");
+		//USQLQuery.setParams(this,connection);
+		//new Deb(debug,"initialized UtilsParams");
 		bvs=new UStorage(this,connection);
 		new Deb(debug,"initialized bvs");
 		OBUBookUse.init();
@@ -79,7 +77,6 @@ public class Control implements Runnable,ActionListener,ChangeListener {
 		new Deb(debug,"initialized switchusecases");
 		scanner=new ScanAdapter(this);
 		new Deb(debug,"initialized SCANNER");
-		MainGUI.selectView(UCUseCases.Datenimport);
 		MainGUI.selectView(UCUseCases.Ausleihe);//default usecase
 		new Deb(debug,"End of Constructor of Control");
 		
@@ -171,7 +168,7 @@ public class Control implements Runnable,ActionListener,ChangeListener {
 		
 		if (viewontop!=null & !MainGUI.isSelectedView(viewontop)){
 			viewontop.toBackground();
-			new Deb(true,viewontop.getName()+"<>"+MainGUI.getSelectedView().getName());
+			new Deb(debug,viewontop.getName()+"<>"+MainGUI.getSelectedView().getName());
 		}
 		viewontop=MainGUI.getSelectedView();
 		viewontop.toFront();

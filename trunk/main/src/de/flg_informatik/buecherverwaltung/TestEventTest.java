@@ -28,7 +28,7 @@ public class TestEventTest implements SelectedEventListener{
 		TestEventTest et = new TestEventTest();
 		for (int i=1;i<2000;i++){
 			if (i%100==0){
-				TestEventTest el = new TestEventTest();
+				new TestEventTest();
 			}
 			SelectedEvent.makeEvent(et, SelectedEventType.BookUnknownSelected, new Ean("0"));
 			

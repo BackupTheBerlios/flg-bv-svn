@@ -1,12 +1,9 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -14,11 +11,14 @@ import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 
 import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
-import de.flg_informatik.utils.FLGProperties;
-import de.flg_informatik.utils.FireButton;
 
 public class VPVPropertyView extends JPanel implements UCCase, ActionListener{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	JButton save = new JButton("Einstellungen speichern");
+	@SuppressWarnings("serial")
 	VPVPropertyView(){
 		setLayout(new BorderLayout());
 		add(new JPanel(){{

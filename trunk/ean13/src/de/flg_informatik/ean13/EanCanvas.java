@@ -1,11 +1,12 @@
 package de.flg_informatik.ean13;
 
-import java.awt.*;
-import java.awt.print.Printable;
-import java.math.BigInteger;
-
-import de.flg_informatik.buecherverwaltung.Deb;
-import de.flg_informatik.ean13.Ean;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.GridLayout;
 
 
 public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etikett.PrintableEtikett{
@@ -102,6 +103,7 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 		this.ean=ean;
 		return setDimensions(label);
 	}
+	@SuppressWarnings("serial")
 	public static void main(String[] args) { //testing only
 		EanCanvas eac = new EanCanvas(new Ean("400246403540"),new Dimension(150,200));
 		Frame fra = new de.flg_informatik.utils.FLGFrame(){{

@@ -3,16 +3,24 @@
  */
 package de.flg_informatik.buecherverwaltung;
 
-import javax.swing.JFileChooser;
-import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.Container;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Window;
 import java.io.File;
+
+import javax.swing.JFileChooser;
 
 /**
  * @author Notker
  *
  */
 public class VBVCSVIVFileDialog extends JFileChooser {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	static File file;
 	static Dialog dlg;
 	static JFileChooser fc;

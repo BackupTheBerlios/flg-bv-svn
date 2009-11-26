@@ -7,49 +7,35 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
-import java.awt.TextField;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.TextEvent;
-import java.awt.event.TextListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Vector;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.JWindow;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 
 import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
-import de.flg_informatik.utils.FLGFrame;
 
-public class VBVCSVImporterView extends JPanel implements UCCase {
+@SuppressWarnings("serial")
+public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 	//TODO
 	
 	private String tablename=null;
 	private Container container=null;
 	private static String stablename=null;
 	private static Container scontainer=null;
-	private static final boolean debug=true;
 	private static final String unknownfield="@unknown";
 	private static final String nullfield="@setnull";
 	private static final String ignorefield="@ignore";
@@ -424,7 +410,7 @@ public class VBVCSVImporterView extends JPanel implements UCCase {
 				String matchstring2=new String("(\\A"+str.name.subSequence(0, 1)+".*"+str.name.subSequence(str.name.length()-1, str.name.length())+"\\z)");
 				Pattern p2=Pattern.compile(matchstring2);
 				String matchstring3=new String("("+str.name.subSequence(0, 2)+")");
-				Pattern p3=Pattern.compile(matchstring1);
+				Pattern p3=Pattern.compile(matchstring3);
 				if (p1.matcher((CharSequence)(msqlc)).matches()){
 					new Deb(debug,"M1");
 					return(str);
@@ -503,7 +489,7 @@ public class VBVCSVImporterView extends JPanel implements UCCase {
 		add(sp=new SouthPanel(),BorderLayout.SOUTH);
 		
 		OK.addActionListener(sp);
-		new Deb(true,"ret" );
+		new Deb(debug,"ret" );
 		
 	}
 	public void thingSelected(SelectedEvent e) {

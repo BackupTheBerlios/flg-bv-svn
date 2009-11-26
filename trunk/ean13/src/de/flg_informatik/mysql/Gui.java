@@ -1,11 +1,13 @@
 package de.flg_informatik.mysql;
-import java.awt.*;
-import javax.swing.*;
-
-
 import java.awt.Button;
 
+import javax.swing.JScrollPane;
+
 public class Gui extends de.flg_informatik.utils.FLGFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static Gui instance = null;
 	private JMysqlTable table;
 	private JScrollPane scrollPane;

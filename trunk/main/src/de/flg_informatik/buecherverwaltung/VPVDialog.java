@@ -2,7 +2,6 @@ package de.flg_informatik.buecherverwaltung;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -33,6 +32,7 @@ public class VPVDialog extends JDialog implements ActionListener {
 		this.pack();
 	}
 	*/
+	@SuppressWarnings("serial")
 	public VPVDialog (FLGProperties propertiespanel) {
 		super ((java.awt.Frame) null, "Verbindungseinstellungen", true);
 		this.setLayout(new java.awt.BorderLayout ());

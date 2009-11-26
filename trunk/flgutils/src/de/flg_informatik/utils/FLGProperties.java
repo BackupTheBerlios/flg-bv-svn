@@ -1,13 +1,9 @@
 package de.flg_informatik.utils;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GridLayout;
-import java.awt.HeadlessException;
-import java.awt.PopupMenu;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.MouseListener;
 import java.awt.event.TextEvent;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,19 +12,15 @@ import java.util.ArrayList;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
-import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.filechooser.FileFilter;
 
 //import CopyOfFLGProperties.TabPanel;
 
@@ -279,6 +271,11 @@ public class FLGProperties extends  JPanel implements FocusListener{
 		 * 
 		 */
 		class CBJTextField extends JTextField implements DocumentListener{
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			CBJTextField(String title){
 				super(title);
 				getDocument().addDocumentListener(this);
@@ -301,6 +298,10 @@ public class FLGProperties extends  JPanel implements FocusListener{
 			
 		}
 		class CBJPasswordField extends JPasswordField implements DocumentListener{
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 			CBJPasswordField(String title){
 				super(title);
 				getDocument().addDocumentListener(this);
@@ -418,6 +419,11 @@ public class FLGProperties extends  JPanel implements FocusListener{
 		}
 	class mfc extends javax.swing.JFileChooser
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public void test(){
 			//this.;
 			

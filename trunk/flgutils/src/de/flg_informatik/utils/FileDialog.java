@@ -3,16 +3,23 @@
  */
 package de.flg_informatik.utils;
 
-import javax.swing.JFileChooser;
-import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Window;
 import java.io.File;
+
+import javax.swing.JFileChooser;
 
 /**
  * @author Notker
  *
  */
 public class FileDialog extends JFileChooser {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	static File file;
 	static Dialog dlg;
 	static JFileChooser fc;
@@ -66,7 +73,7 @@ public class FileDialog extends JFileChooser {
 	public void approveSelection(){
 		file=this.getSelectedFile();
 		
-		this.dlg.dispose();
+		dlg.dispose();
 		
 	}
 

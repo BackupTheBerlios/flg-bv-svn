@@ -1,21 +1,22 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 
-public class JPVYearChooser extends JPanel implements ActionListener{
+public class JPVYearChooser extends JPanel implements ActionListener,BVConstants{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPChooser years;
 	private JPChooser classes;
-	private static boolean debug=true;
 	private Vector<OClass> classesvect = null;
 	private JPVYearChooser np;
 		public JPVYearChooser() {

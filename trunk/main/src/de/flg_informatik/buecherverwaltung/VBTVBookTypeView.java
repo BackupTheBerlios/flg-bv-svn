@@ -1,24 +1,22 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Vector;
+
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 
 import de.flg_informatik.ean13.Ean;
-//import de.flg_informatik.buecherverwaltung.SelectedEvent;
 
-public class VBTVBookTypeView extends ATableView implements ActionListener {
+public class VBTVBookTypeView extends ATableView implements ActionListener, BVConstants {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static boolean debug=true;
 	final int[] columnwidth={13,20,50,50};
 	boolean[] columnresizable={false,true,true,true}; 
 	private VBTVDatamodell mymodell;
@@ -188,7 +186,7 @@ public class VBTVBookTypeView extends ATableView implements ActionListener {
 			break;
 		case register:
 			booktyp=null;
-			new Warn("Bitte den Buchtyp fï¿½r die zu \n registrierenden Bï¿½cher wï¿½hlen!");
+			new Warn("Bitte den Buchtyp für die zu \n registrierenden Bücher wählen!");
 			break;
 		case neu:
 			if(booktyp==null){ // new selected manually
@@ -250,6 +248,7 @@ public class VBTVBookTypeView extends ATableView implements ActionListener {
 		// TODO Auto-generated method stub
 		
 	}
+	@SuppressWarnings("serial")
 	public Vector<SelectedEvent.SelectedEventType> getConsumedEvents() {
 		return (new Vector<SelectedEvent.SelectedEventType>(){{
 			add(SelectedEvent.SelectedEventType.ISBNSelected);

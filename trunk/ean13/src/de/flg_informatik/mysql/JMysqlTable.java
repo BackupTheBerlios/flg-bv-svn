@@ -5,6 +5,10 @@ import javax.swing.event.TableModelEvent;
 
 
 public class JMysqlTable extends JTable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7817282755662242170L;
 	private MysqlTabelle mysqlTabelle;
 	
 	public JMysqlTable(MysqlTabelle mysqlTabelle)

@@ -1,13 +1,12 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
 
-public class USQLQuery implements Runnable{
-	private static boolean debug=false;
+public class USQLQuery implements Runnable, BVConstants{
+
 	enum todo{
 		query,
 		update,
@@ -17,38 +16,39 @@ public class USQLQuery implements Runnable{
 		insert
 		}
 	
-	static Connection connection;
 	static Control control;
-	
+	private Statement statement;
 	private todo what; 
 	private String command;
 	ResultSet result=null;
 	
 	private int count=0;
 	
-	static void setParams(Control control, Connection connection){
+	/*static void setParams(Control control){
+		//, Connection connection){
 		USQLQuery.control=control;
-		USQLQuery.connection=connection;
+		// USQLQuery.connection=connection;
 	}
-	
-	private USQLQuery(USQLQuery.todo what, String command){
+	*/
+	private USQLQuery(USQLQuery.todo what, String command, Statement statement){
 		this.what=what;
 		this.command=command;
+		this.statement=statement;
 		//new Thread(this).start();
 		//this.waitForSemaphore();
 		run();
 	}
-	public USQLQuery(){
+	/*public USQLQuery(){
 		 
 	}
 	
-	public USQLQuery(Control control, Connection connection){
+	public USQLQuery(Control control ){//, // Connection connection){
 		USQLQuery.control=control;
-		USQLQuery.connection=connection;
 	}
+	*/
 	
 	public synchronized void run() {
-		Statement statement = control.bvs.getStatement();
+		// Statement statement = Control.getControl().bvs.getStatement();
 		try{
 			switch (this.what){
 			case query:
@@ -78,32 +78,39 @@ public class USQLQuery implements Runnable{
 	
 	
 	
-	public static synchronized	ResultSet doQuery(String query) throws SQLException{
+	public static synchronized	ResultSet doQuery(String query, Statement statement) throws SQLException{
 	/*
 	 * TODO: rewrite multithreaded - done, to be tested
 	 */
-		ResultSet ret=new USQLQuery(todo.query,query).result;
+		ResultSet ret=new USQLQuery(todo.query,query,statement).result;
 		ret.first();
 		return ret;
 	}
 	
 	public static synchronized int doUpdate(String update) {
-				return (new USQLQuery(todo.update,update )).count;
+		  Statement statement = Control.getControl().bvs.getStatement();
+		  int i=(new USQLQuery(todo.update,update, statement)).count;
+		  Control.getControl().bvs.releaseStatement(statement);
+				return i;
 	}
 		
 	
 	public static synchronized int doCount(String query){
-		USQLQuery bvutils=new USQLQuery(todo.count,query);
+		Statement statement = Control.getControl().bvs.getStatement();
+		USQLQuery bvutils=new USQLQuery(todo.count,query,statement);
 		try{
 			bvutils.result.absolute(1);
 			return bvutils.result.getInt(1);
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		return -1;		
 	}
 	public static synchronized boolean doesExist(String query){
-		USQLQuery bvutils=new USQLQuery(todo.exists,query);
+		Statement statement = Control.getControl().bvs.getStatement();
+		USQLQuery bvutils=new USQLQuery(todo.exists,query,statement);
 		try{
 			if (bvutils.result.next()){
 				return true;
@@ -112,24 +119,32 @@ public class USQLQuery implements Runnable{
 			}
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		return false;		
 	}
 	
 	public static synchronized int doInsert(String query){
-		
-		return (new USQLQuery(todo.insert, query )).count;
+		Statement statement = Control.getControl().bvs.getStatement();
+		int i=(new USQLQuery(todo.insert, query,statement )).count;
+		Control.getControl().bvs.releaseStatement(statement);
+		return i;
 		
 	}
 	public static synchronized int doDelete(String query){
+		Statement statement = Control.getControl().bvs.getStatement();
+		int i=(new USQLQuery(todo.remove, query, statement )).count;
+		Control.getControl().bvs.releaseStatement(statement);
+		return i;
 		
-		return (new USQLQuery(todo.remove, query )).count;
 		
 	}
 	public static Vector<String> getColumnHeaders(String tablename){
 		Vector<String> ret=new Vector<String>();
+		Statement statement = Control.getControl().bvs.getStatement();
 		try{
-			ResultSet rs=USQLQuery.doQuery("DESCRIBE "+tablename);
+			ResultSet rs=USQLQuery.doQuery("DESCRIBE "+tablename,statement);
 			rs.first();
 			do{
 				ret.add(rs.getString(1));
@@ -139,24 +154,30 @@ public class USQLQuery implements Runnable{
 			while(rs.next());
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		return ret;
 			
 	}
 	public static int getNumOfDBColumns(String tablename){
+		Statement statement = Control.getControl().bvs.getStatement();
 		try{
-			ResultSet res=USQLQuery.doQuery("DESCRIBE " + tablename);
+			ResultSet res=USQLQuery.doQuery("DESCRIBE " + tablename,statement);
 			res.last();
 			return res.getRow();
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		return 0;
 	}
 	public static Vector<Boolean>  getNotNullColumns(String tablename){
 		Vector<Boolean> ret=new Vector<Boolean>(); 
+		Statement statement = Control.getControl().bvs.getStatement();
 		try{
-			ResultSet res=USQLQuery.doQuery("DESCRIBE " + tablename); //Cols 1-6
+			ResultSet res=USQLQuery.doQuery("DESCRIBE " + tablename,statement); //Cols 1-6
 			res.beforeFirst();
 			while (res.next()){
 				ret.add(new Boolean(!res.getBoolean(3)));
@@ -168,13 +189,16 @@ public class USQLQuery implements Runnable{
 			
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		return ret;
 	}
 	public static Vector<String>  getDefaults(String tablename){
-		Vector<String> ret=new Vector<String>(); 
+		Vector<String> ret=new Vector<String>();
+		Statement statement = Control.getControl().bvs.getStatement();
 		try{
-			ResultSet res=USQLQuery.doQuery("DESCRIBE " + tablename); //Cols 1-6
+			ResultSet res=USQLQuery.doQuery("DESCRIBE " + tablename,statement); //Cols 1-6
 			res.beforeFirst();
 			while (res.next()){
 				ret.add(res.getString(5));
@@ -182,6 +206,8 @@ public class USQLQuery implements Runnable{
 			
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		return ret;
 	}
@@ -191,10 +217,11 @@ public class USQLQuery implements Runnable{
 	}
 	public static Vector<String> getEnumTokens(String tablename, String col_set){
 		Vector<String> set = new Vector<String>();
+		Statement statement = Control.getControl().bvs.getStatement();
 		ResultSet rs;
 		String[] res;
 		try{
-			rs=USQLQuery.doQuery("SHOW COLUMNS FROM "+ tablename +" LIKE '" + col_set +"'");
+			rs=USQLQuery.doQuery("SHOW COLUMNS FROM "+ tablename +" LIKE '" + col_set +"'",statement);
 			if (rs.first()){
 				new Deb(debug,rs.getString("Type"));
 					res=rs.getString("Type").split(new String("(enum\\(')|(',')|('\\))"));
@@ -208,16 +235,19 @@ public class USQLQuery implements Runnable{
 			}
 		}catch(SQLException sqe){
 			sqe.printStackTrace();
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		
 		return (set);
 	}
 	public static Vector<String> getSetTokens(String tablename, String col_set){
 		Vector<String> set = new Vector<String>();
+		Statement statement = Control.getControl().bvs.getStatement();
 		ResultSet rs;
 		String[] res;
 		try{
-			rs=USQLQuery.doQuery("SHOW COLUMNS FROM "+ tablename +" LIKE '" + col_set +"'");
+			rs=USQLQuery.doQuery("SHOW COLUMNS FROM "+ tablename +" LIKE '" + col_set +"'",statement);
 			if (rs.first()){
 				new Deb(debug,rs.getString("Type"));
 					res=rs.getString("Type").split(new String("(set\\(')|(',')|('\\))"));
@@ -231,6 +261,8 @@ public class USQLQuery implements Runnable{
 			}
 		}catch(SQLException sqe){
 			sqe.printStackTrace();
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		
 		return (set);

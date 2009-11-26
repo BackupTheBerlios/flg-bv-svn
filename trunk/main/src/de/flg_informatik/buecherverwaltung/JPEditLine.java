@@ -5,6 +5,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class JPEditLine extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public JLabel label;
 	public JTextField textfield;
 	public JPEditLine(String labeltext, String text, String longas, int textwidth) {

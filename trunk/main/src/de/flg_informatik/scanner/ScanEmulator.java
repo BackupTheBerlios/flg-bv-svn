@@ -23,7 +23,7 @@ public class ScanEmulator extends FLGFrame implements ActionListener{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static boolean debug=true;
+	private static int debug=0;
 	/**
 	 * @param args
 	 */

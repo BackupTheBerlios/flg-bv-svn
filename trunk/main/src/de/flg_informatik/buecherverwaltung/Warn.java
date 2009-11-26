@@ -1,12 +1,13 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.awt.Frame;
-
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class Warn extends Throwable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String who="";
 	int debuglevel=0;
 	Warn(String text){
@@ -21,6 +22,7 @@ public class Warn extends Throwable{
 		new warning(text,who);
 	}
 
+	@SuppressWarnings("serial")
 	class warning extends JDialog{
 			warning(String text,String who){
 				

@@ -4,21 +4,18 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.io.File;
-import java.io.IOException;
-import java.math.BigInteger;
 
 import de.flg_informatik.ean13.Ean;
+import de.flg_informatik.scanner.IScanAdapter;
 import de.flg_informatik.scanner.ScanEmulator;
 import de.flg_informatik.scanner.ScanFile;
-import de.flg_informatik.scanner.IScanAdapter;
 import de.flg_informatik.utils.FLGProperties;
 
 /**
  * @author notkers
  *
  */
-public class ScanAdapter implements IScanAdapter, Runnable{
-	private static boolean debug=true;
+public class ScanAdapter implements IScanAdapter, Runnable, BVConstants{
 	private static Control control;
 	private Ean ean;
 	
@@ -86,8 +83,7 @@ public class ScanAdapter implements IScanAdapter, Runnable{
 						new Deb(debug,"isISBNNullEan");
 						control.newEvent(this, SelectedEvent.SelectedEventType.BookUnknownSelected, ean);
 					}else{
-						new Deb(book.Location);
-						if (book.Location.equals(new BigInteger("1"))){
+						if (book.isInStore()){
 							new Deb(debug,"isFreeBook");
 							control.newEvent(this, SelectedEvent.SelectedEventType.BookFreeSelected, ean);
 						}else{

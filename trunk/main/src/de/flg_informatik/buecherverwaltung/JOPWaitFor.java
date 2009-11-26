@@ -3,7 +3,6 @@
  */
 package de.flg_informatik.buecherverwaltung;
 
-import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
@@ -15,6 +14,10 @@ import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
  *
  */
 public class JOPWaitFor extends JOptionPane implements SelectedEventListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private SelectedEventType setype;
 	private JDialog jd; 
 

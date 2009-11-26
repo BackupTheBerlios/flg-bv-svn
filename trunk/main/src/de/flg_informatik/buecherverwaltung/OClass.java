@@ -3,14 +3,14 @@ package de.flg_informatik.buecherverwaltung;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
 
 import de.flg_informatik.ean13.Ean;
 
-public class OClass {
+public class OClass implements BVConstants{
 	public static final BigInteger Class12=new BigInteger("210000000000");
 	final static String tablename="Classes";
-	final static private boolean debug=true;
 	String KID;
 	String Name;
 	Short Abijahr; 
@@ -34,9 +34,10 @@ public class OClass {
 	
 	public static OClass getBVClass(int id) {
 		OClass result=null;
+		Statement statement = Control.getControl().bvs.getStatement();
 		//TODO not tested
 		try{
-			ResultSet rs=USQLQuery.doQuery("SELECT * FROM " + tablename + " WHERE KID = " + id );
+			ResultSet rs=USQLQuery.doQuery("SELECT * FROM " + tablename + " WHERE KID = " + id, statement );
 			rs.beforeFirst();
 			while(rs.next()){	
 				result=(new OClass(rs.getString("KID"), rs.getString("KName"), rs.getShort("COY"), rs.getShort("Year"), rs.getInt("LID")));
@@ -45,6 +46,8 @@ public class OClass {
 			sqle.printStackTrace();
 			
 			
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		return result;
 	}
@@ -54,9 +57,10 @@ public class OClass {
 		String[] ret;
 		ResultSet rs;
 		int i=0;
+		Statement statement = Control.getControl().bvs.getStatement();
 		try {
 			
-			rs=USQLQuery.doQuery("SELECT Year FROM "+ tablename + " GROUP BY Year ORDER BY Year ");
+			rs=USQLQuery.doQuery("SELECT Year FROM "+ tablename + " GROUP BY Year ORDER BY Year ",statement);
 			rs.beforeFirst();
 			while (rs.next()){
 				if (rs.getInt("Year")>2008){
@@ -72,6 +76,8 @@ public class OClass {
 		} catch (SQLException e) {
 			new Err(e.getMessage());
 			ret=null;
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		return ret;
 		
@@ -91,9 +97,10 @@ public class OClass {
 	}
 	public static Vector<String> getSubjects(String KID) {
 		Vector<String> result=new Vector<String>();
+		Statement statement = Control.getControl().bvs.getStatement();
 		String[] res;
 		try{
-			ResultSet rs=USQLQuery.doQuery("SELECT Subjects FROM " + tablename + " WHERE KID = " + KID );
+			ResultSet rs=USQLQuery.doQuery("SELECT Subjects FROM " + tablename + " WHERE KID = " + KID,statement );
 			rs.first();
 			res=rs.getString(1).split(new String(","));
 			
@@ -104,13 +111,16 @@ public class OClass {
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
 			
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		return result;
 	}
 	public static Vector <OClass> getClasses(String year){
 		Vector<OClass> result=new Vector<OClass>();
+		Statement statement = Control.getControl().bvs.getStatement();
 		try{
-			ResultSet rs=USQLQuery.doQuery("SELECT * FROM " + tablename + " WHERE Year = '" + year +"' ORDER BY KName" );
+			ResultSet rs=USQLQuery.doQuery("SELECT * FROM " + tablename + " WHERE Year = '" + year +"' ORDER BY KName" , statement);
 			rs.beforeFirst();
 			while(rs.next()){	
 				result.add(new OClass(rs.getString("KID"), rs.getString("KName"), rs.getShort("COY"), rs.getShort("Year"), rs.getInt("LID")));
@@ -118,6 +128,8 @@ public class OClass {
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
 			result = null;
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		return result;
 		

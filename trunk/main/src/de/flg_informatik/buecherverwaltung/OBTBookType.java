@@ -1,8 +1,8 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.math.BigInteger;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import de.flg_informatik.ean13.Ean;
 
@@ -29,13 +29,15 @@ public class OBTBookType {
 
 	
  	public static String getTitle(Ean ISBN){
- 		
+ 		Statement statement = Control.getControl().bvs.getStatement();
  		try {
  			
-			return USQLQuery.doQuery("SELECT Title FROM Booktypes WHERE ISBN="+ISBN).getString(1);
+			return USQLQuery.doQuery("SELECT Title FROM Booktypes WHERE ISBN="+ISBN,statement).getString(1);
 		} catch (SQLException e) {
 			//new Err("Kein Titel fur ISBN "+ISBN+" gefunden!");
 			return null;
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		
  	}

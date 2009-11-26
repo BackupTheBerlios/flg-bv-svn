@@ -1,12 +1,13 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.awt.Frame;
-
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class Notimpl extends Throwable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String who="";
 	int debuglevel=1;
 	Notimpl(){
@@ -23,6 +24,11 @@ public class Notimpl extends Throwable{
 	
 
 	class Error extends JDialog{
+			/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 			Error(String text,String who){
 				
 				

@@ -1,12 +1,8 @@
 package de.flg_informatik.buecherverwaltung;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -14,9 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 
 import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
-import de.flg_informatik.utils.FLGProperties;
-import de.flg_informatik.utils.FireButton;
 
+@SuppressWarnings("serial")
 public class VEVExtraView extends JPanel implements UCCase, ActionListener{
 	JButton save = new JButton("Extras speichern");
 	JPanel settings;//=new VPVPropertyView();

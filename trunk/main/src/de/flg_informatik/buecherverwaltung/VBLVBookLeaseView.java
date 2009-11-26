@@ -14,8 +14,12 @@ import javax.swing.event.ListSelectionEvent;
 import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 
-public class VBLVBookLeaseView extends JPanel implements UCCase , ActionListener{
-	private static boolean debug=true;
+public class VBLVBookLeaseView extends JPanel implements UCCase , ActionListener, BVConstants{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPVYearChooser wp;
 	private JPBookPresenter np;
 	private CenterPanel cp;
@@ -32,6 +36,10 @@ public class VBLVBookLeaseView extends JPanel implements UCCase , ActionListener
 	
 	private class CenterPanel extends JPanel{
 	
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		JPanel inner =new JPanel(new GridLayout(0,1));
 		JPanel outer=new JPanel();
 
@@ -114,9 +122,9 @@ public class VBLVBookLeaseView extends JPanel implements UCCase , ActionListener
 			Control.logln("ABBRUCH der Ausleihe: (" + lastbook.ID + ", " + OBTBookType.getTitle(new Ean(lastbook.ISBN))+", "+lastbook.Scoring_of_condition+"): No class chosen") ;
 		}else{
 			if (book!=null){
-				book.Location=new BigInteger(wp.getSelectedClass().KID);
-				Control.log("LEIHE: B"+book.ID + " -> K" +book.Location + " ("+ OBTBookType.getTitle(new Ean(book.ISBN))+" an " + OClass.getBVClass(book.Location.intValue()).Name +") Zustand: "+book.Scoring_of_condition );
-				if(book.doUpdate()){
+				Ean kean=new Ean(new BigInteger(wp.getSelectedClass().KID).add(OClass.Class12));
+				Control.log("LEIHE: B"+book.ID + " -> K" +kean.toString().substring(8, 12) + " ("+ OBTBookType.getTitle(new Ean(book.ISBN))+" an " + OClass.getBVClass(kean).Name +") Zustand: "+book.Scoring_of_condition );
+				if(book.makeLease(kean)){
 					Control.logln(" OK!");
 				}else{
 					Control.logln(" Fehler!");
@@ -132,6 +140,7 @@ public class VBLVBookLeaseView extends JPanel implements UCCase , ActionListener
 	}
 
 
+	@SuppressWarnings("serial")
 	public Vector<SelectedEventType> getConsumedEvents() {
 		return (new Vector<SelectedEvent.SelectedEventType>(){{
 			add(SelectedEvent.SelectedEventType.BookFreeSelected);

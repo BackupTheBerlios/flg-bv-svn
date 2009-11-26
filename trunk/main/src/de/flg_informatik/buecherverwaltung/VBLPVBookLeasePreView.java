@@ -2,7 +2,6 @@ package de.flg_informatik.buecherverwaltung;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -10,27 +9,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
-import javax.management.MXBean;
-import javax.security.auth.Subject;
-import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.event.ListSelectionEvent;
-
 
 import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 import de.flg_informatik.utils.FLGJScrollPane;
 
-public class VBLPVBookLeasePreView extends ATableView implements UCCase , ActionListener{
-	private static boolean debug=true;
+public class VBLPVBookLeasePreView extends ATableView implements UCCase , ActionListener, BVConstants{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPVYearChooser wp;
 	private UsableBookPanel dp;
 	private UsableBookPanel ep;
@@ -52,6 +48,10 @@ public class VBLPVBookLeasePreView extends ATableView implements UCCase , Action
 		add(new NorthPanel(),BorderLayout.NORTH);
 	}
 	private class NorthPanel extends JPanel implements ActionListener{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		JButton save = new JButton("Stundentafel speichern");
 		NorthPanel(){
 			super(new FlowLayout());
@@ -71,6 +71,10 @@ public class VBLPVBookLeasePreView extends ATableView implements UCCase , Action
 		}
 	}
 	private class DualPanel extends JSplitPane implements ActionListener{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		int dividerat=0;
 		public DualPanel() {
 			super(JSplitPane.HORIZONTAL_SPLIT,dp=new UsableBookPanel(),bvjp=new JPSrcollTable(me,mymodell));
@@ -100,6 +104,10 @@ public class VBLPVBookLeasePreView extends ATableView implements UCCase , Action
 	}
 	
 	private class UsableBookPanel extends JPanel implements ActionListener{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		Vector<BookTypLine> lines=new Vector<BookTypLine>();
 		Subpanel sub;
 
@@ -126,6 +134,10 @@ public class VBLPVBookLeasePreView extends ATableView implements UCCase , Action
 		}
 	
 		class Subpanel extends JPanel{
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 			public Subpanel() {
 				setLayout(new GridLayout(0,1,1,0));
 				//removeAll();
@@ -176,10 +188,18 @@ public class VBLPVBookLeasePreView extends ATableView implements UCCase , Action
 	}
 	private int maxwidth=10; // max width of BookTypLine._JLabel
 	private class BookTypLine extends JPanel {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private JDialog jd2=null;
 		private Vector <BTColumn> btfields;
 		BTColumn chooseline = new BTColumn((Ean) null, "Ein anderes Buch!");
 		private class _JLabel extends JLabel { // to set kind of tabular
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 			public _JLabel(String subject){
 				super (subject);
 			}
@@ -204,6 +224,10 @@ public class VBLPVBookLeasePreView extends ATableView implements UCCase , Action
 		}
 		
 		private class BTSelector extends javax.swing.JComboBox{
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 			String subject;
 			BTSelector(String subject, Vector <BTColumn> btfields){
 				
@@ -371,6 +395,7 @@ public class VBLPVBookLeasePreView extends ATableView implements UCCase , Action
 	}
 
 
+	@SuppressWarnings("serial")
 	public Vector<SelectedEventType> getConsumedEvents() {
 		return (new Vector<SelectedEvent.SelectedEventType>(){{
 			add(SelectedEvent.SelectedEventType.BookFreeSelected);

@@ -1,29 +1,23 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.awt.Button;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Vector;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 
-import de.flg_informatik.buecherverwaltung.VBTVBookTypeView.State;
 import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
+import de.flg_informatik.buecherverwaltung.VBTVBookTypeView.State;
 
-public class JPSelector extends JPanel implements ActionListener{
+public class JPSelector extends JPanel implements ActionListener,BVConstants{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static boolean debug=false;
+	
 	public enum Orientation{
 		VERTICAL,
 		HORZONTAL;
@@ -35,7 +29,7 @@ public class JPSelector extends JPanel implements ActionListener{
 	}
 	
 	public JPSelector(ActionListener listener, Vector<String> names, Orientation o) {
-		new Deb(true,names.size());
+		new Deb(debug,names.size());
 		switch(o){
 		case VERTICAL: 
 			this.setLayout(new GridLayout(20,(names.size()/20+1)));

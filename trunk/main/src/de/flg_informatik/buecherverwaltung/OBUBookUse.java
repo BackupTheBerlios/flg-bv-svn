@@ -3,6 +3,7 @@ package de.flg_informatik.buecherverwaltung;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
 import de.flg_informatik.ean13.Ean;
 
@@ -10,8 +11,8 @@ import de.flg_informatik.ean13.Ean;
  * @author notkers
  *
  */
-public class OBUBookUse{
-	private static boolean debug=true;
+public class OBUBookUse implements BVConstants{
+	
 		
 	/**
 	 *  
@@ -72,9 +73,10 @@ public class OBUBookUse{
 	 */
 	public static int getBCIDOf(Ean ISBN){
 		ResultSet rs;
+		Statement statement = Control.getControl().bvs.getStatement();
 		try {
 			rs=USQLQuery.doQuery("SELECT BCID FROM " + tablename + " WHERE ISBN = "
-					+ ISBN + " AND BCID <> 0");
+					+ ISBN + " AND BCID <> 0",statement);
 			rs.beforeFirst();
 			while (rs.next()){	
 				return rs.getInt(col_bc);
@@ -83,6 +85,8 @@ public class OBUBookUse{
 			
 		} catch (NullPointerException np){
 			//no aequivalence yet
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		return 0;
 	}
@@ -93,7 +97,6 @@ public class OBUBookUse{
 	 */
 	
 	public static Vector<String> getEquisOfString(Ean ISBN){
-		ResultSet rs;
 		Vector<String> ret=new Vector<String>();
 		for (OBUBookUse bv:getBVOf(getBCIDOf(ISBN), false)){
 			new Deb(debug,bv.isbn);
@@ -132,17 +135,20 @@ public class OBUBookUse{
 		if (getBCIDOf(ean1)+getBCIDOf(ean2)==0){
 				
 			//Find free bcid (maximum of bcid + 1)
+			Statement statement = Control.getControl().bvs.getStatement();
 			try {
 				bcid=0;
 				do{	
 					bcid++;
 					rs=USQLQuery.doQuery("SELECT COUNT(BCID) FROM " + tablename + " WHERE BCID =  "
-							+ bcid);
+							+ bcid,statement);
 					new Deb(debug,rs.first());
 				}while (rs.getInt(1)!=0);
 			} catch (SQLException sqe) {
 				new Deb(debug,sqe);
 				
+			}finally{
+				Control.getControl().bvs.releaseStatement(statement);
 			}
 			new Deb(debug,"bcid: "+bcid);
 			setBCIDOf(ean1,bcid);
@@ -329,10 +335,11 @@ public class OBUBookUse{
 
 	private static Vector<OBUBookUse> getBVOf(Ean ISBN){
 		Vector<OBUBookUse> ret = new Vector<OBUBookUse>();
+		Statement statement = Control.getControl().bvs.getStatement();
 		ResultSet rs;
 		try{
 			rs=USQLQuery.doQuery("SELECT  * FROM " + tablename + " WHERE ISBN = "
-					+ ISBN);
+					+ ISBN,statement);
 			rs.beforeFirst();
 			while (rs.next()){	
 				ret.add(new OBUBookUse(rs.getInt(col_pk),rs.getInt(col_bc),rs.getString(col_isbn),rs.getString(col_grades),rs.getString(col_subname)));
@@ -342,6 +349,8 @@ public class OBUBookUse{
 			
 		} catch (NullPointerException np){
 			//null in null out;
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		return ret;
 		
@@ -349,19 +358,20 @@ public class OBUBookUse{
 	private static Vector<OBUBookUse> getBVOf(int bcid, boolean isbnnull) {
 		Vector<OBUBookUse> ret = new Vector<OBUBookUse>();
 		ResultSet rs;
+		Statement statement = Control.getControl().bvs.getStatement();
 		
 		try {
 			if (isbnnull){
 		
 				rs=USQLQuery.doQuery("SELECT * FROM " + tablename + " WHERE ( BCID = "
-				+ bcid + ") " + " AND ("  + col_isbn + " IS NULL )");
+				+ bcid + ") " + " AND ("  + col_isbn + " IS NULL )",statement);
 				rs.beforeFirst();
 				while (rs.next()){	
 					ret.add(new OBUBookUse(rs.getInt(col_pk),rs.getInt(col_bc),null,rs.getString(col_grades),rs.getString(col_subname)));
 				}
 			} else {
 				rs=USQLQuery.doQuery("SELECT * FROM " + tablename + " WHERE ( BCID = "
-						+ bcid + ") " + " AND ("  + col_isbn + " IS NOT NULL )");
+						+ bcid + ") " + " AND ("  + col_isbn + " IS NOT NULL )",statement);
 				rs.beforeFirst();
 				while (rs.next()){	
 					ret.add(new OBUBookUse(rs.getInt(col_pk),rs.getInt(col_bc),rs.getString(col_isbn),rs.getString(col_grades),rs.getString(col_subname)));
@@ -373,6 +383,8 @@ public class OBUBookUse{
 		
 		} catch (NullPointerException np){
 		//no use yet
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		return ret;
 	}
@@ -430,11 +442,12 @@ public class OBUBookUse{
 	public static Vector<Ean>  getISBN(String subject, String grade) {
 		Vector<Ean> ret= new Vector<Ean>();
 		Vector<Integer> equi = new Vector<Integer>();
+		Statement statement = Control.getControl().bvs.getStatement();
 		ResultSet rs;
 		try {
 			rs=USQLQuery.doQuery("SELECT  ISBN, BCID FROM "+tablename+" WHERE " +
 			 		" ( " + col_grades + " = '" + grade + "') AND ("
-			 		+ col_subname + " = '" + subject +"')");
+			 		+ col_subname + " = '" + subject +"')",statement);
 			rs.beforeFirst();
 			while (rs.next()){
 				if (rs.getString(1)!=null){
@@ -451,6 +464,8 @@ public class OBUBookUse{
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
 		}
 		if (equi.size()>0){ // there are Equivalences
 			for (int bcid:equi){

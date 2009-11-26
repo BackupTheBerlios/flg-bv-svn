@@ -3,7 +3,6 @@ package de.flg_informatik.buecherverwaltung;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.math.BigInteger;
 import java.util.Vector;
 
 import javax.swing.JPanel;
@@ -11,7 +10,7 @@ import javax.swing.event.ListSelectionEvent;
 
 import de.flg_informatik.ean13.Ean;
 
-public class VBBVBookBackView extends JPanel implements UCCase, ActionListener {
+public class VBBVBookBackView extends JPanel implements UCCase, ActionListener, BVConstants {
 	
 
 	/**
@@ -27,7 +26,6 @@ public class VBBVBookBackView extends JPanel implements UCCase, ActionListener {
 	 */
 	
 	private static final long serialVersionUID = 1L;
-	private static boolean debug=true;
 	private OBook lastbook=null;
 	private OBook book=null;
 	private JPBookPresenter np;
@@ -99,16 +97,24 @@ public class VBBVBookBackView extends JPanel implements UCCase, ActionListener {
 	
 	private synchronized void commit(OBook book){
 		new Deb (debug,"commit");
-		String classname;
-		int locnumber=book.Location.intValue();
-		if(OClass.getBVClass(locnumber)!=null ){
-			classname=OClass.getBVClass(locnumber).Name;
-		}else{
-			classname="000";
-		}
-		Control.log("ZURÜCK: B"+book.ID + " <- K" +locnumber + " ("+ OBTBookType.getTitle(new Ean(book.ISBN))+" von " + classname +") Zustand: "+book.Scoring_of_condition );
-		book.Location=BigInteger.ONE;
-		if (book.doUpdate()){
+		String classname=""
+			;
+		String classid="";
+		Ean leaser=book.getLeaser();
+		switch (EEANType.getType(leaser)){
+			case BVClass:
+				if(OClass.getBVClass(leaser)!=null ){
+					classname=OClass.getBVClass(leaser).Name;
+				}else{
+					classname="000";
+				}
+				classid="K"+leaser.toString().substring(8, 12);
+				
+			break;
+		}	
+		Control.log("ZURÜCK: B"+book.ID + " <- "+classid + " ("+ OBTBookType.getTitle(new Ean(book.ISBN))+" von " + classname +") Zustand: "+book.Scoring_of_condition );
+		
+		if (book.endLease()){
 			Control.logln(" OK!");
 		}else{
 			Control.logln(" Fehler!");
@@ -131,8 +137,12 @@ public class VBBVBookBackView extends JPanel implements UCCase, ActionListener {
 	}
 	public Vector<SelectedEvent.SelectedEventType> getConsumedEvents() {
 		
-		// TODO Auto-generated method stub
-		return (new Vector<SelectedEvent.SelectedEventType>(){{
+		return (new Vector<SelectedEvent.SelectedEventType>(){/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+		{
 			add(SelectedEvent.SelectedEventType.BookLeasedSelected);
 		}});
 	}

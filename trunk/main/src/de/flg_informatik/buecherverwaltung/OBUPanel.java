@@ -1,12 +1,9 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -15,20 +12,19 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import de.flg_informatik.buecherverwaltung.JPChooser.Orientation;
-
 import de.flg_informatik.ean13.Ean;
-import de.flg_informatik.utils.FLGFrame;
 import de.flg_informatik.utils.FireButton;
 
-public class OBUPanel extends JPanel  implements ActionListener {
-	private static boolean debug=false;
+public class OBUPanel extends JPanel  implements ActionListener, BVConstants {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Ean isbn=null;
 	private OBUPanel me;
 	private JButton add = new JButton("hinzufügen");
 	private JButton cancel = new JButton("abbrechen");
-	private int mw=0;
-	private int mh=0;
-	
+
 	
 	public OBUPanel(Ean ISBN){
 		me=this;
@@ -40,6 +36,7 @@ public class OBUPanel extends JPanel  implements ActionListener {
 					
 	}
 	
+	@SuppressWarnings("serial")
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource()==add){
 			this.removeAll();
@@ -68,6 +65,7 @@ public class OBUPanel extends JPanel  implements ActionListener {
 			
 		}
 	}
+	@SuppressWarnings("serial")
 	class addPanel extends JPanel implements ActionListener{
 		JPChooser sc;
 		JPChooser gc;
@@ -88,6 +86,7 @@ public class OBUPanel extends JPanel  implements ActionListener {
 		}
 	}
 
+	@SuppressWarnings("serial")
 	class showPanel extends JPanel implements ActionListener{
 		private FireButton remove = new FireButton("entfernen");
 		JPChooser bu;
@@ -114,6 +113,10 @@ public class OBUPanel extends JPanel  implements ActionListener {
 	}
 	
 	class aequiPanel extends JPanel implements ActionListener{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private FireButton remove = new FireButton("löschen");
 		private FireButton add = new FireButton("setzen");
 		
@@ -163,6 +166,11 @@ public class OBUPanel extends JPanel  implements ActionListener {
 			
 		}
 		class WaitingForAequi extends JPanel implements SelectedEventListener{
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			public void thingSelected(SelectedEvent e) {
 				if (jd!=null){
 					jd.dispose();
