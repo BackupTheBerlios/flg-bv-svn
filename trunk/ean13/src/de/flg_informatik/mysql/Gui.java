@@ -20,7 +20,7 @@ public class Gui extends de.flg_informatik.utils.FLGFrame {
 	
 	private Gui()
 	{
-		Button but;
+
 		
 		//  Fenster sichtbar machen
 		this.setVisible(true);

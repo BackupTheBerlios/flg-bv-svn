@@ -22,8 +22,6 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-//import CopyOfFLGProperties.TabPanel;
-
 
 public class FLGProperties extends  JPanel implements FocusListener{
 	/**
@@ -32,14 +30,12 @@ public class FLGProperties extends  JPanel implements FocusListener{
 	private Properties properties;
 	private static final long serialVersionUID = 767010307826685781L;
 	private JTabbedPane jtp =new JTabbedPane();
-	private FLGProperties me;
 	private String infilename;
 	private File defaultfile;
 	private String significantkey;
 	private ArrayList<String> groups;
 	private ArrayList<ArrayList<String>> keys;
 	private ArrayList<TabPanel.LinePanel> changelist = new ArrayList<TabPanel.LinePanel>();
-	private File outfile;
 	private boolean changed=false;
 	/**
 	 * @param (Properties properties) Properties als Objekt für die Rückgabe, wenn null, dann wird das Propertyfile (infile bzw defaultfile) geladen.
@@ -68,7 +64,6 @@ public class FLGProperties extends  JPanel implements FocusListener{
 		}
 		debug(properties);
 		this.properties=properties;
-		this.me=this;
 		this.addFocusListener(this);
 		this.setLayout(new BorderLayout(5,5));
 		makeTabs(properties);
