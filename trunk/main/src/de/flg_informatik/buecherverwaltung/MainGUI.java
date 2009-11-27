@@ -101,7 +101,7 @@ public class MainGUI extends JFrame implements BVConstants {
 		retpan.add(lp=new LogPane());
 		retpan.add(new JPanel(new GridLayout(0,1)){
 			{
-				add(new JLabel("Buchverwaltung Version: "+control.version));
+				add(new JLabel("Buchverwaltung Version: "+MainGUI.version));
 				add(new JLabel("(C) C.HOFF&NURH (@flg-informatik.de)"));
 				add(new JPanel(new FlowLayout()){{
 				this.add(cancelbutton);

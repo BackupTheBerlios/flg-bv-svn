@@ -28,14 +28,14 @@ import javax.swing.event.ListSelectionEvent;
 
 import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
 
-@SuppressWarnings("serial")
+// @SuppressWarnings("serial")
 public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
-	//TODO
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String tablename=null;
 	private Container container=null;
-	private static String stablename=null;
-	private static Container scontainer=null;
 	private static final String unknownfield="@unknown";
 	private static final String nullfield="@setnull";
 	private static final String ignorefield="@ignore";
@@ -55,11 +55,12 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 	private static final String fieldseparator =",";
 	private JButton OK = new JButton("Anwenden");
 	private JButton load = new JButton("File Importieren");
-	
+	@SuppressWarnings("unused")
 	private JPChooser bvc;
 	private char[] trenner;
 	private FileReader inreader = null;
 	private NorthPanel np=null;
+	@SuppressWarnings("unused")
 	private WestPanel wp=null;
 	private SouthPanel sp=null;
 	private JScrollPane cp=null;
@@ -89,12 +90,8 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 		setVisible(true);
 		return true;
 	}
-	public static void setTablename(String tablename){
-		stablename=tablename;
-	}
-	public static void setContainer(Container container){
-		scontainer=container;
-	}
+	
+	
 	private boolean openFile(){
 		if  ((infile=VBVCSVIVFileDialog.getFileOpen((Frame)container))==null){
 			new Mess("Please choose a file!");
@@ -112,6 +109,10 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 	}
 	
 	private class MySQLcolumns extends JPanel{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private FieldSelector fs=null;
 		private JCheckBox en=null;
 		private JTextField tf=null;
@@ -131,10 +132,22 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 				new Deb(debug,sqlfields.get(i));
 				en=new JCheckBox("wenn leer, dann MYSQL-NULL",!notNullColumns.get(i));
 				emptynull.add(en);
-				add(new JPanel(){{add(en,JPanel.LEFT_ALIGNMENT);}});
+				add(new JPanel(){/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
+				{
+					add(en,JPanel.LEFT_ALIGNMENT);
+					}});
 				
 					if (notNullColumns.get(i)&(defaultColumns.get(i)==null)){
-						add(new JLabel("kein (NULL & NOT NULL)"){{
+						add(new JLabel("kein (NULL & NOT NULL)"){/**
+							 * 
+							 */
+							private static final long serialVersionUID = 1L;
+
+						{
 							setToolTipText("Für neue Datensätze: " +
 									"zuordnen oder default eintragen," +
 									" für updates auch ignorieren möglich!");}});
@@ -145,7 +158,12 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 							add(new JLabel("SQLDefault: "+defaultColumns.get(i)));
 						}
 					}
-					add(new JPanel(){{
+					add(new JPanel(){/**
+						 * 
+						 */
+						private static final long serialVersionUID = 1L;
+
+					{
 						add(new JLabel("@default= "));
 							tf=new JTextField(10);
 							defaultval.add(tf);
@@ -161,6 +179,11 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 		
 	}
 	private class FieldSelector extends javax.swing.JComboBox{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		FieldSelector(String msqlc){
 			super(filefields);
 			setSelectedItem(getGuess(msqlc));
@@ -170,6 +193,10 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 		
 	}
 	private class WestPanel extends JPanel {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		String[] was = new String[]{"Schüler", "Klassen"};
 		public WestPanel() {
 			add(bvc=new JPChooser(VBVCSVImporterView.this.sp,was,JPChooser.Orientation.VERTICAL));
@@ -178,7 +205,20 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 		
 	}
 	private class NorthPanel extends JPanel {
-		JTextField fsep= new JTextField(fieldseparator,0){{setBorder(null);setBackground(Color.WHITE);this.setFont(new java.awt.Font(this.getFont().toString(),java.awt.Font.BOLD,(int)(this.getFont().getSize()*1.5)));}};
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		JTextField fsep= new JTextField(fieldseparator,0){
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			{
+				setBorder(null);setBackground(Color.WHITE);
+				this.setFont(new java.awt.Font(this.getFont().toString(),java.awt.Font.BOLD,(int)(this.getFont().getSize()*1.5)));
+		}};
 		ButtonGroup bg =new ButtonGroup();
 		JRadioButton CO = new JRadioButton("\",\"");
 		JRadioButton SC = new JRadioButton("\";\"");
@@ -192,9 +232,37 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 			bg.add(CO);
 			bg.add(SC);
 			bg.add(FS);
-			add(new JPanel(){{add(new JLabel("Feldtrenner:"));add(CO);add(SC);add(FS);add(fsep);}});
-			add(new JPanel(){{add(new JLabel("Zeilentrenner:")); add(CR);add(LF);}});
-			add(new JPanel(){{add(new JLabel("\" \" als opt. Textauszeichner:")); add(QM);;}});
+			add(new JPanel(){/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
+				{
+					add(new JLabel("Feldtrenner:"));
+					add(CO);
+					add(SC);
+					add(FS);
+					add(fsep);
+			}});
+			add(new JPanel(){/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
+				{
+				add(new JLabel("Zeilentrenner:"));
+				add(CR);
+				add(LF);
+			}});
+			add(new JPanel(){/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
+				{
+				add(new JLabel("\" \" als opt. Textauszeichner:"));
+				add(QM);
+			}});
 			CO.setSelected(true);
 			if(System.getProperty("line.separator").equals("\n")){
 				CR.setSelected(false);
@@ -212,7 +280,14 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 			trenner=getChars();
 			isdelimited=QM.isSelected();
 			
-			add(new JPanel(){{add(OK);}});
+			add(new JPanel(){/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
+				{
+				add(OK);
+			}});
 			//
 		}
 		private char[] getChars(){
@@ -254,10 +329,23 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 		
 	}
 	private class CenterPanel extends JScrollPane{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		public CenterPanel() {
 			
 			
-			setViewportView(new JPanel(new GridLayout(1,0)){{add(new MySQLcolumns());}});
+			setViewportView(
+				new JPanel(new GridLayout(1,0)){/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
+					{	
+					add(new MySQLcolumns());
+				}}
+			);
 	}
 		public Dimension getPreferredSize() {
 			return new Dimension(500,500);
@@ -270,6 +358,11 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 	 */ 
 	
 	private class SouthPanel extends JPanel implements ActionListener{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		SouthPanel(){
 		
 		}
@@ -404,7 +497,7 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 		new Deb(debug,filefields);
 		for (FileColumn str:filefields){
 			if (!(str.index<0)){
-				//new Deb(debug,str);
+				new Deb(debug,str);
 				String matchstring1=new String("(\\A"+str.name+"\\z)");
 				Pattern p1=Pattern.compile(matchstring1);
 				String matchstring2=new String("(\\A"+str.name.subSequence(0, 1)+".*"+str.name.subSequence(str.name.length()-1, str.name.length())+"\\z)");

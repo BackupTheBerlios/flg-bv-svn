@@ -13,7 +13,6 @@ import de.flg_informatik.Etikett.EtikettDruck;
 import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
 import de.flg_informatik.utils.FLGProperties;
-import de.flg_informatik.utils.Version;
 
 public class Control implements Runnable,ActionListener,ChangeListener,BVConstants {
 	/**
@@ -36,7 +35,6 @@ public class Control implements Runnable,ActionListener,ChangeListener,BVConstan
 	private UCCase viewontop=null;
 	FLGProperties app_settings_pane;
 	Properties app_settings;
-	Version version=new Version(new int[]{0,96},"09-11-26");
 	UCUseCases.Selected2Usecases  switchusecases;
 	MainGUI mainGUI;
 	UStorage bvs;
@@ -54,7 +52,6 @@ public class Control implements Runnable,ActionListener,ChangeListener,BVConstan
 			
 			connection=UDataBaseConnect.getConnection(app_settings);
 			if (connection == null) {
-				javax.swing.JOptionPane.showMessageDialog(null, "Konnte nicht mit Datenbank verbinden, bitte Extras überprüfen!");
 				VPVDialog.showSettingsDialog(app_settings_pane);
 			}
 		new Deb(debug,"connecting");	
@@ -79,6 +76,7 @@ public class Control implements Runnable,ActionListener,ChangeListener,BVConstan
 		new Deb(debug,"initialized SCANNER");
 		MainGUI.selectView(UCUseCases.Ausleihe);//default usecase
 		new Deb(debug,"End of Constructor of Control");
+
 		
 		
 		

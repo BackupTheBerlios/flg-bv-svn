@@ -1,6 +1,5 @@
 package de.flg_informatik.buecherverwaltung;
 
-import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -9,7 +8,6 @@ import java.util.Vector;
 import de.flg_informatik.ean13.Ean;
 
 public class OClass implements BVConstants{
-	public static final BigInteger Class12=new BigInteger("210000000000");
 	final static String tablename="Classes";
 	String KID;
 	String Name;

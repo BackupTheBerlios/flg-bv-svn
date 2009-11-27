@@ -22,6 +22,7 @@ public class VBLVBookLeaseView extends JPanel implements UCCase , ActionListener
 	private static final long serialVersionUID = 1L;
 	private JPVYearChooser wp;
 	private JPBookPresenter np;
+	@SuppressWarnings("unused")
 	private CenterPanel cp;
 	private JOPWaitFor jd=null;
 	private OBook lastbook=null;

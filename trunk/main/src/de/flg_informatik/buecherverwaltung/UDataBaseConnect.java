@@ -33,7 +33,7 @@ public class UDataBaseConnect {
 				props.getProperty("datenbank.username"),
 				props.getProperty("*datenbank.passwort"));
 		}catch(Exception e){
-			e.printStackTrace();
+			new Warn("Konnte nicht mit Datenbank verbinden, bitte Extras überprüfen!",e);
 			return null;
 		}
 		return connection;

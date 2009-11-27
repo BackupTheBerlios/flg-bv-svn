@@ -6,10 +6,8 @@ import java.sql.Statement;
 
 import de.flg_informatik.ean13.Ean;
 
-public class OBTBookType {
+public class OBTBookType implements BVConstants {
 	
-	public static final BigInteger ISBNNull12 = new BigInteger("978000000000");
-	public static final Ean ISBNNullEan = new Ean(ISBNNull12);
 	public BigInteger ISBN;
 	public String Author;
  	public String Title;

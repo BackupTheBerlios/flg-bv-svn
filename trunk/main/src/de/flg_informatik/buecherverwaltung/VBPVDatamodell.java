@@ -26,6 +26,7 @@ public class VBPVDatamodell extends javax.swing.table.AbstractTableModel impleme
 	
 	Vector<Vector<Object>> tablecells=new Vector<Vector<Object>>(); 
 	int numofcolumns;
+	@SuppressWarnings("unused")
 	private OClass bvclass;
 	public VBPVDatamodell(OClass bvclass) {
 		this.numofcolumns=headers.length;

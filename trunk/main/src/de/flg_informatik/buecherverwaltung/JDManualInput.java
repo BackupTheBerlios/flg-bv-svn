@@ -5,6 +5,7 @@ package de.flg_informatik.buecherverwaltung;
 
 import java.awt.Color;
 import java.awt.Dialog;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.GridLayout;
@@ -193,6 +194,7 @@ public class JDManualInput extends JDialog implements ActionListener {
 			add(new JTextField("x"){{
 				setEditable(false);
 				setBackground(Color.white);
+				setFont(getFont().deriveFont(Font.BOLD));
 			}});
 			
 		
@@ -221,8 +223,17 @@ public class JDManualInput extends JDialog implements ActionListener {
 		validate();
 	}
 	
-	public String getText(){
-		return editline.getText();
+	public BigInteger getID(){
+		
+		try {
+			return new BigInteger(editline.getText());
+		}catch (NumberFormatException e) {
+			new Warn("Dies ist keine Ganzzahl, also keine ID");
+			return BigInteger.ZERO;
+		}catch (RuntimeException e) {
+			new Err(e);
+		}
+		return null;
 	}
 
 	/**
@@ -236,18 +247,25 @@ public class JDManualInput extends JDialog implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(cancel)){
-			
+			setVisible(false); // get off
 		}
 		if (e.getSource().equals(bbook)){
-			Control.getControl().scanner.eanScanned(OBook.makeBookEan(new BigInteger(getText())).toString());
+			if (OBook.isOBook(getID())){
+				Control.getControl().scanner.eanScanned(OBook.makeBookEan(getID()).toString());
+				setVisible(false); // get off
+			}else{
+				new Warn("Dies ist keine gülltige Buch-ID");
+			}
 		}
 		if (e.getSource().equals(bclass)){
 			new Notimpl();
+			setVisible(false); // get off
 		}
 		if (e.getSource().equals(bcust)){
 			new Notimpl();
+			setVisible(false); // get off
 		}
-		setVisible(false); // get off
+		
 	}
 
 }

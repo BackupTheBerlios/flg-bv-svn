@@ -10,23 +10,17 @@ import java.sql.Statement;
 import de.flg_informatik.ean13.Ean;
 import de.flg_informatik.ean13.EanCanvas;
 
-public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
-	public static final boolean debug=false;
-	public static final BigInteger Book12=new BigInteger("200000000000");
+public class OBook implements de.flg_informatik.Etikett.PrintableEtikett, BVConstants{
 	public BigInteger ID;
 	public String Purchased;
  	public int Scoring_of_condition;
- 	// public BigInteger Location;
  	public BigInteger ISBN;
 	
- 	public OBook(BigInteger id, String purchased, int scoring_of_condition,
-			//BigInteger location,
- 			BigInteger isbn) {
+ 	public OBook(BigInteger id, String purchased, int scoring_of_condition, BigInteger isbn) {
 		
 		ID = id;
 		Purchased = purchased;
 		Scoring_of_condition = scoring_of_condition;
-		// Location = location;
 		ISBN = isbn;
 	}
  	
@@ -40,10 +34,9 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
 				ID = new BigInteger(rs.getString("ID"));
 				Purchased = rs.getString("Purchased"); 
 				Scoring_of_condition = rs.getInt("Scoring_of_condition");
-				// Location = new BigInteger(rs.getString("Location"));
 				ISBN = new BigInteger(rs.getString("ISBN"));
 			}else{
-				debug("no book");
+				new Err();
 			}
 			debug(rs.getWarnings());
 			
@@ -66,10 +59,9 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  					ID = new BigInteger(rs.getString("ID"));
  					Purchased = rs.getString("Purchased"); 
  					Scoring_of_condition = rs.getInt("Scoring_of_condition");
- 					// Location = new BigInteger(rs.getString("Location"));
  					ISBN = new BigInteger(rs.getString("ISBN"));
  				}else{
- 					debug("no book");
+ 					new Err();
  				}
  				debug(rs.getWarnings());
  				
@@ -83,10 +75,33 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  			
  		
  	}
- 	
- 	private static int getLocation(Ean ean){
- 		return getLocation(makeBookID(ean));	
+ 	public static synchronized boolean isOBook(BigInteger id) {
+ 		Statement statement = Control.getControl().bvs.getStatement();
+		
+		try{
+			
+			ResultSet rs=USQLQuery.doQuery("SELECT * FROM Books WHERE ID="+id,statement);
+			if (rs.first()){
+				return true;
+			}else{
+				return false;
+			}
+			
+		}catch(SQLException sqle){
+			new Err(sqle);
+		}catch(NullPointerException e){
+			new Err("Die Datenbank antwortet nicht!");
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
+		}
+		debug("checked book"+ id);
+		return false;	
+		
 	}
+ 	public static boolean isOBook(Ean ean) {
+ 		return isOBook(makeBookID(ean));
+	}
+ 	
  	public boolean setBookType(Ean ean){
  		new Notimpl();
  		return true;	
@@ -99,20 +114,7 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  		return (getLeaser(ID)==null);
  	}
  	
- 	private static synchronized int getLocation(BigInteger ID){
- 		debug("getLocation "+ID);
- 		Statement statement = Control.getControl().bvs.getStatement();
- 		try {
-			return USQLQuery.doQuery("SELECT Location FROM Books WHERE ID="+ID,statement).getInt(1);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return 0;
-		}finally{
-			Control.getControl().bvs.releaseStatement(statement);
-		}
-		
- 	}
+ 	
  	public Ean getLeaser(){
  		return getLeaser(ID);
  	}
@@ -185,8 +187,6 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  	
  	public static synchronized OBook[] makeNewBooks(int howmany, String ISBN){
  		// make temporay ISBN
- 		final BigInteger subtract13=new BigInteger("6800000000000");
-  		// subtract from Bookworld ISBN 979X 978X to private EAN 299X 298X, does'nt change control digit
  		new Deb(ISBN);
  		ISBN=new BigInteger(ISBN).subtract(subtract13).toString();
  		new Deb(ISBN);
@@ -260,7 +260,7 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett{
  		
  	}
  	static private void debug(Object obj){
- 		if (debug) System.out.println(OBook.class+": "+ obj);
+ 		if (debug>0) System.out.println(OBook.class+": "+ obj);
 	}
 
 	public int printAt(Graphics g, Dimension position, Dimension boxgroesse) {

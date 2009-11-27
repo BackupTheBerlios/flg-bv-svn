@@ -29,7 +29,7 @@ public class OBUBookUse implements BVConstants{
 	 * @return Vector of grades from set-definition in database 
 	 */
 	public static Vector<String> getGrades(){
-		return (grades=USQLQuery.getSetTokens(tablename, col_grades));
+		return (USQLQuery.getSetTokens(tablename, col_grades));
 	}
 	
 	/**
@@ -292,7 +292,6 @@ public class OBUBookUse implements BVConstants{
 	private static final String col_subname="Subjects";
 	private static final String col_grades="Grades";
 	private static Vector<String> subjects;
-	private static Vector<String> grades;
 	private String subject=null;
 	private String grade=null;
 	private Ean isbn;

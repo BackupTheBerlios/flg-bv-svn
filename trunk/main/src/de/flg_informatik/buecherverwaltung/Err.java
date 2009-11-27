@@ -1,59 +1,46 @@
 package de.flg_informatik.buecherverwaltung;
 
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-public class Err extends Throwable implements BVConstants{
+public class Err extends Mess{
 
 	/**
 	 * 
 	 */
+	
 	private static final long serialVersionUID = 1L;
-	String who="";
-	
+	static final int messagetype=JOptionPane.ERROR_MESSAGE;
 	Err(){
-		if (debug>0){
-			this.printStackTrace();
-		}
-	
-		if (debuglevel>0){
-		who="\nStacktrace:";	
+		printOut("Es ist ein interner Fehler aufgetreten!\n",this,messagetype);
 		
-			for (int i=0; i< Math.min(this.getStackTrace().length, debuglevel);i++){
-				who = who+"\n"+this.getStackTrace()[i].toString();
-			}
-		}
-		new Error("Interner Fehler",who);
 	}
+	Err(Throwable e){
+		throwable=e;
+		text=e.getLocalizedMessage();
+		printOut(text,this,messagetype);
+		
+	}
+
 	Err(String text){
-		if (debug>0){
-			this.printStackTrace();
-		}
+		printOut(text,this,messagetype);
 		
-		if (debuglevel>0){
-		who="Stacktrace:";	
-		
-			for (int i=0; i< Math.min(this.getStackTrace().length, debuglevel);i++){
-				who = who+"\n"+this.getStackTrace()[i].toString();
-			}
-		}
-		new Error(text,who);
 	}
-
-	class Error extends JDialog{
-			/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-
-			Error(String text,String who){
-				
-				
-				JOptionPane.showMessageDialog(Control.getControl().mainGUI,text+who,"FLGBV "+Control.getControl().version.toString()+"",JOptionPane.ERROR_MESSAGE);
-				
-			}
-			
-	}		
+	Err(String text,Throwable e){
+		text="Fehlermeldung der JVM: "+e.getMessage();
+		throwable=e;
+		printOut(text,this,messagetype);
+	}
+	@Override
+	void finished() {
+		// TODO Auto-generated method stub
+		super.finished();
+		if (debug==0){
+			System.exit(1);
+		}
+	}
+	
+	
+	
 }
 	
 

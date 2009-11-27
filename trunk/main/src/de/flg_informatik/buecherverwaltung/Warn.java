@@ -1,37 +1,33 @@
 package de.flg_informatik.buecherverwaltung;
 
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-public class Warn extends Throwable{
+public class Warn extends Mess implements BVConstants{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	String who="";
-	int debuglevel=0;
-	Warn(String text){
+	private static final int messagetype=JOptionPane.WARNING_MESSAGE;
+	Warn(){
 		
-		if (debuglevel>0){
-		who="Stacktrace:";	
-		
-			for (int i=0; i< Math.min(this.getStackTrace().length, debuglevel);i++){
-				who = who+"\n"+this.getStackTrace()[i].toString();
-			}
-		}
-		new warning(text,who);
+		printOut("Warnung!\n", this,messagetype);
+	}
+	Warn(Throwable e){
+		text="Es ist ein Fehler (\"runtime in JVM\") aufgetreten: "+e.getMessage();
+		throwable=e;
+		printOut(text, this,messagetype);
 	}
 
-	@SuppressWarnings("serial")
-	class warning extends JDialog{
-			warning(String text,String who){
-				
-				
-				JOptionPane.showMessageDialog(Control.getControl().mainGUI,text+who,"FLGBV "+Control.getControl().version.toString(),JOptionPane.WARNING_MESSAGE);
-				
-			}
-			
-	}		
+	Warn(String text){
+		printOut(text,this,messagetype);
+	}
+	Warn(String text,Throwable e){
+		throwable = e;
+		printOut(text,this,messagetype);
+	}
+	
+
+	
 }
 	
 
