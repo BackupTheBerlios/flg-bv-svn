@@ -75,10 +75,10 @@ public class JPChooser extends JPanel implements ActionListener,BVConstants{
 		new Deb(debug,names.size());
 		switch(o){
 		case VERTICAL: 
-			this.setLayout(new GridLayout(names.size()/(names.size()/20+1)+1,(names.size()/20+1)));
+			this.setLayout(new GridLayout(names.size()/(names.size()/15+1)+1,(names.size()/15+1)));
 			break;
 		case HORZONTAL:
-			this.setLayout(new GridLayout((names.size()/20+1),20));
+			this.setLayout(new GridLayout((names.size()/15+1),15));
 			break;
 		default:
 			new Err();
