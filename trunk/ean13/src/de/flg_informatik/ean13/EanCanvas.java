@@ -12,127 +12,164 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private final int randvert = 10;
-	private final int randhori = 4;
-	private Dimension line = new Dimension(4,128); //testing only
-	private final int codewidth =(2+digits)*7+2*randhori;
-	private final char midchar = '9'+2;
-	private final char edgechar = '9'+1;
-	private Dimension here = new Dimension(0,0);
+	
+	private static final int codewidth =(digits-1)*7+9+6*2; //
+	private static final char midchar = '9'+2;
+	private static final char edgechar = '9'+1;
+	
+	
+	
+	private static int randvert = 0;
+	private static int randhori = 0;
+	private Dimension box = new Dimension(106,30);
+	private Ean ean=null;
+	
+	private Dimension pos = new Dimension(0,0);
+	private String[] text=null;
+	private double textscale=1.0;
+	
+	
 	private Dimension code = new Dimension(0,0);
 	private Dimension start = new Dimension(0,0);
 	private Dimension label = new Dimension(0,0);
-	private Dimension offset = new Dimension(0,0);
-	private String text;
-	private int line1 = 0;
+	private Dimension line = new Dimension(0,0);
+
+	
+	private int line1;
 	private int eanheight;
-	private double textscale=1.0;
 	private int textheight;
-	private Ean ean;
 	private Dimension startl = new Dimension(0,0);
 	
-	private EanCanvas(){
-		this.setBackground(Color.WHITE);
-		//label.width=codewidth*line.width;
-		//setDimensions();
-	}
+
+	/** 
+	 * 
+	 * @param ean no default
+	 * @param box defaults to minimal box (106,20) for ean13
+	 * @param text default null
+	 * @param textscale default 1.0
+	 */ 
+	
+	
 	public EanCanvas(Ean ean){
-		this();
-		this.ean=ean;
-	}
-	public EanCanvas(Ean ean, Dimension box){
-		this();
-		setDimensions(box);
-		this.ean=ean;
-	}
-	public EanCanvas(String string, Dimension box){
-		this();
-		setDimensions(box);
-		this.ean=new Ean(string);
-	}
-	public EanCanvas(Ean ean, Dimension pos, Dimension box){
-		this();
-		this.here=pos;
-		setDimensions(box);
-		this.ean=ean;
-	}
-	public EanCanvas(String string, Dimension pos, Dimension box){
-		this();
-		this.here=pos;
-		setDimensions(box);
-		this.ean=new Ean(string);
+		init(ean, box, text, textscale);
 	}
 	public EanCanvas(BigInteger bigint){
-		this();
-		this.ean=new Ean(bigint);
+		init(new Ean(bigint), box, text, textscale);
+	}
+	public EanCanvas(String string){
+		init(new Ean(string), box, text, textscale);
+	}
+	public EanCanvas(Ean ean, Dimension box){
+		init(ean, box, text, textscale);
 	}
 	public EanCanvas(BigInteger bigint, Dimension box){
-		this();
-		setDimensions(box);
-		this.ean=new Ean(bigint);
+		init(new Ean(bigint), box, text, textscale);
 	}
-	public EanCanvas(Ean ean, String text){
-		this();
-		this.text=text;
-		this.ean=ean;
+	public EanCanvas(String string, Dimension box){
+		init(new Ean(string), box, text, textscale);
 	}
 	public EanCanvas(Ean ean, Dimension box, String text){
-		this();
-		this.text=text;
-		setDimensions(box);
-		this.ean=ean;
+		init(ean, box, new String[]{text}, textscale);
 	}
 	public EanCanvas(String string, Dimension box, String text){
-		this();
-		this.text=text;
-		setDimensions(box);
-		this.ean=new Ean(string);
-	}
-	public EanCanvas(Ean ean, Dimension pos, Dimension box, String text){
-		this();
-		this.text=text;
-		this.here=pos;
-		setDimensions(box);
-		this.ean=ean;
-	}
-	public EanCanvas(String string, Dimension pos, Dimension box, String text){
-		this();
-		this.text=text;
-		this.here=pos;
-		setDimensions(box);
-		this.ean=new Ean(string);
-	}
-	public EanCanvas(BigInteger bigint, String text){
-		this();
-		this.text=text;
-		this.ean=new Ean(bigint);
+		init(new Ean(string), box, new String[]{text}, textscale);
 	}
 	public EanCanvas(BigInteger bigint, Dimension box, String text){
-		this();
-		this.text=text;
-		setDimensions(box);
-		this.ean=new Ean(bigint);
+		init(new Ean(bigint), box, new String[]{text}, textscale);
+	}
+	public EanCanvas(Ean ean, Dimension box, String[] text){
+		init(ean, box, text, textscale);
+	}
+	public EanCanvas(String string, Dimension box, String[] text){
+		init(new Ean(string), box, text, textscale);
+	}
+	public EanCanvas(BigInteger bigint, Dimension box, String[] text){
+		init(new Ean(bigint), box, text, textscale);
+	}
+	public EanCanvas(Ean ean, Dimension box, String[] text, double textscale){
+		init(ean, box, text, textscale);
+	}
+	public EanCanvas(String string, Dimension box, String[] text, double textscale){
+		init(new Ean(string), box, text, textscale);
+	}
+	public EanCanvas(BigInteger bigint, Dimension box, String[] text, double textscale){
+		init(new Ean(bigint), box, text, textscale);
+	}
+	public EanCanvas(Ean ean, String text){
+		init(ean, box, new String[]{text}, textscale);
+	}
+	public EanCanvas(String string, String text){
+		init(new Ean(string), box, new String[]{text}, textscale);
+	}
+	public EanCanvas(BigInteger bigint, String text){
+		init(new Ean(bigint), box, new String[]{text}, textscale);
+	}
+	public EanCanvas(Ean ean,  String[] text){
+		init(ean, box, text, textscale);
+	}
+	public EanCanvas(String string, String[] text){
+		init(new Ean(string), box, text, textscale);
+	}
+	public EanCanvas(BigInteger bigint,  String[] text){
+		init(new Ean(bigint), box, text, textscale);
 	}
 	public EanCanvas(Ean ean, String text, double textscale){
-		this(ean,text);
-		this.textscale=textscale;
+		init(ean, box, new String[]{text}, textscale);
 	}
-	public EanCanvas(Ean ean, Dimension box, String text, double textscale){
-		this(ean,box,text);
-		this.textscale=textscale;
+	public EanCanvas(String string, String text, double textscale){
+		init(new Ean(string), box, new String[]{text}, textscale);
 	}
-	public EanCanvas(Ean ean, Dimension pos, Dimension box, String text, double textscale){
-		this(ean,pos,box,text);
-		this.textscale=textscale;
+	public EanCanvas(BigInteger bigint, String text, double textscale){
+		init(new Ean(bigint), box, new String[]{text}, textscale);
 	}
-	
-	
-
-	/**
-	 * @param args
-	 */
+	public EanCanvas(Ean ean,  String[] text, double textscale){
+		init(ean, box, text, textscale);
+	}
+	public EanCanvas(String string,  String[] text, double textscale){
+		init(new Ean(string), box, text, textscale);
+	}
+	public EanCanvas(BigInteger bigint, String[] text, double textscale){
+		init(new Ean(bigint), box, text, textscale);
+	}
+		
 	public Dimension getMinimumSize(){
 		return new Dimension(label);
+	}
+	public static int getRandvert() {
+		return randvert;
+	}
+	public static void setRandvert(int randvert) {
+		EanCanvas.randvert = randvert;
+	}
+	public static int getRandhori() {
+		return randhori;
+	}
+	public static void setRandhori(int randhori) {
+		EanCanvas.randhori = randhori;
+	}
+	public Dimension getBox() {
+		return box;
+	}
+	public void setBox(Dimension box) {
+		this.box = box;
+	}
+	public String[] getText() {
+		return text;
+	}
+	public void setText(String[] text) {
+		this.text = text;
+	}
+	public double getTextscale() {
+		return textscale;
+	}
+	public void setTextscale(double textscale) {
+		this.textscale = textscale;
+	}
+	public int getTextheight() {
+		return textheight;
+	}
+	public void setTextheight(int textheight) {
+		this.textheight = textheight;
 	}
 	public Dimension getMaximumSize(){
 		return new Dimension(label);
@@ -153,25 +190,18 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 		this.ean=ean;
 		return setDimensions(label);
 	}
-	@SuppressWarnings("serial")
-	public static void main(String[] args) { //testing only
-		EanCanvas eac = new EanCanvas("4003994155486",new Dimension(600,600), "Scheiﬂ Text!");
-		Frame fra = new de.flg_informatik.utils.FLGFrame(){{
-			setLayout(new GridLayout(1,2));
-		}};
-		fra.setTitle("EAN:"+eac.toString());
-		fra.add(eac);
-		EanCanvas eac2 = new EanCanvas("400246403000",new Dimension(150,200));
-		fra.add(eac2);
-		fra.setVisible(true);
-		fra.pack();
-		
+	private int init(Ean ean, Dimension box, String[] text, double textscale){
+		this.setBackground(Color.WHITE);
+		this.ean=ean;
+		this.text=text;
+		this.textscale=textscale;
+		return setDimensions(box);
 	}
+
 	public int printAt(Graphics g, Dimension pos, Dimension box){
-		offset=pos.getSize();
+		this.pos=pos.getSize();
 		int ret=setDimensions(box);
 		this.paint(g);
-		offset.setSize(here);
 		return ret;
 	}
 	public void paint(Graphics g){
@@ -188,7 +218,8 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 		if (text!=null){
 			g.setFont(new Font("Serif", Font.PLAIN, textheight));
 			g.setColor(Color.BLACK);
-			g.drawString(text, 1, start.height+line.height+eanheight+textheight);
+			for (int i=0; i<text.length; i++)
+			g.drawString(text[i], pos.width+randhori, start.height+line.height+eanheight+textheight*(i+1));
 		}
 		
 	}
@@ -228,20 +259,33 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 	
 	private int setDimensions(Dimension label){
 		this.label=label;
-		line.width = label.width / codewidth;
+		line.width = (label.width-2*randhori) / codewidth;
 		line1=line.width;
 		eanheight=10*line1;
 		textheight=(int)(textscale*eanheight);
 		line.height = label.height-2*randvert-eanheight ;
 		if (text!=null){
-			line.height-=textheight;
+			line.height-=textheight*text.length;
 		}
-		
+		new Deb(codewidth);
 		code.setSize(codewidth*line1,label.height);
-		start.setSize(9*line1+(label.width-code.width)/2+offset.width
-				,randvert+offset.height);
+		start.setSize((label.width-code.width)/2+8*line1+pos.width
+				,randvert+pos.height);
 		return line.width;
 	}
-	
+	@SuppressWarnings("serial")
+	public static void main(String[] args) { //testing only
+		EanCanvas eac = new EanCanvas("4003994155486",new Dimension(106,100));
+		Frame fra = new de.flg_informatik.utils.FLGFrame(){{
+			setLayout(new GridLayout(1,2));
+		}};
+		fra.setTitle("EAN:"+eac.toString());
+		fra.add(eac);
+		EanCanvas eac2 = new EanCanvas("400246403000");
+		fra.add(eac2);
+		fra.setVisible(true);
+		fra.pack();
+		
+	}	
 		
 }
