@@ -126,6 +126,9 @@ public class FLGProperties extends  JPanel implements FocusListener{
 		while(!props.containsKey(significantkey)){
 			try{FileInputStream fis =new FileInputStream(getfile);
 				props.loadFromXML(fis);
+				if(!props.containsKey(significantkey)){
+					 new FileInputStream("");
+				}
 			}catch(java.io.FileNotFoundException e){
 				switch (javax.swing.JOptionPane.showOptionDialog(null, "Eine gültige Einstellungsdatei wurde nicht in \nden Anwendungseinstellungen/ihrem Benutzerverzeichnis gefunden.\n Sollen die Standardeinstellungen geladen werden?",
                        "Extras laden",

@@ -1,70 +1,118 @@
 package de.flg_informatik.ean13;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.GridLayout;
+import java.awt.*;
+import java.math.BigInteger;
+
+import de.flg_informatik.buecherverwaltung.Deb;
 
 
-public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etikett.PrintableEtikett{
+public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etikett.PrintableEtikett {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	private final int randvert = 10;
+	private final int randhori = 4;
 	private Dimension line = new Dimension(4,128); //testing only
-	
-	private int codewidth;
-	private final char trenner = '|';
-	private final char ende = '@';
+	private final int codewidth =(2+digits)*7+2*randhori;
+	private final char midchar = '9'+2;
+	private final char edgechar = '9'+1;
+	private Dimension here = new Dimension(0,0);
 	private Dimension code = new Dimension(0,0);
 	private Dimension start = new Dimension(0,0);
 	private Dimension label = new Dimension(0,0);
 	private Dimension offset = new Dimension(0,0);
 	private String text;
-	private double textscale=1;
 	private int line1 = 0;
-	@SuppressWarnings("unused")
-	private int line6 = 0;
-	private int line7 = 0;
-	private int line8 = 0;
+	private int eanheight;
+	private double textscale=1.0;
+	private int textheight;
 	private Ean ean;
 	private Dimension startl = new Dimension(0,0);
 	
 	private EanCanvas(){
 		this.setBackground(Color.WHITE);
+		//label.width=codewidth*line.width;
+		//setDimensions();
 	}
 	public EanCanvas(Ean ean){
 		this();
 		this.ean=ean;
 	}
 	public EanCanvas(Ean ean, Dimension box){
-		this(ean);
+		this();
 		setDimensions(box);
+		this.ean=ean;
 	}
-	
+	public EanCanvas(String string, Dimension box){
+		this();
+		setDimensions(box);
+		this.ean=new Ean(string);
+	}
 	public EanCanvas(Ean ean, Dimension pos, Dimension box){
-		this(ean,box);
-		offset=pos;
+		this();
+		this.here=pos;
+		setDimensions(box);
+		this.ean=ean;
 	}
-		
+	public EanCanvas(String string, Dimension pos, Dimension box){
+		this();
+		this.here=pos;
+		setDimensions(box);
+		this.ean=new Ean(string);
+	}
+	public EanCanvas(BigInteger bigint){
+		this();
+		this.ean=new Ean(bigint);
+	}
+	public EanCanvas(BigInteger bigint, Dimension box){
+		this();
+		setDimensions(box);
+		this.ean=new Ean(bigint);
+	}
 	public EanCanvas(Ean ean, String text){
-		this(ean);
+		this();
 		this.text=text;
+		this.ean=ean;
 	}
 	public EanCanvas(Ean ean, Dimension box, String text){
-		this(ean,box);
+		this();
 		this.text=text;
+		setDimensions(box);
+		this.ean=ean;
+	}
+	public EanCanvas(String string, Dimension box, String text){
+		this();
+		this.text=text;
+		setDimensions(box);
+		this.ean=new Ean(string);
 	}
 	public EanCanvas(Ean ean, Dimension pos, Dimension box, String text){
-		this(ean,pos,box);
+		this();
 		this.text=text;
+		this.here=pos;
+		setDimensions(box);
+		this.ean=ean;
 	}
-	
+	public EanCanvas(String string, Dimension pos, Dimension box, String text){
+		this();
+		this.text=text;
+		this.here=pos;
+		setDimensions(box);
+		this.ean=new Ean(string);
+	}
+	public EanCanvas(BigInteger bigint, String text){
+		this();
+		this.text=text;
+		this.ean=new Ean(bigint);
+	}
+	public EanCanvas(BigInteger bigint, Dimension box, String text){
+		this();
+		this.text=text;
+		setDimensions(box);
+		this.ean=new Ean(bigint);
+	}
 	public EanCanvas(Ean ean, String text, double textscale){
 		this(ean,text);
 		this.textscale=textscale;
@@ -78,6 +126,8 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 		this.textscale=textscale;
 	}
 	
+	
+
 	/**
 	 * @param args
 	 */
@@ -105,13 +155,13 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 	}
 	@SuppressWarnings("serial")
 	public static void main(String[] args) { //testing only
-		EanCanvas eac = new EanCanvas(new Ean("400246403540"),new Dimension(150,200));
+		EanCanvas eac = new EanCanvas("4003994155486",new Dimension(600,600), "Scheiﬂ Text!");
 		Frame fra = new de.flg_informatik.utils.FLGFrame(){{
 			setLayout(new GridLayout(1,2));
 		}};
 		fra.setTitle("EAN:"+eac.toString());
 		fra.add(eac);
-		EanCanvas eac2 = new EanCanvas(new Ean("400246403000"),new Dimension(150,200),"text");
+		EanCanvas eac2 = new EanCanvas("400246403000",new Dimension(150,200));
 		fra.add(eac2);
 		fra.setVisible(true);
 		fra.pack();
@@ -120,94 +170,78 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 	public int printAt(Graphics g, Dimension pos, Dimension box){
 		offset=pos.getSize();
 		int ret=setDimensions(box);
-		print(g);
+		this.paint(g);
+		offset.setSize(here);
 		return ret;
 	}
 	public void paint(Graphics g){
-		
-	}
-	
-	public void print(Graphics g){
 		startl.setSize(start);
-		g.setClip(offset.width, offset.height, label.width, label.height);
-		g.setFont(new Font("SansSerif", Font.BOLD, line7));
+		g.setFont(new Font(Font.SERIF, Font.BOLD,  eanheight));
 		g.setColor(Color.BLACK);
-		g.drawChars(ean.getEanChars(), 0, 1, startl.width-line6, startl.height+line.height+line6);
-		//startl.width+=2*line1;
-		paintZiffer(g,'@',0,startl);
+		g.drawChars(ean.getEanChars(), 0, 1, startl.width-eanheight*3/4, startl.height+line.height+eanheight);
+		paintZiffer(g,edgechar,3,startl);
 		for (int i=1; i<digits; i++){
-			g.setColor(Color.BLACK);
-			if (i==7) paintZiffer(g,'|',0,startl);
-			g.drawChars(ean.getEanChars(), i, 1, startl.width+line1, startl.height+line.height+line6);
-			paintZiffer(g,ean.getEanChar(i),alphabeth13[ean.getEanChar(0)-'0'][i-1],startl);
+			if (i==7) paintZiffer(g,midchar,1,startl); // just to be added in between #6 and #7 
+			paintZiffer(g,ean.getEanChar(i),alphabeth13[ean.getEanChar(0)-'0'][i-1],startl); // plot a barcode
 		}
-		g.setColor(Color.BLACK);
-		paintZiffer(g,'@',0,startl);
+		paintZiffer(g,edgechar,3,startl);
 		if (text!=null){
-			g.setFont(new Font("Serif", Font.PLAIN, getTextHeight()));
-			int len=Math.min(g.getFontMetrics().stringWidth(text),label.width);
-			g.drawString(text, offset.width+Math.max(0, (label.width-len)/2), start.height+line.height+line6+getTextHeight());
+			g.setFont(new Font("Serif", Font.PLAIN, textheight));
+			g.setColor(Color.BLACK);
+			g.drawString(text, 1, start.height+line.height+eanheight+textheight);
 		}
 		
 	}
 	private void paintZiffer(Graphics g,char zeichen, int variante, Dimension start){
-		
-		switch (zeichen){
-			case trenner:
-				start.width+=line1;
-			case ende:
-				g.fillRect(start.width, start.height, line1, line.height+5*line1);
-				start.width+=line1;
-				start.width+=line1;
-				g.fillRect(start.width, start.height, line1, line.height+5*line1);
-				start.width+=line1;
-				start.width+=line1;
-				if (zeichen==ende) break;
-				start.width+=line1;
-				break;
-			default:
-				switch (variante){
-				case 1:
-					g.setColor(Color.WHITE);
-				case 3:
-					for (int i=0; i<4; i++){
-						g.fillRect(start.width, start.height, line1*alphabeth[zeichen-'0'][i], line.height);
-						start.width+=line1*alphabeth[zeichen-'0'][i];
-						if (g.getColor()== Color.WHITE) g.setColor(Color.BLACK); else g.setColor(Color.WHITE);
-					}
-					break;
-				case 2:
-					g.setColor(Color.WHITE);
-					for (int i=3; i>=0; i--){
-						g.fillRect(start.width, start.height, line1*alphabeth[zeichen-'0'][i], line.height);
-						start.width+=line1*alphabeth[zeichen-'0'][i];
-						if (g.getColor()== Color.WHITE) g.setColor(Color.BLACK); else g.setColor(Color.WHITE);
-					}
-					break;
-				}
+		g.setColor(Color.BLACK);
+		if (zeichen<='9'){ //print only digits, no edge or mid
+			g.drawChars((new char[]{zeichen}) ,0,1, start.width+line1, start.height+line.height+eanheight );
 		}
-		
+		switch (variante){
+			case 1:
+				toggleColor(g);
+			case 3:
+				for (int i=0; i<alphabeth[zeichen-'0'].length; i++){
+					g.fillRect(start.width, start.height, line1*alphabeth[zeichen-'0'][i], line.height+(zeichen-'0')/10 * eanheight / 2 );
+					start.width+=line1*alphabeth[zeichen-'0'][i];
+					toggleColor(g);
+				}
+				break;
+			case 2:
+				toggleColor(g);
+				for (int i=alphabeth[zeichen-'0'].length-1; i>=0; i--){
+					g.fillRect(start.width, start.height, line1*alphabeth[zeichen-'0'][i], line.height+(zeichen-'0')/10 * eanheight / 2 );
+					start.width+=line1*alphabeth[zeichen-'0'][i];
+					toggleColor(g);
+				}
+				break;
+			}
+			
 	}
-	private int getTextHeight(){
-		return (int)(line8*textscale);
+	private void toggleColor(Graphics g){
+		if (g.getColor()== Color.WHITE){
+			g.setColor(Color.BLACK);
+		}else{
+			g.setColor(Color.WHITE);
+		}
 	}
+	
 	private int setDimensions(Dimension label){
 		this.label=label;
-		codewidth=(3+digits)*7;
 		line.width = label.width / codewidth;
 		line1=line.width;
-		line6=6*line1;
-		line7=7*line1;
-		line8=8*line1;
-		line.height = label.height-line7;
+		eanheight=10*line1;
+		textheight=(int)(textscale*eanheight);
+		line.height = label.height-2*randvert-eanheight ;
 		if (text!=null){
-			line.height-=getTextHeight();
+			line.height-=textheight;
 		}
+		
 		code.setSize(codewidth*line1,label.height);
-		start.setSize(line7 +(label.width-code.width)/2+offset.width
-				,offset.height);
+		start.setSize(9*line1+(label.width-code.width)/2+offset.width
+				,randvert+offset.height);
 		return line.width;
 	}
-		
 	
+		
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 	<entry key=".EtikettenV2">.0</entry>
-	<entry key='spaltenprozeile'>4</entry>
+	<entry key="spaltenprozeile">4</entry>
 	<entry key="zeilenproseite">14</entry>
 	<entry key="SeiteLinksmm">5</entry>
 	<entry key="SeiteRechtsmm">5</entry>
