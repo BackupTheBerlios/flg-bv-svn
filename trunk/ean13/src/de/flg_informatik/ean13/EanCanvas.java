@@ -3,14 +3,29 @@ package de.flg_informatik.ean13;
 import java.awt.*;
 import java.math.BigInteger;
 
+import javax.print.PrintException;
+import javax.swing.JOptionPane;
+
 import de.flg_informatik.buecherverwaltung.Deb;
+/** 
+ * @author nurh
+ * @version 100413
+ * Gives a visual impression of a EAN13 and
+ * implements {@see de.flg_informatik.Etikett.PrintableEtikett}
+ * (painting itself optimal in Graphics g at given pos in 
+ * given max box size, but respecting readability giving bars only 
+ * widths of integer pixel size.
+ * 
+ * @param ean no default
+ * @param box defaults to minimal box (106,20) for ean13
+ * @param text default null
+ * @param textscale default 1.0
+ */ 
 
 
-public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etikett.PrintableEtikett {
+public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etikett.PrintableEtikett{
 	
-	/**
-	 * test
-	 */
+	
 	private static final long serialVersionUID = 1L;
 	
 	private static final int codewidth =(digits-1)*7+9+6*2; //
@@ -35,7 +50,6 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 	private Dimension line = new Dimension(0,0);
 
 	
-	private int line1;
 	private int eanheight;
 	private int textheight;
 	private Dimension startl = new Dimension(0,0);
@@ -43,13 +57,15 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 
 	/** 
 	 * 
-	 * @param ean no default
+	 * @param ean no default 
 	 * @param box defaults to minimal box (106,20) for ean13
 	 * @param text default null
 	 * @param textscale default 1.0
 	 */ 
 	
-	
+	public EanCanvas(BigInteger bigint, Dimension box, String[] text, double textscale){
+		init(new Ean(bigint), box, text, textscale);
+	}
 	public EanCanvas(Ean ean){
 		init(ean, box, text, textscale);
 	}
@@ -92,10 +108,7 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 	public EanCanvas(String string, Dimension box, String[] text, double textscale){
 		init(new Ean(string), box, text, textscale);
 	}
-	public EanCanvas(BigInteger bigint, Dimension box, String[] text, double textscale){
-		init(new Ean(bigint), box, text, textscale);
-	}
-	public EanCanvas(Ean ean, String text){
+		public EanCanvas(Ean ean, String text){
 		init(ean, box, new String[]{text}, textscale);
 	}
 	public EanCanvas(String string, String text){
@@ -130,10 +143,6 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 	}
 	public EanCanvas(BigInteger bigint, String[] text, double textscale){
 		init(new Ean(bigint), box, text, textscale);
-	}
-		
-	public Dimension getMinimumSize(){
-		return new Dimension(label);
 	}
 	public static int getRandvert() {
 		return randvert;
@@ -171,20 +180,17 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 	public void setTextheight(int textheight) {
 		this.textheight = textheight;
 	}
-	public Dimension getMaximumSize(){
-		return new Dimension(label);
-	}
 	public Dimension getPreferredSize(){
 		return new Dimension(label);
 	}
 	public String toString(){
 		return ean.toString();
 	}
+	public Dimension getMinimumSize(){
+		return new Dimension(label);
+	}
 	public Ean getEan(){
 		return ean;
-	}
-	public int setLabelSize(Dimension label){
-		return setDimensions(label);
 	}
 	public int setEan(Ean ean){
 		this.ean=ean;
@@ -198,16 +204,24 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 		return setDimensions(box);
 	}
 
-	public int printAt(Graphics g, Dimension pos, Dimension box){
+	public int printAt(Graphics g, Dimension pos, Dimension box) throws PrintException{
 		this.pos=pos.getSize();
-		int ret=setDimensions(box);
+		if (setDimensions(box)<1){
+			throw new PrintException("box size too small; is " + box.width +"x"+box.height +
+					" should be >= "+ this.box.width+"x"+this.box.height);
+		}
 		this.paint(g);
-		return ret;
+		return 0;
+		
 	}
 	public void paint(Graphics g){
 		startl.setSize(start);
-		g.setFont(new Font(Font.SERIF, Font.BOLD,  eanheight));
+		g.setFont(new Font(Font.SANS_SERIF, Font.BOLD,  eanheight));
 		g.setColor(Color.BLACK);
+		if (line.width<1){
+			g.drawString("Zu klein für\n Barcode", pos.width, pos.height+eanheight);
+			return ;
+		}
 		g.drawChars(ean.getEanChars(), 0, 1, startl.width-eanheight*3/4, startl.height+line.height+eanheight);
 		paintZiffer(g,edgechar,3,startl);
 		for (int i=1; i<digits; i++){
@@ -226,23 +240,23 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 	private void paintZiffer(Graphics g,char zeichen, int variante, Dimension start){
 		g.setColor(Color.BLACK);
 		if (zeichen<='9'){ //print only digits, no edge or mid
-			g.drawChars((new char[]{zeichen}) ,0,1, start.width+line1, start.height+line.height+eanheight );
+			g.drawChars((new char[]{zeichen}) ,0,1, start.width+line.width, start.height+line.height+eanheight );
 		}
 		switch (variante){
 			case 1:
 				toggleColor(g);
 			case 3:
 				for (int i=0; i<alphabeth[zeichen-'0'].length; i++){
-					g.fillRect(start.width, start.height, line1*alphabeth[zeichen-'0'][i], line.height+(zeichen-'0')/10 * eanheight / 2 );
-					start.width+=line1*alphabeth[zeichen-'0'][i];
+					g.fillRect(start.width, start.height, line.width*alphabeth[zeichen-'0'][i], line.height+(zeichen-'0')/10 * eanheight / 2 );
+					start.width+=line.width*alphabeth[zeichen-'0'][i];
 					toggleColor(g);
 				}
 				break;
 			case 2:
 				toggleColor(g);
 				for (int i=alphabeth[zeichen-'0'].length-1; i>=0; i--){
-					g.fillRect(start.width, start.height, line1*alphabeth[zeichen-'0'][i], line.height+(zeichen-'0')/10 * eanheight / 2 );
-					start.width+=line1*alphabeth[zeichen-'0'][i];
+					g.fillRect(start.width, start.height, line.width*alphabeth[zeichen-'0'][i], line.height+(zeichen-'0')/10 * eanheight / 2 );
+					start.width+=line.width*alphabeth[zeichen-'0'][i];
 					toggleColor(g);
 				}
 				break;
@@ -260,22 +274,20 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 	private int setDimensions(Dimension label){
 		this.label=label;
 		line.width = (label.width-2*randhori) / codewidth;
-		line1=line.width;
-		eanheight=10*line1;
+		eanheight=Math.max(8*line.width,10);
 		textheight=(int)(textscale*eanheight);
 		line.height = label.height-2*randvert-eanheight ;
 		if (text!=null){
 			line.height-=textheight*text.length;
 		}
-		new Deb(codewidth);
-		code.setSize(codewidth*line1,label.height);
-		start.setSize((label.width-code.width)/2+8*line1+pos.width
+		code.setSize(codewidth*line.width,label.height);
+		start.setSize((label.width-code.width)/2+8*line.width+pos.width
 				,randvert+pos.height);
 		return line.width;
 	}
 	@SuppressWarnings("serial")
 	public static void main(String[] args) { //testing only
-		EanCanvas eac = new EanCanvas("4003994155486",new Dimension(106,100));
+		EanCanvas eac = new EanCanvas("4003994155486",new Dimension(16,100));
 		Frame fra = new de.flg_informatik.utils.FLGFrame(){{
 			setLayout(new GridLayout(1,2));
 		}};

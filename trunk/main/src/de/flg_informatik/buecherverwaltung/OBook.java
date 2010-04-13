@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.print.PrintException;
+
 import de.flg_informatik.ean13.Ean;
 import de.flg_informatik.ean13.EanCanvas;
 
@@ -264,7 +266,12 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett, BVCons
 	}
 
 	public int printAt(Graphics g, Dimension position, Dimension boxgroesse) {
-		return (new EanCanvas(getEan(),OBTBookType.getTitle(new Ean(this.ISBN)),0.6).printAt(g, position, boxgroesse));
+		try {
+			return (new EanCanvas(getEan(),OBTBookType.getTitle(new Ean(this.ISBN)),0.6).printAt(g, position, boxgroesse));
+		} catch (PrintException e) {
+			new Err(e);
+			return 0;
+		}
 	}
 
 	public static boolean delete(BigInteger Id) {

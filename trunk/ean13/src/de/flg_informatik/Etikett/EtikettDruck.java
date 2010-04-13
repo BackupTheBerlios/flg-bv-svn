@@ -9,6 +9,7 @@ import java.awt.print.PrinterJob;
 import java.io.File;
 import java.util.Properties;
 
+import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.standard.MediaPrintableArea;
@@ -338,17 +339,21 @@ public class EtikettDruck implements Printable {
 		Graphics2D g2    = (Graphics2D)g;
 		// Here we (try to) change to physical resolution
 		g2.scale(1/g2.getTransform().getScaleX(),1/g2.getTransform().getScaleY());
-	    for (int zeile=0;zeile<zeilenproseite;zeile++){
-		    for (int spalte=0;spalte<spaltenprozeile;spalte++){
-		    	if (!(pageindex*proseite+zeile*spaltenprozeile+spalte<etikettoffset)){
-		    		if (pageindex*proseite+zeile*spaltenprozeile+spalte<etiketten.length+etikettoffset){
-		    		etiketten[pageindex*proseite+zeile*spaltenprozeile+spalte-etikettoffset].printAt(g2, new Dimension((int)Math.round(swidth*spalte+originx+mmToP(etikettlinksmm)),(int)Math.round(zheight*zeile+originy+mmToP(etikettobenmm))), new Dimension (lwidth,lheight));
-		    		}
-		    	}else{ //offset etikett
-		    	}	
-		    	
-		    }
-	    }
+	    try {
+			for (int zeile=0;zeile<zeilenproseite;zeile++){
+			    for (int spalte=0;spalte<spaltenprozeile;spalte++){
+			    	if (!(pageindex*proseite+zeile*spaltenprozeile+spalte<etikettoffset)){
+			    		if (pageindex*proseite+zeile*spaltenprozeile+spalte<etiketten.length+etikettoffset){
+			    		etiketten[pageindex*proseite+zeile*spaltenprozeile+spalte-etikettoffset].printAt(g2, new Dimension((int)Math.round(swidth*spalte+originx+mmToP(etikettlinksmm)),(int)Math.round(zheight*zeile+originy+mmToP(etikettobenmm))), new Dimension (lwidth,lheight));
+			    		}
+			    	}else{ //offset etikett
+			    	}	
+			    	
+			    }
+			}
+		} catch (PrintException e) {
+			e.printStackTrace();
+		}
 	       
 		return Printable.PAGE_EXISTS;
 	}

@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.math.BigInteger;
 
+import javax.print.PrintException;
+
 public class Ean implements Ean13, de.flg_informatik.Etikett.PrintableEtikett{
 	char[] ean = new char[digits];
 	char[] maxean =new char[digits-1];
@@ -91,7 +93,8 @@ public class Ean implements Ean13, de.flg_informatik.Etikett.PrintableEtikett{
 		return new Result[]{Result.ok};
 	}
 
-	public int printAt(Graphics g, Dimension position, Dimension boxgroesse) {
+	public int printAt(Graphics g, Dimension position, Dimension boxgroesse) 
+		throws PrintException{
 		if (me == null){
 			me = new EanCanvas(this);
 		}
