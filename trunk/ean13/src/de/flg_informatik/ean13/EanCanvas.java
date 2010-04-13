@@ -9,7 +9,7 @@ import de.flg_informatik.buecherverwaltung.Deb;
 public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etikett.PrintableEtikett {
 	
 	/**
-	 * 
+	 * test
 	 */
 	private static final long serialVersionUID = 1L;
 	
