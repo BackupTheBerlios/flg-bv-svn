@@ -6,7 +6,7 @@
 <entry key=".BuchverwaltungV01">.1</entry>
 <entry key="datenbank.username">buchadmin</entry>
 <entry key="scanner.emulator.filename_linux">/tmp/scanfile</entry>
-<entry key="*datenbank.passwort">aa</entry>
+<entry key="*datenbank.passwort"></entry>
 <entry key=".datenbank.connection.prefix">jdbc:mysql:</entry>
 <entry key=".datenbank.jdbc.Driver">com.mysql.jdbc.Driver</entry>
 <entry key="scanner.typ">file</entry><!--Reflects hardcoded(sorry!) enumeration BVScanAdapter.types, by now only "emulator, file", but you can change file-name in next properties.-->
