@@ -73,10 +73,12 @@ public class VBPVBookPrepareView extends ATableView implements ActionListener, B
 			
 		}
 	
-		if (preselected==(preselected=lastselected)){ // catch echos
+		if (preselected==lastselected){ // catch echos
 			if (pretime-(pretime=System.currentTimeMillis())<echotime){
 				return; //was a Echo
 			}
+		}else{
+			preselected=lastselected;
 		}
 	
 	

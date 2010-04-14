@@ -5,6 +5,12 @@ import javax.swing.event.ListSelectionEvent;
 
 public abstract class ATableView extends JPanel implements SelectedEventListener, UCCase{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3403823097446423001L;
+
+
 	int getColumnwidth(int i){
 		return 0;
 	}

@@ -155,10 +155,12 @@ public class VBTVBookTypeView extends ATableView implements ActionListener, BVCo
 			
 		}
 	
-		if (preselected==(preselected=lastselected)){ // catch echos
+		if (preselected==lastselected){ // catch echos
 			if (pretime-(pretime=System.currentTimeMillis())<echotime){
 				return; //was a Echo
 			}
+		}else{
+			preselected=lastselected;
 		}
 	if (state==State.neu){
 		state=State.info;
