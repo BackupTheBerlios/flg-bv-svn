@@ -7,7 +7,7 @@ import de.flg_informatik.buecherverwaltung.ScanAdapter;
 
 
 public class ScanFile extends Scanner implements Runnable{
-	final private static int debug=0;
+	final private static int debug=1;
 	public FileReader rf=null;
 	ScanAdapter adapter;
 	static ScanFile scanFile=null; 
@@ -48,6 +48,7 @@ public class ScanFile extends Scanner implements Runnable{
 				Thread.sleep(10);
 			}
 			ch = (char)(rf.read());
+			new Deb(ch);
 			if (ch == '\n'){
 				if (io.length()==13){
 					sendString(io.toString());
@@ -77,7 +78,7 @@ public class ScanFile extends Scanner implements Runnable{
 	 */
 	public static void main(String[] args) {
 		//getScan1(null, new File("C:\\temp\\temp.ll") );
-	getScanner(null, new File("/dev/ttyUSB0"));
+	getScanner(null, new File("/dev/ptmx"));
 	}
 	public static Scanner getScanner(ScanAdapter adapter, Object file) {
 		new Deb(debug,"try");

@@ -161,6 +161,7 @@ public class VBTVBookTypeView extends ATableView implements ActionListener, BVCo
 			}
 		}else{
 			preselected=lastselected;
+			pretime=System.currentTimeMillis();
 		}
 	if (state==State.neu){
 		state=State.info;

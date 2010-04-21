@@ -64,10 +64,17 @@ public class VBTVDatamodell extends javax.swing.table.AbstractTableModel{
 	
 	public Result setNewBooktype(Vector<String> newvec){
 		
-		String isbn=newvec.firstElement();
-		debug(isbn);
-		if (Ean.checkEan(new Ean(isbn))[0]==Ean.Result.ok){
-				if (!isInDataBase(isbn)){
+		Ean ean;
+		ean=new Ean(newvec.firstElement());
+		if (Ean.checkEan(ean)[0]==Ean.Result.ok){
+				if (!(EEANType.getType(ean)==EEANType.ISBN)){
+					new Warn("Bitte eine ISBN eingeben!");
+					return Result.isbnmalformed;
+				}
+				// ensure its with check-digit
+				newvec.remove(0);
+				newvec.add(0, ean.toString());
+				if (!isInDataBase(ean.toString())){
 					debug("not yet here!");
 					StringBuffer update=new StringBuffer();
 					for (int i=0; i<numofcolumns;i++ ){

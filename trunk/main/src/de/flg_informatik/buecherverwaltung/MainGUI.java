@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,7 +14,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-public class MainGUI extends JFrame implements BVConstants {
+import de.flg_informatik.scanner.ScanKeyStrokes;
+
+public class MainGUI extends JFrame implements BVConstants{
 
 	/*
 	 * Hauptklasse, jeder usecase bekommt ein Panel im JTabbedPane
@@ -47,9 +51,9 @@ public class MainGUI extends JFrame implements BVConstants {
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.pack();
 		this.setExtendedState(MAXIMIZED_BOTH);
-		
 		this.setVisible(true);
 		new Deb(debug,"finished");
+		
 		
 		
 	}
@@ -84,6 +88,7 @@ public class MainGUI extends JFrame implements BVConstants {
 			SelectedEvent.addBVSelectedEventListener(usecase.view);
 		}
 		centerpane.addChangeListener(Control.getControl());
+		
 		
 		
 		

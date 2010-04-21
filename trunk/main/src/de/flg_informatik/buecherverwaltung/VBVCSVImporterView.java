@@ -87,7 +87,8 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 		add(cp=new JScrollPane(),BorderLayout.CENTER);// Dummy
 		
 		//OK.addActionListener(sp);
-		setVisible(true);
+		//setVisible(true);
+		toBackground();
 		return true;
 	}
 	
@@ -576,13 +577,7 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 			inreader=null;
 		}
 		removeAll();
-		add(np=new NorthPanel(),BorderLayout.NORTH);
-		add(cp=new JScrollPane(),BorderLayout.CENTER);// Dummy
-		add(wp=new WestPanel(),BorderLayout.WEST);
-		add(sp=new SouthPanel(),BorderLayout.SOUTH);
-		
-		OK.addActionListener(sp);
-		new Deb(debug,"ret" );
+		setVisible(false);
 		
 	}
 	public void thingSelected(SelectedEvent e) {
@@ -636,6 +631,15 @@ public class VBVCSVImporterView extends JPanel implements UCCase, BVConstants {
 		return null;
 	}
 	public void toFront() {
+
+		add(np=new NorthPanel(),BorderLayout.NORTH);
+		add(cp=new JScrollPane(),BorderLayout.CENTER);// Dummy
+		add(wp=new WestPanel(),BorderLayout.WEST);
+		add(sp=new SouthPanel(),BorderLayout.SOUTH);
+		
+		OK.addActionListener(sp);
+		new Deb(debug,"ret" );
+		setVisible(true);
 		// TODO Auto-generated method stub
 		
 	}

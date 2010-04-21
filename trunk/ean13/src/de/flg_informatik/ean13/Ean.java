@@ -3,6 +3,7 @@ package de.flg_informatik.ean13;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.math.BigInteger;
+import java.util.jar.JarException;
 
 import javax.print.PrintException;
 
@@ -21,34 +22,51 @@ public class Ean implements Ean13, de.flg_informatik.Etikett.PrintableEtikett{
 	}
 	
 	public Ean(String string){
-		this(new BigInteger(string));
+		try{
+			makeEan(new BigInteger(string));
+		}catch(java.lang.NumberFormatException e){
+			throw new InternalError("String is not convertable to a BigInteger!");			
+		}catch(NullPointerException e){
+			throw new InternalError("null-String is not convertable to a BigInteger!");
+		}catch(InternalError e){
+			throw new InternalError(e.getLocalizedMessage());
+		}
 				
 	}
 	
 	public Ean(BigInteger bigint){
+		makeEan(bigint);
+	}
+	private void makeEan(BigInteger bigint){
 		for (int i = digits-2; i>=0; i--){
 			ean[i] = '0';
 			maxean[i]='9';
 		}
-		debug(bigint);
-		if (bigint.toString().length()!=13){
+		ean[digits-1] = '0';
+		debug("conv"+bigint);
+		if (bigint.toString().length()>digits){
+			throw new InternalError("Ean will be truncated, (> "+digits+" digits)!");
+		}
+		if (bigint.toString().length()!=digits){
 			if ((bigint.compareTo(new BigInteger(new String(maxean))) != 1) && (bigint.compareTo(BigInteger.ZERO)!=-1)){
 				for (int i = digits-bigint.toString().length()-1; i < digits-1; i++){
 					ean[i] = bigint.toString().charAt(i-(digits-bigint.toString().length()-1));
 				}
 				setCheck();
-				this.eanbigint=bigint;
+				this.eanbigint=new BigInteger(new String(ean));
 				debug(this);
 			}
 		}else{
 			for (int i = digits-bigint.toString().length(); i < digits; i++){
 				ean[i] = bigint.toString().charAt(i-(digits-bigint.toString().length()));
 			}
-			
+			if (checkEan(this)[0]!=Result.ok){
+				throw new InternalError("Ean with wrong check digit!");
+			}
 			this.eanbigint=bigint;
-			debug(this);
+			
 		}
-		
+		debug("end"+this);
 	}
 	
 	void setCheck(){
@@ -103,7 +121,7 @@ public class Ean implements Ean13, de.flg_informatik.Etikett.PrintableEtikett{
 		return 0;
 	}
 	static private void debug(Object obj){
-		//System.out.println(Ean.class+": "+ obj);
+		// System.out.println(Ean.class+": "+ obj);
 	}
 
 }

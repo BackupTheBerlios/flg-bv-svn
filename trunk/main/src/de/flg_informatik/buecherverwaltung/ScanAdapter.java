@@ -9,6 +9,7 @@ import de.flg_informatik.ean13.Ean;
 import de.flg_informatik.scanner.IScanAdapter;
 import de.flg_informatik.scanner.ScanEmulator;
 import de.flg_informatik.scanner.ScanFile;
+import de.flg_informatik.scanner.ScanKeyStrokes;
 import de.flg_informatik.utils.FLGProperties;
 
 /**
@@ -36,7 +37,7 @@ public class ScanAdapter implements IScanAdapter, Runnable, BVConstants{
 		}
 		new Deb(debug,file1);
 		initScanner(file1);
-		
+		ScanKeyStrokes.getScanner(this);
 	}
 	ScanAdapter(Ean ean){
 		this.ean=ean;

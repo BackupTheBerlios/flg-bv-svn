@@ -63,7 +63,9 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett, BVCons
  					Scoring_of_condition = rs.getInt("Scoring_of_condition");
  					ISBN = new BigInteger(rs.getString("ISBN"));
  				}else{
- 					new Err();
+ 					new Warn("Diese Buch-ID ist zwar gültig \n aber das Buch ist nicht in der Datenbank! \n" +
+ 							"  Bitte zugehörigen Buchtyp wählen!" );
+ 					new Notimpl();
  				}
  				debug(rs.getWarnings());
  				
