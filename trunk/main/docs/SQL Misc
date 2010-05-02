@@ -1,0 +1,12 @@
+public void checkDB(boolean change) {
+		for (Vector<Object> l: tablecells){
+			try{
+				
+				new Ean(((Long)(l.firstElement())).toString());
+			}catch(InternalError e){
+				//System.out.println( l.firstElement() +": "+USQLQuery.doUpdate("Update Booktypes set ISBN= "+ new Ean(((Long)(l.firstElement())).toString().substring(0, 12))+" where ISBN= "+ l.firstElement() ));
+				//System.out.println( l.firstElement() + " -> "+ new Ean(((Long)(l.firstElement())).toString().substring(0, 12)));
+			}
+		}
+				
+	}

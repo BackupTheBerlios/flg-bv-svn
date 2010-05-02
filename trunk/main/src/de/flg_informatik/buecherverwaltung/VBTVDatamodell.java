@@ -1,5 +1,6 @@
 package de.flg_informatik.buecherverwaltung;
 
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -41,7 +42,7 @@ public class VBTVDatamodell extends javax.swing.table.AbstractTableModel{
 		Statement statement = Control.getControl().bvs.getStatement();
 		try{
 			tablecells.clear();
-			ResultSet rs=USQLQuery.doQuery("SELECT * FROM "+tablename + " Order by Title",statement);
+			ResultSet rs=USQLQuery.doQuery("SELECT * FROM "+tablename + " Order by ISBN",statement);
 			rs.beforeFirst();
 			while(rs.next()){	
 				tablerow=new Vector<Object>(numofcolumns);
@@ -56,10 +57,11 @@ public class VBTVDatamodell extends javax.swing.table.AbstractTableModel{
 		}finally{
 			Control.getControl().bvs.releaseStatement(statement);
 		}
+		
 		return result;
 
 	}
-	
+		
 	
 	
 	public Result setNewBooktype(Vector<String> newvec){
@@ -188,6 +190,13 @@ public class VBTVDatamodell extends javax.swing.table.AbstractTableModel{
 	public String getColumnName(int column){
 		return headers.get(column);
 	}
+
+
+
+
+
+
+	
 	
 	
 }

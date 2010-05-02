@@ -19,6 +19,9 @@ public class OBTBookType implements BVConstants {
 			String publisher) {
 		super();
 		ISBN = isbn;
+		if (new Ean(ISBN)==null){
+			new Warn("Ungültige ISBN "+ISBN);
+		}
 		
 		Author = author;
 		Title = title;

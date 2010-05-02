@@ -19,5 +19,6 @@ public interface BVConstants {
 	public static final BigInteger ISBNNull12 = new BigInteger("978000000000");
 	public static final Ean ISBNNullEan = new Ean(ISBNNull12);
 	final static Version version=new Version(new int[]{1,1},"10-04-13 (Barcode) ");
+	static final boolean docorrect=true; 
 
 }

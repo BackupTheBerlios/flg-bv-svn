@@ -76,6 +76,8 @@ public class Control implements Runnable,ActionListener,ChangeListener,BVConstan
 		new Deb(debug,"initialized SCANNER");
 		MainGUI.selectView(UCUseCases.Ausleihe);//default usecase
 		new Deb(debug,"End of Constructor of Control");
+		
+		
 
 		
 		
