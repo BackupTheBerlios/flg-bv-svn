@@ -18,7 +18,7 @@ public interface BVConstants {
 		// subtract from Bookworld ISBN 979X 978X to private EAN 299X 298X, does'nt change control digit
 	public static final BigInteger ISBNNull12 = new BigInteger("978000000000");
 	public static final Ean ISBNNullEan = new Ean(ISBNNull12);
-	final static Version version=new Version(new int[]{1,1},"10-04-13 (Barcode) ");
+	final static Version version=new Version(new int[]{1,2},"21-04-13 (USBScan) ");
 	static final boolean docorrect=true; 
 
 }

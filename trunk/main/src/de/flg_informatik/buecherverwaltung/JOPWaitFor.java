@@ -30,7 +30,7 @@ public class JOPWaitFor extends JOptionPane implements SelectedEventListener {
 		super(message, messageType);
 		setype=selectedEventType;
 		SelectedEvent.addBVSelectedEventListener(this);
-		jd=createDialog("Bitte Auswählen");
+		jd=createDialog("Bitte Auswï¿½hlen");
 		jd.setModal(false);
 		jd.setVisible(true);
 	}

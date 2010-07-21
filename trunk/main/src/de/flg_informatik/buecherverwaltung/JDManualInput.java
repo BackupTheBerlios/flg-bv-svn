@@ -199,7 +199,7 @@ public class JDManualInput extends JDialog implements ActionListener {
 			
 		
 		}});
-		add(new JLabel("Bitte ohne Prüfziffer eingeben!"));
+		add(new JLabel("Bitte ohne Prï¿½fziffer eingeben!"));
 		add(new JPanel(){{
 			add(bbook);
 			add(bclass);
@@ -254,7 +254,7 @@ public class JDManualInput extends JDialog implements ActionListener {
 				Control.getControl().scanner.eanScanned(OBook.makeBookEan(getID()).toString());
 				setVisible(false); // get off
 			}else{
-				new Warn("Dies ist keine gülltige Buch-ID");
+				new Warn("Dies ist keine gï¿½lltige Buch-ID");
 			}
 		}
 		if (e.getSource().equals(bclass)){
