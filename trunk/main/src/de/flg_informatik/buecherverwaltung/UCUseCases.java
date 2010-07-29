@@ -11,7 +11,7 @@ public enum UCUseCases implements BVConstants{
 	Buchtypen (new VBTVBookTypeView()),
 	Extras (new VEVExtraView()),
 	Datenimport (new VBVCSVImporterView()),
-	// Vorbereitung(new VBPVBookPrepareView()),
+	Vorbereitung(new VBPVBookPrepareView()),
 	// VorbereitungTest(new VBLPVBookLeasePreView());
 	;
 	private static Hashtable<UCCase, UCUseCases> reverse;// is initialized in static void waitForReverse()
