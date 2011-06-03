@@ -25,7 +25,7 @@ public class JPVYearChooser extends JPanel implements ActionListener,BVConstants
 			years=new JPChooser(np,OClass.getYears(),JPChooser.Orientation.VERTICAL);
 			add(years);
 			try {
-				years.clickOn(Control.getControl().app_settings.getProperty("aktuellesSchuljahr", "2010"));
+				years.clickOn(Control.getControl().app_settings.getProperty("aktuellesSchuljahr", "2011"));
 				
 			} catch (IllegalArgumentException iae) {
 				new Warn("keine Schuljahre verfügbar, sind die Klassendaten importiert?");

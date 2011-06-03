@@ -267,6 +267,23 @@ public class USQLQuery implements Runnable, BVConstants{
 		
 		return (set);
 	}
-	
-
+	public static Vector<String> getAll(String tablename, String col_set){
+		Vector<String> set = new Vector<String>();
+		Statement statement = Control.getControl().bvs.getStatement();
+		ResultSet rs;
+		try{
+			rs=USQLQuery.doQuery("Select " + col_set + " FROM " + tablename // + " GroupBy " + col_set
+					,statement);
+			rs.beforeFirst();
+			while(rs.next()){ // this is strange! it starts with a ""
+				set.add(rs.getString(1));
+			}
+		}catch(SQLException sqe){
+			sqe.printStackTrace();
+		}finally{
+			Control.getControl().bvs.releaseStatement(statement);
+		}
+		
+		return (set);
+	}
 }

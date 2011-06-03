@@ -24,6 +24,7 @@ public class VBTVDatamodell extends javax.swing.table.AbstractTableModel{
 	Vector<String> headers;
 	Vector<Vector<Object>> tablecells=new Vector<Vector<Object>>(); 
 	int numofcolumns;
+	String orderby;
 	public VBTVDatamodell(VBTVBookTypeView myview) {
 		this.headers=USQLQuery.getColumnHeaders(tablename);
 		this.numofcolumns=USQLQuery.getNumOfDBColumns(tablename);
@@ -42,7 +43,7 @@ public class VBTVDatamodell extends javax.swing.table.AbstractTableModel{
 		Statement statement = Control.getControl().bvs.getStatement();
 		try{
 			tablecells.clear();
-			ResultSet rs=USQLQuery.doQuery("SELECT * FROM "+tablename + " Order by ISBN",statement);
+			ResultSet rs=USQLQuery.doQuery("SELECT * FROM "+tablename + " Order by "+orderby,statement);
 			rs.beforeFirst();
 			while(rs.next()){	
 				tablerow=new Vector<Object>(numofcolumns);
@@ -190,13 +191,16 @@ public class VBTVDatamodell extends javax.swing.table.AbstractTableModel{
 	public String getColumnName(int column){
 		return headers.get(column);
 	}
-
-
-
-
-
-
-	
-	
+	public boolean orderBy(String column){
+		if (headers.contains(column)){
+			orderby=column;
+			return true;	
+		}else{
+			orderby=headers.firstElement();
+			new Warn("No vali column Header, to order by!");
+			return false;
+		}
+		
+	}
 	
 }

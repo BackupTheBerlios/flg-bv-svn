@@ -20,16 +20,15 @@ public class OBUBookUse implements BVConstants{
 	 * 
 	 */
 	public static Vector<String> getSubjects(){
-		subjects=USQLQuery.getSetTokens(tablename, col_subname);
-		new Deb(debug,subjects);
-		return (subjects);
+		
+		return (USQLQuery.getAll(SubjectTable, "ShortDesc"));
 	}
 	
 	/**
 	 * @return Vector of grades from set-definition in database 
 	 */
 	public static Vector<String> getGrades(){
-		return (USQLQuery.getSetTokens(tablename, col_grades));
+		return (USQLQuery.getAll(GradeTable, "Grade"));
 	}
 	
 	/**
@@ -247,7 +246,7 @@ public class OBUBookUse implements BVConstants{
 				new Warn("Keine vollständige Zuweisung; \n Anweisung ignoriert!");
 				return;
 			}
-			new Deb(5,grade); new Deb(debug,subject);
+			new Deb(debug,grade); new Deb(debug,subject);
 			if (!isExisting(isbn,grade,subject)){
 				new OBUBookUse(isbn,grade,subject).addUse();
 			}else{
@@ -286,6 +285,10 @@ public class OBUBookUse implements BVConstants{
 	 *  Implementation
 	 */
 	private static final String tablename="BookUses";
+	private static final String SubjectTable="Subjects";
+	private static final String GradeTable="Grades";
+	private static final String ClassTypeTable="ClassTypes";
+	
 	private static final String col_pk="BUID";
 	private static final String col_bc="BCID";	
 	private static final String col_isbn="ISBN";

@@ -1,0 +1,8 @@
+CREATE TABLE `Books2test`.`Subjects` (
+  `ShortDesc` VARCHAR(5)  NOT NULL,
+  `LongDesc` TEXT  NOT NULL,
+  PRIMARY KEY (`ShortDesc`)
+)
+ENGINE = MyISAM;
+SAM
+COMMENT = 'Alle Fächer';

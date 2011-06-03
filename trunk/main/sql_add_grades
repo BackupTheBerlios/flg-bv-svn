@@ -1,0 +1,5 @@
+CREATE TABLE `Books2test`.`Grades` (
+  `Grade` Varchar(5)  NOT NULL,
+  PRIMARY KEY (`Grade`)
+)
+ENGINE = MyISAM;

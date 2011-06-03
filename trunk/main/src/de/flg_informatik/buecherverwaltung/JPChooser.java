@@ -88,6 +88,7 @@ public class JPChooser extends JPanel implements ActionListener,BVConstants{
 		
 		
 		for (int i=0; i< names.size(); i++){
+			new Deb(debug, names.get(i).toString());
 			radiobutton[i]=new JRadioButton(names.get(i).toString());
 			radiobutton[i].setActionCommand(Integer.toString(i));
 			bgr.add(radiobutton[i]);

@@ -44,8 +44,8 @@ public class OBUPanel extends JPanel  implements ActionListener, BVConstants {
 			//add(new aequiPanel());
 			final addPanel ap=new addPanel();
 			add(ap);
-			add(new JPanel(new GridLayout(0,1)){{add(new JLabel("Verwendung hinzufügen:"));add(new JPanel(){{add(cancel);add(ap.save);}});;}});
-			ap.save.addActionListener(ap);
+			add(new JPanel(new GridLayout(0,1)){{add(new JLabel("Verwendung hinzufügen:"));add(new JPanel(){{add(cancel);
+					}});;}});
 			invalidate();
 			
 		}
@@ -69,19 +69,21 @@ public class OBUPanel extends JPanel  implements ActionListener, BVConstants {
 	class addPanel extends JPanel implements ActionListener{
 		JPChooser sc;
 		JPChooser gc;
-		private FireButton save = new FireButton("save");
+		//private FireButton save = new FireButton("save");
 
 		addPanel(){
 			super(new GridLayout(0,1));
-			add(sc=new JPChooser(null,OBUBookUse.getSubjects(), Orientation.HORZONTAL));
-			add(gc=new JPChooser(null,OBUBookUse.getGrades(), Orientation.HORZONTAL));
+			add(sc=new JPChooser(this,OBUBookUse.getSubjects(), Orientation.HORZONTAL));
+			add(gc=new JPChooser(this,OBUBookUse.getGrades(), Orientation.HORZONTAL));
 			invalidate();
 		}
 	
 		public void actionPerformed(ActionEvent e) {
 			
-			OBUBookUse.makeBookUse(isbn,gc.getSelected(),sc.getSelected());
-			add.doClick();
+			if (gc.getSelected()!=null & sc.getSelected()!= null){
+				OBUBookUse.makeBookUse(isbn,gc.getSelected(),sc.getSelected());
+				add.doClick();
+			}
 			
 		}
 	}
