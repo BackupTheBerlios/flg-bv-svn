@@ -64,85 +64,105 @@ public class EanCanvas extends Canvas implements Ean13, de.flg_informatik.Etiket
 	 */ 
 	
 	public EanCanvas(BigInteger bigint, Dimension box, String[] text, double textscale){
-		init(new Ean(bigint), box, text, textscale);
+		init(getEan(bigint), box, text, textscale);
 	}
 	public EanCanvas(Ean ean){
 		init(ean, box, text, textscale);
 	}
 	public EanCanvas(BigInteger bigint){
-		init(new Ean(bigint), box, text, textscale);
+		init(getEan(bigint), box, text, textscale);
 	}
 	public EanCanvas(String string){
-		init(new Ean(string), box, text, textscale);
+		init(getEan(string), box, text, textscale);
 	}
 	public EanCanvas(Ean ean, Dimension box){
 		init(ean, box, text, textscale);
 	}
 	public EanCanvas(BigInteger bigint, Dimension box){
-		init(new Ean(bigint), box, text, textscale);
+		init(getEan(bigint), box, text, textscale);
 	}
 	public EanCanvas(String string, Dimension box){
-		init(new Ean(string), box, text, textscale);
+		init(getEan(string), box, text, textscale);
 	}
 	public EanCanvas(Ean ean, Dimension box, String text){
 		init(ean, box, new String[]{text}, textscale);
 	}
 	public EanCanvas(String string, Dimension box, String text){
-		init(new Ean(string), box, new String[]{text}, textscale);
+		init(getEan(string), box, new String[]{text}, textscale);
 	}
 	public EanCanvas(BigInteger bigint, Dimension box, String text){
-		init(new Ean(bigint), box, new String[]{text}, textscale);
+		init(getEan(bigint), box, new String[]{text}, textscale);
 	}
 	public EanCanvas(Ean ean, Dimension box, String[] text){
 		init(ean, box, text, textscale);
 	}
 	public EanCanvas(String string, Dimension box, String[] text){
-		init(new Ean(string), box, text, textscale);
+		init(getEan(string), box, text, textscale);
 	}
 	public EanCanvas(BigInteger bigint, Dimension box, String[] text){
-		init(new Ean(bigint), box, text, textscale);
+		init(getEan(bigint), box, text, textscale);
 	}
 	public EanCanvas(Ean ean, Dimension box, String[] text, double textscale){
 		init(ean, box, text, textscale);
 	}
 	public EanCanvas(String string, Dimension box, String[] text, double textscale){
-		init(new Ean(string), box, text, textscale);
+		init(getEan(string), box, text, textscale);
 	}
 		public EanCanvas(Ean ean, String text){
 		init(ean, box, new String[]{text}, textscale);
 	}
 	public EanCanvas(String string, String text){
-		init(new Ean(string), box, new String[]{text}, textscale);
+		init(getEan(string), box, new String[]{text}, textscale);
 	}
 	public EanCanvas(BigInteger bigint, String text){
-		init(new Ean(bigint), box, new String[]{text}, textscale);
+		init(getEan(bigint), box, new String[]{text}, textscale);
 	}
 	public EanCanvas(Ean ean,  String[] text){
 		init(ean, box, text, textscale);
 	}
 	public EanCanvas(String string, String[] text){
-		init(new Ean(string), box, text, textscale);
+		init(getEan(string), box, text, textscale);
 	}
 	public EanCanvas(BigInteger bigint,  String[] text){
-		init(new Ean(bigint), box, text, textscale);
+		init(getEan(bigint), box, text, textscale);
 	}
 	public EanCanvas(Ean ean, String text, double textscale){
 		init(ean, box, new String[]{text}, textscale);
 	}
 	public EanCanvas(String string, String text, double textscale){
-		init(new Ean(string), box, new String[]{text}, textscale);
+		init(getEan(string), box, new String[]{text}, textscale);
 	}
 	public EanCanvas(BigInteger bigint, String text, double textscale){
-		init(new Ean(bigint), box, new String[]{text}, textscale);
+		init(getEan(bigint), box, new String[]{text}, textscale);
 	}
 	public EanCanvas(Ean ean,  String[] text, double textscale){
 		init(ean, box, text, textscale);
 	}
 	public EanCanvas(String string,  String[] text, double textscale){
-		init(new Ean(string), box, text, textscale);
+		init(getEan(string), box, text, textscale);
 	}
 	public EanCanvas(BigInteger bigint, String[] text, double textscale){
-		init(new Ean(bigint), box, text, textscale);
+		init(getEan(bigint), box, text, textscale);
+	}
+	private Ean getEan(BigInteger bigint){
+		try {
+			return new Ean(bigint);
+		} catch (WrongCheckDigitException e) {
+			new InternalError(e.getLocalizedMessage());
+		} catch (WrongLengthException e) {
+			new InternalError(e.getLocalizedMessage());
+		}
+		return null;
+	}
+	private Ean getEan(String string){
+		try {
+			return new Ean(string);
+		} catch (WrongCheckDigitException e) {
+			new InternalError(e.getLocalizedMessage());
+		} catch (WrongLengthException e) {
+			new InternalError(e.getLocalizedMessage());
+		}
+		return null;
 	}
 	public static int getRandvert() {
 		return randvert;

@@ -89,7 +89,7 @@ public class VBTVBookTypeView extends ATableView implements ActionListener, BVCo
 				invalidate();
 				me.validate();
 			}else{
-				new OBook(e.getEan()).setBookType(new Ean(booktyp.firstElement()));
+				new OBook(e.getEan()).setBookType(Ean.getEan(booktyp.firstElement()));
 			}
 		case BookTypOnTop:
 			if (state!=State.info){
@@ -179,13 +179,13 @@ public class VBTVBookTypeView extends ATableView implements ActionListener, BVCo
 		state=State.values()[Integer.parseInt(e.getActionCommand())];
 		switch (state){
 		case info:
-			SelectedEvent.makeEvent(this, SelectedEvent.SelectedEventType.ISBNSelected, new Ean(((VBTVDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
+			SelectedEvent.makeEvent(this, SelectedEvent.SelectedEventType.ISBNSelected, Ean.getEan(((VBTVDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
 			break;
 		case edit:
-			SelectedEvent.makeEvent(this, SelectedEvent.SelectedEventType.ISBNSelected, new Ean(((VBTVDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
+			SelectedEvent.makeEvent(this, SelectedEvent.SelectedEventType.ISBNSelected, Ean.getEan(((VBTVDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
 			break;
 		case zukauf:
-			SelectedEvent.makeEvent(this, SelectedEvent.SelectedEventType.ISBNBuySelected, new Ean(((VBTVDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
+			SelectedEvent.makeEvent(this, SelectedEvent.SelectedEventType.ISBNBuySelected, Ean.getEan(((VBTVDatamodell)mymodell).tablecells.get(lastselected).get(0).toString()));
 			break;
 		case register:
 			booktyp=null;
@@ -196,7 +196,7 @@ public class VBTVBookTypeView extends ATableView implements ActionListener, BVCo
 				SelectedEvent.makeEvent(this, SelectedEvent.SelectedEventType.ISBNUnknownSelected);
 				break;
 			}else{
-				if(OBTBookType.isKnownISBN(new Ean(booktyp.get(0)))){
+				if(OBTBookType.isKnownISBN(Ean.getEan(booktyp.get(0)))){
 					SelectedEvent.makeEvent(this, SelectedEvent.SelectedEventType.ISBNUnknownSelected);
 					break;
 				}

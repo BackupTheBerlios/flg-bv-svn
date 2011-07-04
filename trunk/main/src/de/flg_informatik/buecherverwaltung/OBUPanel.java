@@ -158,7 +158,7 @@ public class OBUPanel extends JPanel  implements ActionListener, BVConstants {
 				new Deb(debug,bvc.getSelectedIndex());
 				new Deb(debug,bvc.getSelected());
 				if (bvc.getSelectedIndex()>-1){
-					OBUBookUse.delEqui(new Ean(OBUBookUse.getEquisOfString(isbn).get(bvc.getSelectedIndex())));
+					OBUBookUse.delEqui(Ean.getEan(OBUBookUse.getEquisOfString(isbn).get(bvc.getSelectedIndex())));
 				}else{
 					new Warn("Keine Äquivalenz gewählt!\n Ignoriere Anweisung.");
 				}

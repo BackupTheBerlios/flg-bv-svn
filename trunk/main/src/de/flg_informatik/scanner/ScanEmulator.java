@@ -45,9 +45,8 @@ public class ScanEmulator extends FLGFrame implements ActionListener{
 		IDString=getIDString(10);
 		ISBNString=getISBNString(10);
 		PersString=getPersString(10);
-		
+		selector.addItem(Ean.getEan(new BigInteger("2000000000150")));
 		for(String id : IDString){
-			selector.addItem(id);
 			selector.addItem(id);
 		}
 		for(String id : ISBNString){
@@ -69,7 +68,7 @@ public class ScanEmulator extends FLGFrame implements ActionListener{
 		ArrayList<String> ret= new ArrayList<String>();
 		
 		for (int i=1; i<=num; i++){
-			ret.add(new Ean(new BigInteger("200000000015").add(new BigInteger(i+""))).toString());
+			ret.add(Ean.getEan(new BigInteger("200000000015").add(new BigInteger(i+""))).toString());
 		}
 		return ret;
 		
@@ -80,7 +79,7 @@ public class ScanEmulator extends FLGFrame implements ActionListener{
 		ArrayList<String>  ret= new ArrayList<String> ();
 		
 		for (int i=1; i<=num; i++){
-			ret.add(new Ean(new BigInteger("978314100600").add(new BigInteger(i+""))).toString());
+			ret.add(Ean.getEan(new BigInteger("978314100600").add(new BigInteger(i+""))).toString());
 		}
 		return ret;
 		
@@ -90,7 +89,7 @@ public class ScanEmulator extends FLGFrame implements ActionListener{
 		ArrayList<String>  ret= new ArrayList<String> ();
 		
 		for (int i=1; i<=num; i++){
-			ret.add(new Ean(new BigInteger("210000000000").add(new BigInteger(i+""))).toString());
+			ret.add(Ean.getEan(new BigInteger("210000000000").add(new BigInteger(i+""))).toString());
 		}
 		return ret;
 		

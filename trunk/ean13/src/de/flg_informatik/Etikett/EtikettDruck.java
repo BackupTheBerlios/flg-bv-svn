@@ -366,7 +366,7 @@ public class EtikettDruck implements Printable {
 	*/
 	public static void main(String[] args){
 		
-	Ean ean=new Ean("123456123456");
+	Ean ean=Ean.getEan("123456123456");
 	// etikettenDruck(new Ean[]{ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean},4,14,(float)8,(float)8,(float)8,(float)8);
 	etikettenDruck(new Ean[]{ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean,ean},4,14,6);
 		}

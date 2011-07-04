@@ -12,6 +12,8 @@ import javax.swing.JPanel;
 import de.flg_informatik.Etikett.EtikettDruck;
 import de.flg_informatik.Etikett.PrintableEtikett;
 import de.flg_informatik.ean13.Ean;
+import de.flg_informatik.ean13.WrongCheckDigitException;
+import de.flg_informatik.ean13.WrongLengthException;
 
 @SuppressWarnings("serial")
 public class VEVJPStickerPrint extends JPanel implements ActionListener{
@@ -40,7 +42,13 @@ public class VEVJPStickerPrint extends JPanel implements ActionListener{
 	private PrintableEtikett[] makeEtiketts(Ean ean, int count){
 		Ean[] ret = new Ean[count];
 		for (int i=0; i< count; i++ ){
-			ret[i]=new Ean(new BigInteger(ean.toString().substring(0,12)).add(new BigInteger(i+"")));
+			try {
+				ret[i]=new Ean(new BigInteger(ean.toString().substring(0,12)).add(new BigInteger(i+"")));
+			} catch (WrongCheckDigitException e) {
+				new InternalError(e.getLocalizedMessage());
+			} catch (WrongLengthException e) {
+				new InternalError(e.getLocalizedMessage());
+			}
 		}
 		return ret;
 		

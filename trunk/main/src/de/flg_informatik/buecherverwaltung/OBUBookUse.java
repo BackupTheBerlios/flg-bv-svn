@@ -159,7 +159,7 @@ public class OBUBookUse implements BVConstants{
 				bcid=getBCIDOf(ean1);
 				if (getBCIDOf(ean2)!=0){ // much work to do
 					for (String ean:getEquisOfString(ean2)){
-						setBCIDOf(new Ean(ean),bcid);
+						setBCIDOf(Ean.getEan(ean),bcid);
 					}
 				}
 				setBCIDOf(ean2,bcid);
@@ -320,7 +320,7 @@ public class OBUBookUse implements BVConstants{
 	
 	private OBUBookUse(int buid, int bcid, String isbn, String grade, String subject ){ // new Bookuse created, same ISBN
 		if (isbn != null){
-			this.isbn=new Ean(isbn);
+			this.isbn=Ean.getEan(isbn);
 		}
 		this.buid=buid;
 		this.bcid=bcid;
@@ -453,7 +453,7 @@ public class OBUBookUse implements BVConstants{
 			rs.beforeFirst();
 			while (rs.next()){
 				if (rs.getString(1)!=null){
-					ret.add(new Ean(rs.getString(1)));
+					ret.add(Ean.getEan(rs.getString(1)));
 				}else{
 					if (rs.getString(2)!=null){
 						equi.add(rs.getInt(2));

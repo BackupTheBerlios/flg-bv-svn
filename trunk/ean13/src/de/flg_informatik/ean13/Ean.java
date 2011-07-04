@@ -12,7 +12,7 @@ public class Ean implements Ean13, de.flg_informatik.Etikett.PrintableEtikett{
 	char[] maxean =new char[digits-1];
 	EanCanvas me = null;
 	BigInteger eanbigint = BigInteger.ZERO;
-	public enum Result{
+	/*public enum Result{
 		ok,
 		error,
 		eanpriv,
@@ -20,32 +20,52 @@ public class Ean implements Ean13, de.flg_informatik.Etikett.PrintableEtikett{
 		wronglength,
 		checkfalse;
 	}
-	
-	public Ean(String string){
+	*/
+	public static Ean getEan(String string){
+		try {
+			return new Ean(string);
+		} catch (WrongCheckDigitException e) {
+			// TODO Auto-generated catch block
+			
+		} catch (WrongLengthException e) {
+			// TODO Auto-generated catch block
+			
+		}
+		return null;
+	}
+	public static Ean getEan(BigInteger bigint){
+		try {
+			return new Ean(bigint);
+		} catch (WrongCheckDigitException e) {
+			throw new InternalError(e.getLocalizedMessage());
+		} catch (WrongLengthException e) {
+			throw new InternalError(e.getLocalizedMessage());
+		}
+		//return null;
+	}
+	public Ean(String string) throws WrongCheckDigitException, WrongLengthException{
 		try{
 			makeEan(new BigInteger(string));
 		}catch(java.lang.NumberFormatException e){
 			throw new InternalError("String is not convertable to a BigInteger!");			
 		}catch(NullPointerException e){
 			throw new InternalError("null-String is not convertable to a BigInteger!");
-		}catch(InternalError e){
-			throw new InternalError(e.getLocalizedMessage());
 		}
 				
 	}
 	
-	public Ean(BigInteger bigint){
+	public Ean(BigInteger bigint) throws WrongCheckDigitException, WrongLengthException{
 		makeEan(bigint);
 	}
-	private void makeEan(BigInteger bigint){
+	private void makeEan(BigInteger bigint) throws WrongCheckDigitException, WrongLengthException{
 		for (int i = digits-2; i>=0; i--){
 			ean[i] = '0';
 			maxean[i]='9';
 		}
 		ean[digits-1] = '0';
-		debug("conv"+bigint);
+		debug("conv "+bigint);
 		if (bigint.toString().length()>digits){
-			throw new InternalError("Ean will be truncated, (> "+digits+" digits)!");
+			throw new WrongLengthException("Ean will be truncated, (> "+digits+" digits)!");
 		}
 		if (bigint.toString().length()!=digits){
 			if ((bigint.compareTo(new BigInteger(new String(maxean))) != 1) && (bigint.compareTo(BigInteger.ZERO)!=-1)){
@@ -60,16 +80,19 @@ public class Ean implements Ean13, de.flg_informatik.Etikett.PrintableEtikett{
 			for (int i = digits-bigint.toString().length(); i < digits; i++){
 				ean[i] = bigint.toString().charAt(i-(digits-bigint.toString().length()));
 			}
-			if (checkEan(this)[0]!=Result.ok){
-				throw new InternalError("Ean with wrong check digit!");
-			}
+			checkEan(this);
 			this.eanbigint=bigint;
 			
 		}
-		debug("end"+this);
+		debug("end "+this);
 	}
 	
-	void setCheck(){
+	private void setCheck(){
+		ean[digits-1]=getCheck();
+		debug(ean.toString());
+	}
+	
+	private char getCheck(){
 		int checksum=0;
 		for (int i=0;i<12;i++){
 			if (i%2==0){
@@ -80,8 +103,7 @@ public class Ean implements Ean13, de.flg_informatik.Etikett.PrintableEtikett{
 			checksum%=10;
 		}
 		checksum=(10-checksum)%10;
-		ean[digits-1]=Integer.toString(checksum).charAt(0);
-		debug(ean.toString());
+		return Integer.toString(checksum).charAt(0);
 	}
 	
 	
@@ -97,18 +119,15 @@ public class Ean implements Ean13, de.flg_informatik.Etikett.PrintableEtikett{
 	public BigInteger getEan(){
 		return eanbigint;
 	}
-	public static Result[] checkEan(Ean ean){
+	public static boolean checkEan(Ean ean) throws WrongCheckDigitException, WrongLengthException{
+		
 		if(ean.ean.length!=13){
-			return new Result[]{Result.error,Result.wronglength};
+			throw new WrongLengthException("Ean has length of "+ean.ean.length+", expected was 13.");
 		}
-		Ean newean = new Ean((new String(ean.toString()).substring(0, 12)));
-		debug(newean.toString());
-		debug(ean.toString());
-		if(!ean.toString().equals(newean.toString())){
-			debug("Check False");
-			return new Result[]{Result.error,Result.checkfalse};
+		if((ean.toString().charAt(12)!=ean.getCheck())){
+			throw new WrongCheckDigitException();
 		}
-		return new Result[]{Result.ok};
+		return true;
 	}
 
 	public int printAt(Graphics g, Dimension position, Dimension boxgroesse) 
@@ -121,7 +140,7 @@ public class Ean implements Ean13, de.flg_informatik.Etikett.PrintableEtikett{
 		return 0;
 	}
 	static private void debug(Object obj){
-		// System.out.println(Ean.class+": "+ obj);
+		 System.out.println(Ean.class+": "+ obj);
 	}
 
 }

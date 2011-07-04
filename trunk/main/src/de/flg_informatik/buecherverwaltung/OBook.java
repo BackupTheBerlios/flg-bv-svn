@@ -129,7 +129,7 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett, BVCons
 			ResultSet rs=USQLQuery.doQuery("SELECT UserID FROM Leases WHERE LObjectID="+ID + " AND BackTime is null" ,statement);
 			rs.beforeFirst();
 			if (rs.next()){ // There is a Lease
- 				return new Ean(rs.getString(1));
+ 				return Ean.getEan(rs.getString(1));
 			}else{ // no open Lease
 				return null;
 			}
@@ -155,7 +155,7 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett, BVCons
  		debug("getIsbn "+ID);
  		Statement statement = Control.getControl().bvs.getStatement();
  		try {
-			return new Ean(USQLQuery.doQuery("SELECT ISBN FROM Books WHERE ID="+ID,statement).getString(1));
+			return Ean.getEan(USQLQuery.doQuery("SELECT ISBN FROM Books WHERE ID="+ID,statement).getString(1));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -169,7 +169,7 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett, BVCons
  	public static synchronized Ean makeBookEan(BigInteger num){
  		
  		
- 		return new Ean(num.add(Book12));
+ 		return Ean.getEan(num.add(Book12));
  	}
  	
  	public synchronized static BigInteger makeBookID(Ean ean){
@@ -269,7 +269,7 @@ public class OBook implements de.flg_informatik.Etikett.PrintableEtikett, BVCons
 
 	public int printAt(Graphics g, Dimension position, Dimension boxgroesse) {
 		try {
-			return (new EanCanvas(getEan(),OBTBookType.getTitle(new Ean(this.ISBN)),0.6).printAt(g, position, boxgroesse));
+			return (new EanCanvas(getEan(),OBTBookType.getTitle(Ean.getEan(this.ISBN)),0.6).printAt(g, position, boxgroesse));
 		} catch (PrintException e) {
 			new Err(e);
 			return 0;

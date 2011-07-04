@@ -10,6 +10,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import de.flg_informatik.ean13.Ean;
+import de.flg_informatik.ean13.WrongCheckDigitException;
+import de.flg_informatik.ean13.WrongLengthException;
 
 public class JPBookPresenter extends JPanel implements MouseListener{
 	/**
@@ -74,7 +76,11 @@ public class JPBookPresenter extends JPanel implements MouseListener{
 
 		}else{
 			idf.setText(OBook.makeBookEan(book.ID).toString());
-			titlef.setText(OBTBookType.getTitle(new Ean(book.ISBN)));
+			try {
+				titlef.setText(OBTBookType.getTitle(new Ean(book.ISBN)));
+			} catch (Exception e) {
+				new Err("ISBN ungültig");
+			} 
 			switcher.setCondition(book.Scoring_of_condition);
 			setBackground(JPConditionSwitcher.colorOfCondition(book.Scoring_of_condition));
 			switcher.setVisible(true);

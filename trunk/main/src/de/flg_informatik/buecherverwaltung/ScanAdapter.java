@@ -6,6 +6,8 @@ package de.flg_informatik.buecherverwaltung;
 import java.io.File;
 
 import de.flg_informatik.ean13.Ean;
+import de.flg_informatik.ean13.WrongCheckDigitException;
+import de.flg_informatik.ean13.WrongLengthException;
 import de.flg_informatik.scanner.IScanAdapter;
 import de.flg_informatik.scanner.ScanEmulator;
 import de.flg_informatik.scanner.ScanFile;
@@ -14,14 +16,24 @@ import de.flg_informatik.utils.FLGProperties;
 
 /**
  * @author notkers
+ * kind of janus-headed, polymorphistic constructor
+ *  
  *
  */
 public class ScanAdapter implements IScanAdapter, Runnable, BVConstants{
 	private static Control control;
+	private static Ean ISBNNullEan; 
 	private Ean ean;
+	private int debug=1;
 	
-	ScanAdapter(Control control){
+	ScanAdapter(Control control){ // thats the true Constructor 
 		ScanAdapter.control=control;
+		try {
+			ISBNNullEan = new Ean(ISBNNull12);
+		} catch (Exception e) {
+			throw new InternalError();
+		}
+
 		File file1=null; //TODO should be an enumeration of /dev/tty files, by now of Property scanner.scanfile
 		if (control.app_settings.getProperty("scanner.typ").equals("emulator")){
 			if (System.getProperty("os.name").equals("Linux")){
@@ -39,15 +51,23 @@ public class ScanAdapter implements IScanAdapter, Runnable, BVConstants{
 		initScanner(file1);
 		ScanKeyStrokes.getScanner(this);
 	}
-	ScanAdapter(Ean ean){
+	ScanAdapter(Ean ean){ // Kind of kick starter for thread of a scan
 		this.ean=ean;
-		new Deb(debug,"eanScanned");
+		new Deb(debug,"eanScanned"+ean);
 		(new Thread(this)).start();
 	}
 	
 	public synchronized void eanScanned(String eanstring){
-		Ean ean=new Ean(eanstring);
-		new ScanAdapter(ean);
+		
+		try{
+			Ean ean=new Ean(eanstring);
+			new ScanAdapter(ean);
+		}catch(WrongCheckDigitException e){
+			new Warn(e.getMessage());
+		}catch (Exception e) {
+			new InternalError(e.getMessage());
+		}
+		
 		
 	}
 	
@@ -80,7 +100,7 @@ public class ScanAdapter implements IScanAdapter, Runnable, BVConstants{
 				new Deb(debug,"isBookEan()");
 				OBook book = new OBook(ean);
 				new Deb(debug,"wasBookEan()");
-				if (book.ISBN==OBTBookType.ISBNNullEan.getEan()){
+				if (book.ISBN==ISBNNullEan.getEan()){
 						new Deb(debug,"isISBNNullEan");
 						control.newEvent(this, SelectedEvent.SelectedEventType.BookUnknownSelected, ean);
 					}else{

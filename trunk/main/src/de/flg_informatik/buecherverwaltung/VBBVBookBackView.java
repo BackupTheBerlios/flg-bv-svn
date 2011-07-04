@@ -52,7 +52,7 @@ public class VBBVBookBackView extends JPanel implements UCCase, ActionListener, 
 			}
 			if (e.getActionCommand().equals("cancel")){
 				if (lastbook!= null){
-					Control.logln("ABBRUCH der Rückgabe: (" + lastbook.ID + ", " + OBTBookType.getTitle(new Ean(lastbook.ISBN))+", "+lastbook.Scoring_of_condition+"), Benutzeraktion" );
+					Control.logln("ABBRUCH der Rückgabe: (" + lastbook.ID + ", " + OBTBookType.getTitle(Ean.getEan(lastbook.ISBN))+", "+lastbook.Scoring_of_condition+"), Benutzeraktion" );
 					lastbook=null;
 					np.publish(lastbook);
 				}
@@ -112,7 +112,7 @@ public class VBBVBookBackView extends JPanel implements UCCase, ActionListener, 
 				
 			break;
 		}	
-		Control.log("ZURÜCK: B"+book.ID + " <- "+classid + " ("+ OBTBookType.getTitle(new Ean(book.ISBN))+" von " + classname +") Zustand: "+book.Scoring_of_condition );
+		Control.log("ZURÜCK: B"+book.ID + " <- "+classid + " ("+ OBTBookType.getTitle(Ean.getEan(book.ISBN))+" von " + classname +") Zustand: "+book.Scoring_of_condition );
 		
 		if (book.endLease()){
 			Control.logln(" OK!");

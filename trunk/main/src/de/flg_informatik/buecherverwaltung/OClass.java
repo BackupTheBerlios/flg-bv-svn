@@ -142,12 +142,12 @@ public class OClass implements BVConstants{
 	}
 	public static Ean getEan(int id){
 		//TODO not tested
-		return new Ean(Class12.add(new java.math.BigInteger(id+"")));
+		return Ean.getEan(Class12.add(new java.math.BigInteger(id+"")));
 	}
 	
 	public static Ean getEan(OClass cl){
 		//TODO not tested
-		return new Ean(Class12.add(new java.math.BigInteger(cl.KID+"")));
+		return Ean.getEan(Class12.add(new java.math.BigInteger(cl.KID+"")));
 	}
 	public static boolean isClassEan(Ean ean){
 		//TODO not tested

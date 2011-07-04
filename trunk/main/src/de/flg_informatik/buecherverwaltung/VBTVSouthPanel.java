@@ -162,7 +162,7 @@ class VBTVSouthPanel extends JPanel implements ActionListener, BVConstants{
 							break;
 						case edit:
 							up.add(new Minipanel(null,save));
-							add(new OBUPanel(new Ean(editfields[0].getText())));
+							add(new OBUPanel(Ean.getEan(editfields[0].getText())));
 							break;
 						case neu:
 							up.add(new Minipanel(null,save));

@@ -2,6 +2,8 @@ package de.flg_informatik.buecherverwaltung;
 
 import de.flg_informatik.buecherverwaltung.SelectedEvent.SelectedEventType;
 import de.flg_informatik.ean13.Ean;
+import de.flg_informatik.ean13.WrongCheckDigitException;
+import de.flg_informatik.ean13.WrongLengthException;
 
 public class TestEventTest implements SelectedEventListener{
 	int num;
@@ -30,7 +32,15 @@ public class TestEventTest implements SelectedEventListener{
 			if (i%100==0){
 				new TestEventTest();
 			}
-			SelectedEvent.makeEvent(et, SelectedEventType.BookUnknownSelected, new Ean("0"));
+			try {
+				SelectedEvent.makeEvent(et, SelectedEventType.BookUnknownSelected, new Ean("0"));
+			} catch (WrongCheckDigitException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (WrongLengthException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 		}
 	}

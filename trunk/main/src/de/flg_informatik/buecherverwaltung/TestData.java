@@ -22,7 +22,7 @@ public class TestData {
  			for (int i=0;i<280;i++){
  				result.absolute(i+1);
  	 		
- 	 			ret[i]=new Ean(new BigInteger(result.getString("ID")).add(OBook.Book12));
+ 	 			ret[i]=Ean.getEan(new BigInteger(result.getString("ID")).add(OBook.Book12));
  	 		}
 		} catch (SQLException e) {
 			e.printStackTrace();
